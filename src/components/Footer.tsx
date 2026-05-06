@@ -40,23 +40,14 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center
-                              p-1 shadow-gold flex-shrink-0 overflow-hidden">
-                <Image
-                  src="/images/logo.png"
-                  alt="بلاد الحرمين"
-                  width={44}
-                  height={44}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div>
-                <p className="text-white font-black text-sm leading-tight"
-                   data-ar="بلاد الحرمين" data-en="Belad Alharamain">بلاد الحرمين</p>
-                <p className="text-gold-light text-xs"
-                   data-ar="للحج والعمرة الداخلية" data-en="Domestic Hajj & Umrah">للحج والعمرة الداخلية</p>
-              </div>
+            <div className="inline-block bg-white/95 rounded-xl px-3 py-2 mb-5 shadow-gold">
+              <Image
+                src="/images/logo.png"
+                alt="شركة بلاد الحرمين للحج والعمرة"
+                width={220}
+                height={80}
+                className="h-14 w-auto object-contain"
+              />
             </div>
             <p className="text-sm leading-relaxed mb-5 text-white/55"
                data-ar="نخدم ضيوف الرحمن بشغف واحترافية منذ أكثر من 15 عاماً."

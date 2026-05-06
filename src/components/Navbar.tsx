@@ -85,23 +85,20 @@ export default function Navbar() {
           <a
             href="#hero"
             onClick={e => { e.preventDefault(); scrollTo('#hero'); }}
-            className="flex items-center gap-2.5 flex-shrink-0"
+            className="flex items-center flex-shrink-0 group"
+            aria-label="بلاد الحرمين"
           >
-            <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center p-1
-                            shadow-gold ring-2 ring-gold/30 flex-shrink-0 overflow-hidden">
+            <div className="bg-white/95 rounded-xl px-2.5 py-1.5 shadow-gold
+                            ring-1 ring-gold/30 transition-transform duration-300
+                            group-hover:scale-105">
               <Image
                 src="/images/logo.png"
-                alt="بلاد الحرمين"
-                width={44}
-                height={44}
-                className="w-full h-full object-contain"
+                alt="شركة بلاد الحرمين للحج والعمرة"
+                width={180}
+                height={60}
+                priority
+                className="h-9 sm:h-10 w-auto object-contain"
               />
-            </div>
-            <div className="flex flex-col leading-tight">
-              <span className="text-white font-bold text-sm">{t('بلاد الحرمين', 'Belad Alharamain')}</span>
-              <span className="text-gold-light text-xs font-medium opacity-85">
-                {t('للحج والعمرة', 'Hajj & Umrah')}
-              </span>
             </div>
           </a>
 

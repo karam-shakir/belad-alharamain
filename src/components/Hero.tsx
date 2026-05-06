@@ -36,34 +36,26 @@ export default function Hero() {
         </div>
 
         {/* Company Logo */}
-        <div className="flex justify-center mb-8 reveal" style={{ transitionDelay: '100ms' }}>
-          <div className="relative">
-            <div className="w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white/95
-                            flex items-center justify-center p-4
-                            ring-2 ring-gold/40 ring-offset-4 ring-offset-transparent
-                            shadow-[0_0_60px_rgba(168,139,74,0.35)]
-                            animate-[float_4s_ease-in-out_infinite]">
-              <Image
-                src="/images/logo.png"
-                alt="شركة بلاد الحرمين للحج والعمرة"
-                width={160}
-                height={160}
-                priority
-                className="w-full h-full object-contain"
-              />
-            </div>
-            {/* Orbiting ring */}
-            <div className="absolute inset-[-8px] rounded-full border border-gold/20
-                            animate-[spin_12s_linear_infinite]"
-                 style={{ borderStyle: 'dashed' }} />
+        <div className="flex justify-center mb-10 reveal" style={{ transitionDelay: '100ms' }}>
+          <div className="relative inline-flex items-center justify-center
+                          animate-[float_5s_ease-in-out_infinite]">
+            {/* Soft radial glow */}
+            <div className="absolute inset-[-30px] rounded-full pointer-events-none"
+                 style={{
+                   background:
+                     'radial-gradient(circle, rgba(168,139,74,0.32) 0%, rgba(168,139,74,0.10) 40%, transparent 70%)',
+                   filter: 'blur(8px)',
+                 }} />
+            <Image
+              src="/images/logo.png"
+              alt="شركة بلاد الحرمين للحج والعمرة"
+              width={420}
+              height={320}
+              priority
+              className="relative w-auto h-44 sm:h-52 md:h-60 object-contain drop-shadow-[0_8px_30px_rgba(0,0,0,0.45)]"
+            />
           </div>
         </div>
-
-        {/* Company name */}
-        <p className="text-gold-light/90 text-sm sm:text-base font-semibold tracking-[0.15em]
-                      uppercase mb-3 reveal" style={{ transitionDelay: '150ms' }}>
-          Belad Alharamain Co. Hajj &amp; Umrah L.L.C
-        </p>
 
         {/* Arabic headline */}
         <h1 className="text-white font-black leading-tight mb-6 reveal"
