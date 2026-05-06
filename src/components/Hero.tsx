@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 export default function Hero() {
   return (
     <section
@@ -7,15 +9,16 @@ export default function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{
         background:
-          'linear-gradient(160deg, rgba(6,25,30,0.94) 0%, rgba(15,60,72,0.88) 50%, rgba(5,18,22,0.96) 100%), url("https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=1920&q=80") center/cover no-repeat',
+          'linear-gradient(160deg, rgba(6,25,30,0.92) 0%, rgba(15,60,72,0.85) 50%, rgba(5,18,22,0.95) 100%), url("https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?w=1920&q=80") center/cover no-repeat',
       }}
     >
-      {/* Islamic geometric overlay */}
+      {/* Hajj calligraphy pattern overlay */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-20"
+        className="absolute inset-0 pointer-events-none opacity-[0.08]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cpath d='M50 6L57.1 32.6L80.9 19.1L67.4 42.9L94 50L67.4 57.1L80.9 80.9L57.1 67.4L50 94L42.9 67.4L19.1 80.9L32.6 57.1L6 50L32.6 42.9L19.1 19.1L42.9 32.6Z' fill='none' stroke='%23A88B4A' stroke-width='0.7'/%3E%3C/svg%3E")`,
-          backgroundSize: '100px 100px',
+          backgroundImage: `url("/images/hajj-pattern.png")`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '180px auto',
         }}
       />
 
@@ -32,16 +35,22 @@ export default function Hero() {
           </span>
         </div>
 
-        {/* Logo placeholder */}
+        {/* Company Logo */}
         <div className="flex justify-center mb-8 reveal" style={{ transitionDelay: '100ms' }}>
           <div className="relative">
-            <div className="w-28 h-28 rounded-full bg-teal-gradient
-                            flex items-center justify-center
+            <div className="w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white/95
+                            flex items-center justify-center p-4
                             ring-2 ring-gold/40 ring-offset-4 ring-offset-transparent
-                            shadow-[0_0_60px_rgba(168,139,74,0.3)]
+                            shadow-[0_0_60px_rgba(168,139,74,0.35)]
                             animate-[float_4s_ease-in-out_infinite]">
-              {/* Replace the icon below with <Image> once you have the actual logo */}
-              <i className="fas fa-kaaba text-gold-light text-5xl" />
+              <Image
+                src="/images/logo.png"
+                alt="شركة بلاد الحرمين للحج والعمرة"
+                width={160}
+                height={160}
+                priority
+                className="w-full h-full object-contain"
+              />
             </div>
             {/* Orbiting ring */}
             <div className="absolute inset-[-8px] rounded-full border border-gold/20
