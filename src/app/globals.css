@@ -313,7 +313,16 @@ body[dir="ltr"] {
 }
 
 /* Prevent unintended horizontal scroll on small screens */
-html, body { max-width: 100%; }
+html, body {
+  max-width: 100vw;
+  overflow-x: clip;
+}
+
+/* Lock body scroll when mobile drawer is open */
+body.menu-open {
+  overflow: hidden;
+  touch-action: none;
+}
 
 /* ── LTR (English) overrides ─────────────────────────────────── */
 [dir="ltr"] .reveal-left  { transform: translateX(-30px); }

@@ -53,12 +53,12 @@ export default function Navbar() {
     const top = (el as HTMLElement).offsetTop - 72;
     window.scrollTo({ top, behavior: 'smooth' });
     setMenuOpen(false);
-    document.body.style.overflow = '';
+    document.body.classList.remove('menu-open');
   };
 
   const toggleMenu = () => {
     setMenuOpen(o => {
-      document.body.style.overflow = o ? '' : 'hidden';
+      document.body.classList.toggle('menu-open', !o);
       return !o;
     });
   };
@@ -68,12 +68,13 @@ export default function Navbar() {
   return (
     <>
       {/* Backdrop */}
-      {menuOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
-          onClick={toggleMenu}
-        />
-      )}
+      <div
+        onClick={toggleMenu}
+        aria-hidden="true"
+        className={`fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm
+                    transition-opacity duration-300
+                    ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+      />
 
       <nav
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 py-4
@@ -165,20 +166,25 @@ export default function Navbar() {
       </nav>
 
       {/* ── Mobile Drawer ─── */}
-      <div className={`fixed top-0 bottom-0 end-0 w-72 bg-teal-dark z-50 transition-transform
-                       duration-300 ease-in-out md:hidden flex flex-col pt-20 px-6 pb-8
-                       ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}
-           style={{ direction: lang === 'ar' ? 'rtl' : 'ltr' }}>
-        <ul className="flex flex-col gap-1">
+      <aside
+        aria-hidden={!menuOpen}
+        className={`fixed top-0 bottom-0 right-0 left-auto h-screen
+                    w-[280px] max-w-[85vw] bg-teal-dark z-[60] shadow-2xl
+                    transition-transform duration-300 ease-in-out md:hidden
+                    flex flex-col pt-20 px-5 pb-6 overflow-y-auto
+                    ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        style={{ direction: lang === 'ar' ? 'rtl' : 'ltr' }}
+      >
+        <ul className="flex flex-col gap-1 w-full">
           {navLinks.map(link => (
-            <li key={link.href}>
+            <li key={link.href} className="w-full">
               <button
                 onClick={() => scrollTo(link.href)}
-                className={`w-full text-start px-4 py-3 rounded-xl text-sm font-semibold
-                  transition-all duration-200
+                className={`block w-full text-start px-4 py-3 rounded-xl text-sm font-semibold
+                  transition-colors duration-200
                   ${activeId === link.href.slice(1)
                     ? 'bg-gold/20 text-gold-light'
-                    : 'text-white/80 hover:bg-white/10 hover:text-white'
+                    : 'text-white/85 hover:bg-white/10 hover:text-white'
                   }`}
               >
                 {t(link.ar, link.en)}
@@ -186,17 +192,17 @@ export default function Navbar() {
             </li>
           ))}
         </ul>
-        <div className="mt-auto">
+        <div className="mt-auto pt-6">
           <button
             onClick={() => scrollTo('#contact')}
-            className="w-full bg-gold text-white font-bold py-3 rounded-xl
-                       flex items-center justify-center gap-2"
+            className="w-full bg-gold hover:bg-gold-light text-white font-bold py-3 rounded-xl
+                       flex items-center justify-center gap-2 shadow-gold transition-colors"
           >
             <i className="fas fa-pen-to-square" />
             {t('احجز الآن', 'Book Now')}
           </button>
         </div>
-      </div>
+      </aside>
     </>
   );
 }
