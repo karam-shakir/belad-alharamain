@@ -39,11 +39,11 @@ export default function Awards() {
         </div>
 
         {/* Awards grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" data-stagger>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" data-stagger>
           {awards.map((award, i) => (
             <div key={i}
                  className="award-card relative bg-white/8 backdrop-blur-sm border border-white/15
-                            rounded-3xl p-7 text-center hover:border-gold/50
+                            rounded-3xl p-5 sm:p-7 text-center hover:border-gold/50
                             hover:bg-white/15 transition-all duration-300 hover:-translate-y-2
                             overflow-hidden reveal-scale group"
                  style={{ transitionDelay: `${i * 80}ms` }}>

@@ -68,11 +68,11 @@ export default function Services() {
         </div>
 
         {/* Cards */}
-        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6" data-stagger>
+        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6" data-stagger>
           {services.map((svc, i) => (
             <div
               key={i}
-              className={`relative bg-white rounded-3xl p-7 border shadow-card
+              className={`relative bg-white rounded-3xl p-5 sm:p-7 border shadow-card
                           card-premium overflow-hidden group reveal-scale
                           ${svc.featured
                             ? 'border-gold/40 ring-1 ring-gold/20'

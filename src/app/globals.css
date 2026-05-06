@@ -289,6 +289,32 @@ body[dir="ltr"] {
   .timeline-connector { display: none; }
 }
 
+/* ── Mobile-only refinements ──────────────────────────────────── */
+@media (max-width: 640px) {
+  html { font-size: 15px; }
+
+  /* Section vertical rhythm */
+  section { scroll-margin-top: 70px; }
+
+  /* Tighter dividers on phones */
+  .gold-divider::before,
+  .gold-divider::after { width: 36px; }
+  .bismillah-line::before,
+  .bismillah-line::after { max-width: 38px; }
+
+  /* Slightly slimmer scrollbar gutter */
+  ::-webkit-scrollbar { width: 4px; }
+
+  /* Form inputs comfortable to tap */
+  .form-input { padding: 0.85rem 0.95rem; font-size: 0.95rem; }
+
+  /* Safe-area for floating buttons on iOS notched devices */
+  .wa-pulse { bottom: max(1rem, env(safe-area-inset-bottom)) !important; }
+}
+
+/* Prevent unintended horizontal scroll on small screens */
+html, body { max-width: 100%; }
+
 /* ── LTR (English) overrides ─────────────────────────────────── */
 [dir="ltr"] .reveal-left  { transform: translateX(-30px); }
 [dir="ltr"] .reveal-left.visible { transform: translateX(0); }

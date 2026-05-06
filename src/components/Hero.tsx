@@ -26,7 +26,7 @@ export default function Hero() {
       <div className="absolute top-0 inset-x-0 h-px bg-gold/30" />
 
       {/* Content */}
-      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center py-28">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center pt-24 pb-20 sm:py-28">
 
         {/* Bismillah */}
         <div className="bismillah-line mb-8 reveal" style={{ transitionDelay: '0ms' }}>
@@ -52,7 +52,7 @@ export default function Hero() {
               width={420}
               height={320}
               priority
-              className="relative w-auto h-44 sm:h-52 md:h-60 object-contain drop-shadow-[0_8px_30px_rgba(0,0,0,0.45)]"
+              className="relative w-auto h-32 sm:h-44 md:h-56 object-contain drop-shadow-[0_8px_30px_rgba(0,0,0,0.45)]"
             />
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function Hero() {
           <a href="#contact"
              onClick={e => { e.preventDefault(); document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }); }}
              className="flex items-center gap-2 bg-gold hover:bg-gold-light text-white
-                        font-bold px-7 py-3.5 rounded-full transition-all duration-300
+                        font-bold px-5 sm:px-7 py-3 sm:py-3.5 rounded-full transition-all duration-300 text-sm sm:text-base
                         hover:-translate-y-1 shadow-gold hover:shadow-gold-lg"
              data-ar="احجز الآن" data-en="Book Now">
             <i className="fas fa-pen-to-square" />
@@ -86,7 +86,7 @@ export default function Hero() {
           </a>
           <a href="#contact"
              className="flex items-center gap-2 border-2 border-white/40 hover:border-white
-                        text-white font-bold px-7 py-3.5 rounded-full transition-all duration-300
+                        text-white font-bold px-5 sm:px-7 py-3 sm:py-3.5 rounded-full transition-all duration-300 text-sm sm:text-base
                         hover:bg-white/10 hover:-translate-y-1 backdrop-blur-sm"
              data-ar="تواصل معنا" data-en="Contact Us">
             <i className="fas fa-phone" />
@@ -112,13 +112,13 @@ export default function Hero() {
             { num: 30,    suffix: '+', label_ar: 'جائزة تميز',    label_en: 'Awards' },
           ].map((s, i) => (
             <div key={i}
-                 className={`flex flex-col items-center px-6 py-4
+                 className={`flex flex-col items-center px-3 sm:px-6 py-3 sm:py-4
                    ${i < 3 ? 'border-e border-white/15' : ''}`}>
-              <div className="text-gold-light font-black text-2xl sm:text-3xl leading-none">
+              <div className="text-gold-light font-black text-xl sm:text-3xl leading-none">
                 <span data-counter={s.num}>0</span>
-                <span className="text-gold text-lg">{s.suffix}</span>
+                <span className="text-gold text-base sm:text-lg">{s.suffix}</span>
               </div>
-              <div className="text-white/60 text-xs mt-1 font-medium"
+              <div className="text-white/60 text-[10px] sm:text-xs mt-1 font-medium whitespace-nowrap"
                    data-ar={s.label_ar} data-en={s.label_en}>
                 {s.label_ar}
               </div>

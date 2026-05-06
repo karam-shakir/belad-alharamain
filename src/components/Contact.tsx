@@ -80,7 +80,7 @@ export default function Contact() {
 
           {/* ── Contact Info + Map ─── */}
           <div className="lg:col-span-2 reveal-right space-y-4">
-            <div className="bg-teal-gradient rounded-3xl p-7 text-white">
+            <div className="bg-teal-gradient rounded-3xl p-5 sm:p-7 text-white">
               <h3 className="font-black text-gold-light mb-5 text-lg"
                   data-ar="بيانات التواصل" data-en="Contact Details">بيانات التواصل</h3>
               <div className="space-y-4">
@@ -120,7 +120,7 @@ export default function Contact() {
 
           {/* ── Form ─── */}
           <div className="lg:col-span-3 reveal-left">
-            <div className="bg-white rounded-3xl shadow-card-lg border border-gold/15 p-8">
+            <div className="bg-white rounded-3xl shadow-card-lg border border-gold/15 p-5 sm:p-8">
 
               {!success ? (
                 <>

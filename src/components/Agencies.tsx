@@ -115,7 +115,7 @@ export default function Agencies() {
 
           {/* ── Left: Info ─── */}
           <div className="reveal-right">
-            <div className="bg-teal-gradient rounded-3xl p-8 text-white h-full">
+            <div className="bg-teal-gradient rounded-3xl p-5 sm:p-8 text-white h-full">
               <h3 className="text-xl font-black text-gold-light mb-6"
                   data-ar="لماذا تشترك معنا؟" data-en="Why Partner With Us?">
                 لماذا تشترك معنا؟

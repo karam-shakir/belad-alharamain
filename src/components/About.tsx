@@ -54,7 +54,7 @@ export default function About() {
 
           {/* ── Left: Text + MVV ─── */}
           <div className="reveal-right">
-            <p className="text-gray-600 leading-relaxed text-lg mb-8 pb-6
+            <p className="text-gray-600 leading-relaxed text-base sm:text-lg mb-8 pb-6
                           border-b border-gold/20"
                data-ar="شركة سعودية رائدة متخصصة في خدمات الحج والعمرة الداخلية، تأسست بهدف تقديم تجربة روحانية متكاملة لضيوف الرحمن من مختلف أنحاء العالم، مع الحفاظ على أعلى معايير الجودة والاحترافية."
                data-en="A leading Saudi company specializing in domestic Hajj & Umrah services, established to deliver a comprehensive spiritual experience for pilgrims worldwide while maintaining the highest standards of quality and professionalism.">
