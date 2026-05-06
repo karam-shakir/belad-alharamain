@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 
 const navLinks = [
   { href: '#about',    ar: 'من نحن',       en: 'About'    },
@@ -86,9 +87,15 @@ export default function Navbar() {
             onClick={e => { e.preventDefault(); scrollTo('#hero'); }}
             className="flex items-center gap-2.5 flex-shrink-0"
           >
-            <div className="w-11 h-11 rounded-full bg-gold-gradient flex items-center justify-center
-                            shadow-gold ring-2 ring-gold/30 flex-shrink-0">
-              <i className="fas fa-kaaba text-white text-lg" />
+            <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center p-1
+                            shadow-gold ring-2 ring-gold/30 flex-shrink-0 overflow-hidden">
+              <Image
+                src="/images/logo.png"
+                alt="بلاد الحرمين"
+                width={44}
+                height={44}
+                className="w-full h-full object-contain"
+              />
             </div>
             <div className="flex flex-col leading-tight">
               <span className="text-white font-bold text-sm">{t('بلاد الحرمين', 'Belad Alharamain')}</span>

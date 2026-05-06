@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 const quickLinks = [
   { href: '#about',    ar: 'من نحن',           en: 'About Us'        },
   { href: '#services', ar: 'خدماتنا',          en: 'Services'        },
@@ -39,9 +41,15 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-11 h-11 rounded-full bg-gold-gradient flex items-center
-                              justify-center shadow-gold flex-shrink-0">
-                <i className="fas fa-kaaba text-white text-lg" />
+              <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center
+                              p-1 shadow-gold flex-shrink-0 overflow-hidden">
+                <Image
+                  src="/images/logo.png"
+                  alt="بلاد الحرمين"
+                  width={44}
+                  height={44}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <p className="text-white font-black text-sm leading-tight"
