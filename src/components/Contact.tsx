@@ -1,13 +1,22 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { contact } from '@/content/site';
+
+// Format WhatsApp number for display: 966500000000 -> +966 50 000 0000
+const fmtWa = (n: string) => {
+  const c = n.replace(/\D/g, '');
+  if (c.length < 4) return '+' + c;
+  return `+${c.slice(0,3)} ${c.slice(3,5)} ${c.slice(5,8)} ${c.slice(8)}`.trim();
+};
+const waDisplay = fmtWa(contact.whatsapp);
 
 const contactInfo = [
-  { icon: 'fa-location-dot', title_ar: 'العنوان',           title_en: 'Address',        value_ar: 'مكة المكرمة، المملكة العربية السعودية', value_en: 'Makkah, Saudi Arabia',         ltr: false },
-  { icon: 'fa-phone',        title_ar: 'الهاتف',            title_en: 'Phone',          value_ar: '+966 5X XXX XXXX',                       value_en: '+966 5X XXX XXXX',             ltr: true  },
-  { icon: 'fab fa-whatsapp', title_ar: 'واتساب',            title_en: 'WhatsApp',       value_ar: '+966 5X XXX XXXX',                       value_en: '+966 5X XXX XXXX',             ltr: true  },
-  { icon: 'fa-envelope',     title_ar: 'البريد الإلكتروني', title_en: 'Email',          value_ar: 'info@belad-haramain.com',                value_en: 'info@belad-haramain.com',      ltr: true  },
-  { icon: 'fa-clock',        title_ar: 'ساعات العمل',       title_en: 'Working Hours',  value_ar: 'السبت – الخميس: 8:00ص – 10:00م',        value_en: 'Sat – Thu: 8:00AM – 10:00PM', ltr: false },
+  { icon: 'fa-location-dot', title_ar: 'العنوان',           title_en: 'Address',        value_ar: contact.address.ar, value_en: contact.address.en, ltr: false },
+  { icon: 'fa-phone',        title_ar: 'الهاتف',            title_en: 'Phone',          value_ar: contact.phone,       value_en: contact.phone,       ltr: true  },
+  { icon: 'fab fa-whatsapp', title_ar: 'واتساب',            title_en: 'WhatsApp',       value_ar: waDisplay,            value_en: waDisplay,            ltr: true  },
+  { icon: 'fa-envelope',     title_ar: 'البريد الإلكتروني', title_en: 'Email',          value_ar: contact.email,       value_en: contact.email,       ltr: true  },
+  { icon: 'fa-clock',        title_ar: 'ساعات العمل',       title_en: 'Working Hours',  value_ar: contact.hours.ar,    value_en: contact.hours.en,    ltr: false },
 ];
 
 const subjects = [
@@ -109,7 +118,7 @@ export default function Contact() {
             {/* Map */}
             <div className="rounded-3xl overflow-hidden h-52 shadow-card border border-gold/10">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3715.4!2d39.826!3d21.4225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15c204b571b3fd7f%3A0x4c6d42e1b9acafca!2sMasjid%20al-Haram!5e0!3m2!1sar!2ssa!4v1"
+                src={contact.mapEmbedUrl}
                 className="w-full h-full border-0"
                 loading="lazy"
                 allowFullScreen

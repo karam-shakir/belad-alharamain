@@ -1,42 +1,4 @@
-const services = [
-  {
-    icon: 'fa-kaaba',
-    title_ar: 'حج الداخل',
-    title_en: 'Domestic Hajj',
-    body_ar:  'باقات حج متكاملة للمواطنين والمقيمين تشمل السكن الفاخر والنقل المريح وجميع الخدمات اللوجستية طوال موسم الحج.',
-    body_en:  'Complete Hajj packages for citizens & residents covering luxury accommodation, comfortable transport, and all logistics throughout the Hajj season.',
-    color:    'from-gold-dark to-gold',
-    accent:   'gold',
-  },
-  {
-    icon: 'fa-moon',
-    title_ar: 'العمرة',
-    title_en: 'Umrah Services',
-    body_ar:  'برامج عمرة متنوعة على مدار العام بباقات تناسب جميع الاحتياجات مع مرشدين متخصصين وخدمات راقية.',
-    body_en:  'Diverse Umrah programs year-round with packages for all needs, including specialized guides and premium services.',
-    color:    'from-teal-dark to-teal',
-    accent:   'teal',
-  },
-  {
-    icon: 'fa-crown',
-    title_ar: 'باقات VIP',
-    title_en: 'VIP Packages',
-    body_ar:  'تجربة فاخرة لضيوف الرحمن مع أرقى الفنادق القريبة من الحرمين وخدمات شخصية وفريق مرافقة خاص.',
-    body_en:  'A luxury experience for pilgrims with the finest hotels near the Two Holy Mosques, personal services, and a private escort team.',
-    color:    'from-gold-dark to-gold',
-    accent:   'gold',
-    featured: true,
-  },
-  {
-    icon: 'fa-bus',
-    title_ar: 'خدمات الضيافة والنقل',
-    title_en: 'Hospitality & Transport',
-    body_ar:  'أسطول من الحافلات الفاخرة المكيفة وخدمات ضيافة راقية على مدار الساعة لضمان أقصى درجات الراحة.',
-    body_en:  'A fleet of luxurious air-conditioned buses and round-the-clock premium hospitality services to ensure maximum comfort.',
-    color:    'from-teal-dark to-teal',
-    accent:   'teal',
-  },
-];
+import { services } from '@/content/site';
 
 export default function Services() {
   return (
@@ -101,12 +63,12 @@ export default function Services() {
 
               {/* Content */}
               <h3 className="text-lg font-black text-teal-dark mb-3"
-                  data-ar={svc.title_ar} data-en={svc.title_en}>
-                {svc.title_ar}
+                  data-ar={svc.title.ar} data-en={svc.title.en}>
+                {svc.title.ar}
               </h3>
               <p className="text-sm text-gray-500 leading-relaxed mb-5"
-                 data-ar={svc.body_ar} data-en={svc.body_en}>
-                {svc.body_ar}
+                 data-ar={svc.body.ar} data-en={svc.body.en}>
+                {svc.body.ar}
               </p>
 
               {/* Link */}

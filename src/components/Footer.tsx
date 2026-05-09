@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { contact, social, footer, services as siteServices } from '@/content/site';
 
 const quickLinks = [
   { href: '#about',    ar: 'من نحن',           en: 'About Us'        },
@@ -9,22 +10,13 @@ const quickLinks = [
   { href: '#agencies', ar: 'للوكالات الخارجية', en: 'External Agencies'},
 ];
 
-const services = [
-  { ar: 'باقات الحج الداخلية',  en: 'Domestic Hajj'   },
-  { ar: 'خدمات العمرة',         en: 'Umrah Services'  },
-  { ar: 'الخدمات الفاخرة VIP',  en: 'VIP Services'    },
-  { ar: 'النقل والتفويج',        en: 'Transportation'  },
-  { ar: 'خدمات الضيافة',        en: 'Hospitality'     },
-  { ar: 'الدعم الميداني',        en: 'Field Support'   },
-];
-
 const socials = [
-  { icon: 'fa-x-twitter',  label: 'X (Twitter)'  },
-  { icon: 'fa-instagram',  label: 'Instagram'     },
-  { icon: 'fa-facebook-f', label: 'Facebook'      },
-  { icon: 'fa-youtube',    label: 'YouTube'       },
-  { icon: 'fa-linkedin-in',label: 'LinkedIn'      },
-  { icon: 'fa-tiktok',     label: 'TikTok'        },
+  { icon: 'fa-x-twitter',   label: 'X (Twitter)', url: social.twitter   },
+  { icon: 'fa-instagram',   label: 'Instagram',   url: social.instagram },
+  { icon: 'fa-facebook-f',  label: 'Facebook',    url: social.facebook  },
+  { icon: 'fa-youtube',     label: 'YouTube',     url: social.youtube   },
+  { icon: 'fa-linkedin-in', label: 'LinkedIn',    url: social.linkedin  },
+  { icon: 'fa-tiktok',      label: 'TikTok',      url: social.tiktok    },
 ];
 
 export default function Footer() {
@@ -50,14 +42,14 @@ export default function Footer() {
               />
             </div>
             <p className="text-sm leading-relaxed mb-5 text-white/55"
-               data-ar="نخدم ضيوف الرحمن بشغف واحترافية منذ أكثر من 15 عاماً."
-               data-en="Serving pilgrims with passion and professionalism for over 15 years.">
-              نخدم ضيوف الرحمن بشغف واحترافية منذ أكثر من 15 عاماً.
+               data-ar={footer.description.ar} data-en={footer.description.en}>
+              {footer.description.ar}
             </p>
             <div className="flex gap-2">
               {socials.map(s => (
                 <a key={s.icon}
-                   href="#"
+                   href={s.url}
+                   target="_blank" rel="noopener noreferrer"
                    aria-label={s.label}
                    className="w-8 h-8 rounded-lg bg-white/8 flex items-center justify-center
                               text-white/60 hover:bg-gold hover:text-white
@@ -95,15 +87,15 @@ export default function Footer() {
                            border-b border-white/10"
                 data-ar="خدماتنا" data-en="Services">خدماتنا</h4>
             <ul className="space-y-2">
-              {services.map(s => (
-                <li key={s.ar}>
+              {siteServices.map(s => (
+                <li key={s.title.ar}>
                   <a href="#services"
                      className="text-sm text-white/55 hover:text-gold-light
                                 transition-colors duration-200 flex items-center gap-1.5
                                 hover:gap-2.5"
-                     data-ar={s.ar} data-en={s.en}>
+                     data-ar={s.title.ar} data-en={s.title.en}>
                     <i className="fas fa-chevron-left text-xs text-gold/50" />
-                    {s.ar}
+                    {s.title.ar}
                   </a>
                 </li>
               ))}
@@ -117,9 +109,9 @@ export default function Footer() {
                 data-ar="تواصل معنا" data-en="Contact">تواصل معنا</h4>
             <ul className="space-y-3 text-sm">
               {[
-                { icon: 'fa-location-dot', text_ar: 'مكة المكرمة، المملكة العربية السعودية', text_en: 'Makkah, Saudi Arabia' },
-                { icon: 'fa-phone',        text_ar: '+966 5X XXX XXXX',                       text_en: '+966 5X XXX XXXX',    ltr: true },
-                { icon: 'fa-envelope',     text_ar: 'info@belad-haramain.com',                text_en: 'info@belad-haramain.com', ltr: true },
+                { icon: 'fa-location-dot', text_ar: contact.address.ar, text_en: contact.address.en },
+                { icon: 'fa-phone',        text_ar: contact.phone,       text_en: contact.phone,       ltr: true },
+                { icon: 'fa-envelope',     text_ar: contact.email,       text_en: contact.email,       ltr: true },
               ].map((c, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-white/55">
                   <i className={`fas ${c.icon} text-gold mt-0.5 flex-shrink-0`} />
@@ -153,9 +145,8 @@ export default function Footer() {
       <div className="border-t border-white/8 py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row
                         items-center justify-between gap-3 text-xs text-white/40">
-          <p data-ar="© 2025 بلاد الحرمين للحج والعمرة. جميع الحقوق محفوظة."
-             data-en="© 2025 Belad Alharamain Hajj & Umrah. All rights reserved.">
-            © 2025 بلاد الحرمين للحج والعمرة. جميع الحقوق محفوظة.
+          <p data-ar={footer.copyright.ar} data-en={footer.copyright.en}>
+            {footer.copyright.ar}
           </p>
           <div className="flex items-center gap-3">
             {[

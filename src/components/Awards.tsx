@@ -1,11 +1,4 @@
-const awards = [
-  { icon: 'fa-trophy',        year: '2024', title_ar: 'جائزة أفضل شركة خدمات حج',      title_en: 'Best Hajj Services Company',      org_ar: 'وزارة الحج والعمرة',            org_en: 'Ministry of Hajj & Umrah',            color: 'from-gold-dark to-gold' },
-  { icon: 'fa-medal',         year: '2023', title_ar: 'جائزة التميز في خدمة العملاء',  title_en: 'Customer Service Excellence',     org_ar: 'الهيئة السعودية للجودة',         org_en: 'Saudi Quality Authority',             color: 'from-teal-dark to-teal' },
-  { icon: 'fa-star',          year: '2023', title_ar: 'شركة العام — السياحة الدينية',  title_en: 'Company of the Year',             org_ar: 'مجلس الغرف السعودية',            org_en: 'Council of Saudi Chambers',           color: 'from-gold-dark to-gold' },
-  { icon: 'fa-certificate',   year: '2022', title_ar: 'جائزة الابتكار في قطاع الحج',  title_en: 'Innovation in Hajj Sector',       org_ar: 'الرابطة العالمية لشركات الحج',   org_en: 'Global Hajj Companies Association',   color: 'from-teal-dark to-teal' },
-  { icon: 'fa-award',         year: '2022', title_ar: 'شهادة الجودة ISO 9001',         title_en: 'ISO 9001 Quality Certificate',    org_ar: 'المنظمة الدولية للمعايير',       org_en: 'International Organization for Standardization', color: 'from-gold-dark to-gold' },
-  { icon: 'fa-shield-halved', year: '2021', title_ar: 'جائزة الشركة الأكثر ثقة',      title_en: 'Most Trusted Company Award',      org_ar: 'اتحاد وكالات السفر العربية',     org_en: 'Arab Travel Agencies Union',          color: 'from-teal-dark to-teal' },
-];
+import { awards } from '@/content/site';
 
 export default function Awards() {
   return (
@@ -67,14 +60,14 @@ export default function Awards() {
 
               {/* Title */}
               <h3 className="text-white font-black text-base leading-snug mb-2"
-                  data-ar={award.title_ar} data-en={award.title_en}>
-                {award.title_ar}
+                  data-ar={award.title.ar} data-en={award.title.en}>
+                {award.title.ar}
               </h3>
 
               {/* Org */}
               <p className="text-white/50 text-sm italic"
-                 data-ar={award.org_ar} data-en={award.org_en}>
-                {award.org_ar}
+                 data-ar={award.org.ar} data-en={award.org.en}>
+                {award.org.ar}
               </p>
             </div>
           ))}

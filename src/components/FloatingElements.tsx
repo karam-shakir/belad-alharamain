@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { contact } from '@/content/site';
 
 export default function FloatingElements() {
   const [showTop, setShowTop] = useState(false);
@@ -17,7 +18,7 @@ export default function FloatingElements() {
     <>
       {/* ── Floating WhatsApp ─── */}
       <a
-        href="https://wa.me/966XXXXXXXXX"
+        href={`https://wa.me/${contact.whatsapp}`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"

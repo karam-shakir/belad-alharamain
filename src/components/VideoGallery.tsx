@@ -1,11 +1,4 @@
-const videos = [
-  { id: 'VIDEO_ID_1', title_ar: 'موسم الحج 1445 هـ',       title_en: 'Hajj Season 1445 AH',       sub_ar: 'لقطات مميزة من الموسم الماضي',    sub_en: 'Highlights from last Hajj season'   },
-  { id: 'VIDEO_ID_2', title_ar: 'برنامج العمرة المميز',     title_en: 'Premium Umrah Program',      sub_ar: 'تجربة العمرة مع بلاد الحرمين',   sub_en: 'Umrah experience with us'           },
-  { id: 'VIDEO_ID_3', title_ar: 'خدماتنا الفاخرة',          title_en: 'Our Luxury Services',        sub_ar: 'تعرف على خدماتنا المتميزة',      sub_en: 'Discover our premium services'      },
-  { id: 'VIDEO_ID_4', title_ar: 'شهادات الحجاج',            title_en: 'Pilgrim Testimonials',       sub_ar: 'آراء ومشاركات حجاجنا الكرام',   sub_en: 'Reviews from our valued pilgrims'   },
-  { id: 'VIDEO_ID_5', title_ar: 'جولة المشاعر المقدسة',     title_en: 'Tour of Holy Sites',         sub_ar: 'الحرم المكي والمدني والمشاعر',   sub_en: 'Grand Mosque, Prophet\'s Mosque'    },
-  { id: 'VIDEO_ID_6', title_ar: 'فريق عملنا المتخصص',       title_en: 'Our Specialized Team',       sub_ar: 'تعرف على فريق بلاد الحرمين',    sub_en: 'Meet the Belad Alharamain team'     },
-];
+import { videos } from '@/content/site';
 
 export default function VideoGallery() {
   return (
@@ -39,8 +32,8 @@ export default function VideoGallery() {
               {/* Embed */}
               <div className="relative w-full aspect-video bg-teal-dark overflow-hidden">
                 <iframe
-                  src={`https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1`}
-                  title={v.title_ar}
+                  src={`https://www.youtube.com/embed/${v.youtubeId}?rel=0&modestbranding=1`}
+                  title={v.title.ar}
                   className="absolute inset-0 w-full h-full border-0"
                   loading="lazy"
                   allowFullScreen
@@ -60,9 +53,9 @@ export default function VideoGallery() {
               {/* Info */}
               <div className="p-5">
                 <h4 className="font-black text-teal-dark mb-1"
-                    data-ar={v.title_ar} data-en={v.title_en}>{v.title_ar}</h4>
+                    data-ar={v.title.ar} data-en={v.title.en}>{v.title.ar}</h4>
                 <p className="text-sm text-gray-500"
-                   data-ar={v.sub_ar} data-en={v.sub_en}>{v.sub_ar}</p>
+                   data-ar={v.subtitle.ar} data-en={v.subtitle.en}>{v.subtitle.ar}</p>
               </div>
             </div>
           ))}

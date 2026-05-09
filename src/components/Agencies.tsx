@@ -1,20 +1,9 @@
 'use client';
 
 import { useState, useRef, FormEvent, DragEvent } from 'react';
+import { agencies } from '@/content/site';
 
-const benefits = [
-  { ar: 'باقات تنافسية مصممة خصيصاً للوكالات الخارجية',      en: 'Competitive packages designed for external agencies'  },
-  { ar: 'دعم فني وميداني متخصص على مدار الساعة',              en: '24/7 specialized technical and field support'         },
-  { ar: 'عمولات تنافسية وبرامج مكافآت للوكلاء المتميزين',      en: 'Competitive commissions and partner reward programs'  },
-  { ar: 'نظام إلكتروني متكامل لإدارة ملفات الحجاج',           en: 'Integrated electronic system for pilgrim management'  },
-  { ar: 'تدريب وتأهيل مستمر لموظفي الوكالات الشريكة',         en: 'Ongoing training for partner agency staff'            },
-  { ar: 'مواد تسويقية احترافية جاهزة للاستخدام الفوري',        en: 'Professional marketing materials ready to use'        },
-];
-
-const countries = [
-  'مصر','تركيا','باكستان','بنغلاديش','إندونيسيا','ماليزيا',
-  'المغرب','الجزائر','تونس','نيجيريا','السنغال','الهند','أخرى',
-];
+const { benefits, countries, partnerFlags } = agencies;
 
 type Field = { name: string; value: string; required: boolean; error: boolean };
 
@@ -155,7 +144,7 @@ export default function Agencies() {
                   شركاؤنا حول العالم
                 </p>
                 <div className="flex flex-wrap gap-2 text-2xl">
-                  {['🇪🇬','🇹🇷','🇵🇰','🇮🇩','🇲🇾','🇲🇦','🇩🇿','🇳🇬','🇧🇩'].map(f => (
+                  {partnerFlags.map(f => (
                     <span key={f} className="hover:scale-125 transition-transform duration-200 cursor-default">
                       {f}
                     </span>

@@ -1,12 +1,4 @@
-const steps = [
-  { num: '١', icon: 'fa-laptop',          ar: 'التسجيل عبر نسك',  en: 'Register via Nusuk',  desc_ar: 'التسجيل في منصة نسك الرسمية والحصول على تصريح الحج أو العمرة.', desc_en: 'Register on the official Nusuk platform and obtain your permit.' },
-  { num: '٢', icon: 'fa-list-check',      ar: 'اختيار الباقة',     en: 'Choose Package',      desc_ar: 'اختيار الباقة المناسبة من قائمة باقاتنا المتنوعة.',              desc_en: 'Select the ideal package from our diverse offerings.' },
-  { num: '٣', icon: 'fa-location-pin',    ar: 'التجمع',            en: 'Assembly',            desc_ar: 'التوجه إلى نقطة التجمع المحددة مع فريقنا المتخصص.',              desc_en: 'Head to the designated assembly point with our team.' },
-  { num: '٤', icon: 'fa-bus',             ar: 'النقل',             en: 'Transport',           desc_ar: 'نقل آمن ومريح إلى مكة المكرمة والمشاعر المقدسة.',               desc_en: 'Safe and comfortable transport to Makkah and holy sites.' },
-  { num: '٥', icon: 'fa-hotel',           ar: 'السكن',             en: 'Accommodation',       desc_ar: 'إقامة مريحة في أفضل الفنادق القريبة من الحرمين.',               desc_en: 'Comfortable stay at the finest hotels near the Two Mosques.' },
-  { num: '٦', icon: 'fa-hands-praying',   ar: 'أداء المناسك',      en: 'Performing Rituals',  desc_ar: 'مرافقة مرشدين دينيين لأداء جميع المناسك بشكل صحيح.',            desc_en: 'Accompanied by religious guides for correct ritual performance.' },
-  { num: '٧', icon: 'fa-plane-departure', ar: 'العودة',            en: 'Return',              desc_ar: 'توديع مريح مع تيسير جميع إجراءات العودة إلى الوطن.',           desc_en: 'Comfortable farewell with full assistance for the return journey.' },
-];
+import { journey as steps } from '@/content/site';
 
 export default function Journey() {
   return (
@@ -50,7 +42,8 @@ export default function Journey() {
             {/* Connector line */}
             <div className="timeline-connector" />
 
-            <div className="grid grid-cols-7 gap-4" data-stagger>
+            <div className="grid gap-4" data-stagger
+                 style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
               {steps.map((step, i) => (
                 <div key={i}
                      className="flex flex-col items-center text-center reveal-scale"
@@ -67,10 +60,10 @@ export default function Journey() {
                                   transition-all duration-300 hover:-translate-y-1 group">
                     <i className={`fas ${step.icon} text-gold text-xl mb-2 block`} />
                     <h4 className="text-white font-bold text-sm mb-1.5"
-                        data-ar={step.ar} data-en={step.en}>{step.ar}</h4>
+                        data-ar={step.title.ar} data-en={step.title.en}>{step.title.ar}</h4>
                     <p className="text-white/55 text-xs leading-relaxed"
-                       data-ar={step.desc_ar} data-en={step.desc_en}>
-                      {step.desc_ar}
+                       data-ar={step.desc.ar} data-en={step.desc.en}>
+                      {step.desc.ar}
                     </p>
                   </div>
                 </div>
@@ -98,13 +91,13 @@ export default function Journey() {
                               flex-1 hover:bg-white/15 transition-all duration-200 mb-2">
                 <div className="flex items-center gap-2 mb-2">
                   <i className={`fas ${step.icon} text-gold text-lg`} />
-                  <h4 className="text-white font-bold" data-ar={step.ar} data-en={step.en}>
-                    {step.ar}
+                  <h4 className="text-white font-bold" data-ar={step.title.ar} data-en={step.title.en}>
+                    {step.title.ar}
                   </h4>
                 </div>
                 <p className="text-white/55 text-sm leading-relaxed"
-                   data-ar={step.desc_ar} data-en={step.desc_en}>
-                  {step.desc_ar}
+                   data-ar={step.desc.ar} data-en={step.desc.en}>
+                  {step.desc.ar}
                 </p>
               </div>
             </div>

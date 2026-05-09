@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { hero } from '@/content/site';
 
 export default function Hero() {
   return (
@@ -105,22 +106,17 @@ export default function Hero() {
         {/* Stats row */}
         <div className="flex flex-wrap justify-center gap-px reveal"
              style={{ transitionDelay: '350ms' }}>
-          {[
-            { num: 15,    suffix: '+', label_ar: 'سنة خبرة',      label_en: 'Years' },
-            { num: 50000, suffix: '+', label_ar: 'حاج ومعتمر',    label_en: 'Pilgrims' },
-            { num: 200,   suffix: '+', label_ar: 'وكالة شريكة',   label_en: 'Agencies' },
-            { num: 30,    suffix: '+', label_ar: 'جائزة تميز',    label_en: 'Awards' },
-          ].map((s, i) => (
+          {hero.stats.map((s, i) => (
             <div key={i}
                  className={`flex flex-col items-center px-3 sm:px-6 py-3 sm:py-4
-                   ${i < 3 ? 'border-e border-white/15' : ''}`}>
+                   ${i < hero.stats.length - 1 ? 'border-e border-white/15' : ''}`}>
               <div className="text-gold-light font-black text-xl sm:text-3xl leading-none">
                 <span data-counter={s.num}>0</span>
                 <span className="text-gold text-base sm:text-lg">{s.suffix}</span>
               </div>
               <div className="text-white/60 text-[10px] sm:text-xs mt-1 font-medium whitespace-nowrap"
-                   data-ar={s.label_ar} data-en={s.label_en}>
-                {s.label_ar}
+                   data-ar={s.label.ar} data-en={s.label.en}>
+                {s.label.ar}
               </div>
             </div>
           ))}
