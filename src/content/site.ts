@@ -21,19 +21,19 @@
 
 /* ─────────────────────── 1) معلومات التواصل ─────────────────────── */
 export const contact = {
-  phone:    '+966 50 000 0000',                                // رقم الهاتف
-  whatsapp: '966500000000',                                    // الواتساب (بدون + ولا مسافات، مثال: 966500000000)
+  phone:    '+966 55 550 8979',                                // رقم الهاتفي
+  whatsapp: '966556777063',                                    // الواتساب (بدون + ولا مسافات، مثال: 966500000000)
   email:    'info@belad-haramain.com',                         // البريد الإلكتروني
   address:  { ar: 'مكة المكرمة، المملكة العربية السعودية', en: 'Makkah, Saudi Arabia' },
   hours:    { ar: 'السبت – الخميس: 8:00ص – 10:00م',          en: 'Sat – Thu: 8:00AM – 10:00PM' },
   // رابط Google Maps Embed (انسخه من Google Maps → Share → Embed a map → Copy HTML → خذ ما بين علامتي src)
   mapEmbedUrl:
-    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3715.4!2d39.826!3d21.4225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15c204b571b3fd7f%3A0x4c6d42e1b9acafca!2sMasjid%20al-Haram!5e0!3m2!1sar!2ssa!4v1',
+    ' https://maps.app.goo.gl/TzK2EwCFnwLiJRBfA?g_st=iw',
 };
 
 /* ─────────────────────── 2) السوشيال ميديا ─────────────────────── */
 export const social = {
-  twitter:   'https://x.com/your_account',           // ضع رابط حساب X (تويتر)
+  twitter:   'https://x.com/beelad_harameen',           // ضع رابط حساب X (تويتر)
   instagram: 'https://instagram.com/your_account',
   facebook:  'https://facebook.com/your_account',
   youtube:   'https://youtube.com/@your_account',
