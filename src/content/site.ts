@@ -130,12 +130,12 @@ export const journey = [
 //   https://www.youtube.com/watch?v=dQw4w9WgXcQ  →  youtubeId: 'dQw4w9WgXcQ'
 //   https://youtu.be/dQw4w9WgXcQ                 →  youtubeId: 'dQw4w9WgXcQ'
 export const videos = [
-  { youtubeId: 'VIDEO_ID_1', title: { ar: 'موسم الحج 1445 هـ',     en: 'Hajj Season 1445 AH' },     subtitle: { ar: 'لقطات مميزة من الموسم الماضي',  en: 'Highlights from last Hajj season' } },
-  { youtubeId: 'VIDEO_ID_2', title: { ar: 'برنامج العمرة المميز',  en: 'Premium Umrah Program' },   subtitle: { ar: 'تجربة العمرة مع بلاد الحرمين',  en: 'Umrah experience with us' } },
-  { youtubeId: 'VIDEO_ID_3', title: { ar: 'خدماتنا الفاخرة',       en: 'Our Luxury Services' },     subtitle: { ar: 'تعرف على خدماتنا المتميزة',     en: 'Discover our premium services' } },
-  { youtubeId: 'VIDEO_ID_4', title: { ar: 'شهادات الحجاج',         en: 'Pilgrim Testimonials' },    subtitle: { ar: 'آراء ومشاركات حجاجنا الكرام',   en: 'Reviews from our valued pilgrims' } },
-  { youtubeId: 'VIDEO_ID_5', title: { ar: 'جولة المشاعر المقدسة',  en: 'Tour of Holy Sites' },      subtitle: { ar: 'الحرم المكي والمدني والمشاعر',  en: "Grand Mosque, Prophet's Mosque" } },
-  { youtubeId: 'VIDEO_ID_6', title: { ar: 'فريق عملنا المتخصص',    en: 'Our Specialized Team' },    subtitle: { ar: 'تعرف على فريق بلاد الحرمين',    en: 'Meet the Belad Alharamain team' } },
+  { youtubeId: 'Pd4TUoCDtGfdfEnJ', title: { ar: '1446 موسم هـ ',     en: 'Hajj Season 1445 AH' },     subtitle: { ar: 'لقطات مميزة من الموسم الماضي',  en: 'Highlights from last Hajj season' } },
+  { youtubeId: '2_wYOwA-Ty0JOxIC', title: { ar: 'استقبال ضيوف الرحمن',  en: 'Premium Umrah Program' },   subtitle: { ar: 'استقبال ضيوف الرحمن',  en: 'Umrah experience with us' } },
+  { youtubeId: 'Ty4_PT7eIp6YzVT4', title: { ar: 'نهتم بالابتكار والابداع',       en: 'Our Luxury Services' },     subtitle: { ar: 'تمكين الابتكار في تقديم الخدمات',     en: 'Discover our premium services' } },
+  { youtubeId: '3X9_Y7qttgXol2Qm', title: { ar: 'شهادات الحجاج',         en: 'Pilgrim Testimonials' },    subtitle: { ar: 'آراء ومشاركات حجاجنا الكرام',   en: 'Reviews from our valued pilgrims' } },
+  { youtubeId: 'GFMUqNIJ8BocOlqd', title: { ar: 'جولة المشاعر المقدسة',  en: 'Tour of Holy Sites' },      subtitle: { ar: 'الحرم المكي والمدني والمشاعر',  en: "Grand Mosque, Prophet's Mosque" } },
+  { youtubeId: 'wrVe0NZNbx21U_Ut', title: { ar: 'فريق عملنا المتخصص',    en: 'Our Specialized Team' },    subtitle: { ar: 'تعرف على فريق بلاد الحرمين',    en: 'Meet the Belad Alharamain team' } },
 ];
 
 /* ─────────────────────── 8) قسم الجوائز (Awards) ─────────────────────── */
