@@ -28,7 +28,7 @@ export const contact = {
   hours:    { ar: 'السبت – الخميس: 8:00ص – 10:00م',          en: 'Sat – Thu: 8:00AM – 10:00PM' },
   // رابط Google Maps Embed (انسخه من Google Maps → Share → Embed a map → Copy HTML → خذ ما بين علامتي src)
   mapEmbedUrl:
-    ' https://maps.app.goo.gl/TzK2EwCFnwLiJRBfA?g_st=iw',
+    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3713.856919612649!2d39.858454099999996!3d21.434868200000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15c20378a661133f%3A0xc1901a99535b1320!2z2LTYsdmD2Kkg2KjZhNin2K8g2KfZhNit2LHZhdmK2YYg2YTZhNit2Kwg2YjYp9mE2LnZhdix2Kkg2LAu2YUu2YUu!5e0!3m2!1sar!2ssa!4v1778407844524!5m2!1sar!2ssa',
 };
 
 /* ─────────────────────── 2) السوشيال ميديا ─────────────────────── */
