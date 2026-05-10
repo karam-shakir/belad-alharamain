@@ -35,20 +35,20 @@ export const contact = {
 export const social = {
   twitter:   'https://x.com/beelad_harameen',           // ضع رابط حساب X (تويتر)
   instagram: 'https://instagram.com/your_account',
-  facebook:  'https://facebook.com/your_account',
-  youtube:   'https://youtube.com/@your_account',
-  linkedin:  'https://linkedin.com/company/your_account',
-  tiktok:    'https://tiktok.com/@your_account',
+  facebook:  'https://www.facebook.com/beelad.alharameen',
+  youtube:   'https://youtube.com/@belad2010?si=SRXNIQpQIEogdnBK',
+  linkedin:  'https://www.linkedin.com/company/belad-alharamain/',
+  tiktok:    'https://tiktok.com/@belad10125',
 };
 
 /* ─────────────────────── 3) قسم الواجهة (Hero) ─────────────────────── */
 export const hero = {
   // الإحصائيات أعلى الصفحة الرئيسية
   stats: [
-    { num: 15,    suffix: '+', label: { ar: 'سنة خبرة',    en: 'Years' } },
-    { num: 50000, suffix: '+', label: { ar: 'حاج ومعتمر',  en: 'Pilgrims' } },
-    { num: 200,   suffix: '+', label: { ar: 'وكالة شريكة', en: 'Agencies' } },
-    { num: 30,    suffix: '+', label: { ar: 'جائزة تميز',  en: 'Awards' } },
+    { num: 20,    suffix: '+', label: { ar: 'سنة خبرة',    en: 'Years' } },
+    { num: 27000, suffix: '+', label: { ar: 'حاج ومعتمر',  en: 'Pilgrims' } },
+    { num: 12,   suffix: '+', label: { ar: 'وكالة شريكة', en: 'Agencies' } },
+    { num: 4,    suffix: '+', label: { ar: 'جائزة تميز',  en: 'Awards' } },
   ],
 };
 
@@ -61,10 +61,10 @@ export const about = {
   },
 
   // مسار صورة قسم "من نحن" (ضع الصورة في public/images/ ثم اكتب اسمها هنا، أو اتركه فارغ '' لإخفاء الصورة)
-  image: '',                                  // مثال: '/images/about.jpg'
+  image: '/images/about.jpg',                                  // مثال: '/images/about.jpg'
 
   // نصّ شارة الخبرة فوق الصورة
-  experienceBadge: { ar: '+15 سنة خبرة', en: '+15 Years' },
+  experienceBadge: { ar: '+20 سنة خبرة', en: '+20 Years' },
 
   // الرؤية والرسالة والقيم (يمكن تعديل النصوص فقط)
   mvv: [
