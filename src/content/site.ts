@@ -23,7 +23,7 @@
 export const contact = {
   phone:    '+966 55 550 8979',                                // رقم الهاتفي
   whatsapp: '966556777063',                                    // الواتساب (بدون + ولا مسافات، مثال: 966500000000)
-  email:    'info@belad-haramain.com',                         // البريد الإلكتروني
+  email:    'info@belad-alharamain.com',                       // البريد الإلكتروني
   address:  { ar: 'مكة المكرمة، المملكة العربية السعودية', en: 'Makkah, Saudi Arabia' },
   hours:    { ar: 'السبت – الخميس: 8:00ص – 10:00م',          en: 'Sat – Thu: 8:00AM – 10:00PM' },
   // رابط Google Maps Embed (انسخه من Google Maps → Share → Embed a map → Copy HTML → خذ ما بين علامتي src)
