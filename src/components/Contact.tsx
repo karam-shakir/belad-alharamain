@@ -123,6 +123,8 @@ export default function Contact() {
                 loading="lazy"
                 allowFullScreen
                 title="موقع الشركة"
+                referrerPolicy="no-referrer-when-downgrade"
+                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
               />
             </div>
           </div>
