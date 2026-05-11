@@ -140,6 +140,62 @@ export const videos = [
   { youtubeId: 'n7A9Qnf2E7M', title: { ar: 'فريق عملنا المتخصص',    en: 'Our Specialized Team' },    subtitle: { ar: 'تعرف على فريق بلاد الحرمين',    en: 'Meet the Belad Alharamain team' } },
 ];
 
+/* ─────────────────────── 7.5) قسم آراء العملاء (Testimonials) ─────────────────────── */
+// شهادات الحجاج — يمكن إضافة/حذف شهادة بنسخ كائن { ... } كاملاً
+//
+// الحقول:
+//   name     : اسم الحاج كما يظهر على البطاقة
+//   country  : البلد (يُعرض مع علم الدولة)
+//   flag     : إيموجي علم البلد
+//   image    : مسار صورة الحاج (اختياري — يُعرض دائرة بأحرفه الأولى إن كان '')
+//              مثلاً: '/images/testimonials/fouad-belaid.jpg'
+//   quote    : الاقتباس القصير الذي يظهر في البطاقة
+//   rating   : عدد النجوم 1-5 (افتراضياً 5)
+//
+// زر "شاهد الشهادات كاملةً" أسفل القسم يربط بالفيديو على يوتيوب.
+export const testimonialsConfig = {
+  videoUrl: 'https://youtu.be/WUnjV0jupbM',
+};
+
+export const testimonials = [
+  {
+    name:    'فؤاد بلعيد',
+    country: { ar: 'المملكة المتحدة', en: 'United Kingdom' },
+    flag:    '🇬🇧',
+    image:   '',
+    quote:   { ar: 'فنادق قريبة جداً من الحرمين، خدمات ممتازة، ووجبات متنوعة ومرضية تماماً.',
+               en: 'Hotels very close to the Two Holy Mosques, excellent services, and varied meals.' },
+    rating:  5,
+  },
+  {
+    name:    'محمد أمين',
+    country: { ar: 'فرنسا', en: 'France' },
+    flag:    '🇫🇷',
+    image:   '',
+    quote:   { ar: 'تجربة رائعة وتنظيم محكم — كان المرافقون معنا في كل خطوة لتذليل الصعاب.',
+               en: 'Wonderful experience and impeccable organization — escorts with us every step of the way.' },
+    rating:  5,
+  },
+  {
+    name:    'حاجة من جنوب أفريقيا',
+    country: { ar: 'جنوب أفريقيا', en: 'South Africa' },
+    flag:    '🇿🇦',
+    image:   '',
+    quote:   { ar: 'رحلة العمر بكل تفاصيلها — مخيمات منى وعرفات كانت مريحة ومجهزة بالكامل.',
+               en: 'The journey of a lifetime — camps in Mina and Arafat were fully equipped and comfortable.' },
+    rating:  5,
+  },
+  {
+    name:    'عبد الله العتيبي',
+    country: { ar: 'الكويت', en: 'Kuwait' },
+    flag:    '🇰🇼',
+    image:   '',
+    quote:   { ar: 'سلاسة التنقلات والقرب من الحرم جعلت مناسكنا سهلة وميسّرة. شكراً لحسن الاستقبال.',
+               en: 'Smooth transport and proximity to the Haram made our rituals easy. Thanks for the warm hospitality.' },
+    rating:  5,
+  },
+];
+
 /* ─────────────────────── 8) قسم الجوائز (Awards) ─────────────────────── */
 // الجوائز والشهادات الحقيقية للشركة
 // ملاحظة: عدّل قيمة "year" أو "org" إذا احتجت لتحديث السنة أو الجهة المانحة

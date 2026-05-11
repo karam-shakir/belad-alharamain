@@ -4,13 +4,14 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 
 const navLinks = [
-  { href: '#about',    ar: 'من نحن',       en: 'About'    },
-  { href: '#services', ar: 'خدماتنا',      en: 'Services' },
-  { href: '#journey',  ar: 'رحلة الحاج',   en: 'Journey'  },
-  { href: '#videos',   ar: 'معرض الفيديو', en: 'Gallery'  },
-  { href: '#awards',   ar: 'جوائزنا',      en: 'Awards'   },
-  { href: '#agencies', ar: 'للوكالات',     en: 'Agencies' },
-  { href: '#contact',  ar: 'تواصل معنا',   en: 'Contact'  },
+  { href: '#about',        ar: 'من نحن',       en: 'About'        },
+  { href: '#services',     ar: 'خدماتنا',      en: 'Services'     },
+  { href: '#journey',      ar: 'رحلة الحاج',   en: 'Journey'      },
+  { href: '#videos',       ar: 'معرض الفيديو', en: 'Gallery'      },
+  { href: '#testimonials', ar: 'آراء العملاء', en: 'Testimonials' },
+  { href: '#awards',       ar: 'جوائزنا',      en: 'Awards'       },
+  { href: '#agencies',     ar: 'للوكالات',     en: 'Agencies'     },
+  { href: '#contact',      ar: 'تواصل معنا',   en: 'Contact'      },
 ];
 
 export default function Navbar() {

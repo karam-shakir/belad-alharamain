@@ -4,6 +4,7 @@ import About           from '@/components/About';
 import Services        from '@/components/Services';
 import Journey         from '@/components/Journey';
 import VideoGallery    from '@/components/VideoGallery';
+import Testimonials    from '@/components/Testimonials';
 import Awards          from '@/components/Awards';
 import Agencies        from '@/components/Agencies';
 import Contact         from '@/components/Contact';
@@ -22,6 +23,7 @@ export default function Home() {
         <Services />
         <Journey />
         <VideoGallery />
+        <Testimonials />
         <Awards />
         <Agencies />
         <Contact />

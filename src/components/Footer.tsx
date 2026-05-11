@@ -2,12 +2,13 @@ import Image from 'next/image';
 import { contact, social, footer, services as siteServices } from '@/content/site';
 
 const quickLinks = [
-  { href: '#about',    ar: 'من نحن',           en: 'About Us'        },
-  { href: '#services', ar: 'خدماتنا',          en: 'Services'        },
-  { href: '#journey',  ar: 'رحلة الحاج',       en: 'Pilgrim Journey' },
-  { href: '#videos',   ar: 'معرض الفيديو',     en: 'Video Gallery'   },
-  { href: '#awards',   ar: 'جوائزنا',          en: 'Our Awards'      },
-  { href: '#agencies', ar: 'للوكالات الخارجية', en: 'External Agencies'},
+  { href: '#about',        ar: 'من نحن',           en: 'About Us'         },
+  { href: '#services',     ar: 'خدماتنا',          en: 'Services'         },
+  { href: '#journey',      ar: 'رحلة الحاج',       en: 'Pilgrim Journey'  },
+  { href: '#videos',       ar: 'معرض الفيديو',     en: 'Video Gallery'    },
+  { href: '#testimonials', ar: 'آراء العملاء',     en: 'Testimonials'     },
+  { href: '#awards',       ar: 'جوائزنا',          en: 'Our Awards'       },
+  { href: '#agencies',     ar: 'للوكالات الخارجية', en: 'External Agencies'},
 ];
 
 const socials = [
