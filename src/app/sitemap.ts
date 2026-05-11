@@ -1,21 +1,35 @@
 import type { MetadataRoute } from 'next';
 
 /* ─────────────────────────────────────────────────────────────
- * sitemap.xml — قائمة بكل الأقسام لمحركات البحث
- * Auto-served at: https://belad-alharamain.com/sitemap.xml
+ * sitemap.xml — قائمة الصفحات الرسمية لمحركات البحث
+ *
+ * هذا الموقع صفحة هبوط واحدة (Single-Page)، لذا يحتوي السايت ماب
+ * على الصفحة الرئيسية فقط. أقسام الموقع (#about, #services...)
+ * ليست صفحات مستقلة من منظور Google — هي مراسٍ داخل نفس الصفحة.
+ *
+ * عند إضافة صفحات حقيقية مستقبلاً (مثل /blog أو /umrah-packages)،
+ * أضفها هنا.
+ *
+ * يُقدَّم تلقائياً على:
+ *   https://belad-alharamain.com/sitemap.xml
  * ───────────────────────────────────────────────────────────── */
 
 const BASE = 'https://belad-alharamain.com';
 
-// Sections rendered as anchors on the single landing page
-const sections = ['', 'about', 'services', 'journey', 'videos', 'awards', 'agencies', 'contact'];
-
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
-  return sections.map((s) => ({
-    url: s ? `${BASE}/#${s}` : BASE,
-    lastModified,
-    changeFrequency: 'monthly',
-    priority: s === '' ? 1.0 : 0.8,
-  }));
+  return [
+    {
+      url: BASE,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 1.0,
+    },
+    // مثال لإضافة صفحات مستقبلية:
+    // {
+    //   url: `${BASE}/blog`,
+    //   lastModified: new Date(),
+    //   changeFrequency: 'weekly',
+    //   priority: 0.7,
+    // },
+  ];
 }
