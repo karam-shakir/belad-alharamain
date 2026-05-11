@@ -146,6 +146,21 @@ export default function Contact() {
                 sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
               />
             </div>
+
+            {/* Google My Business CTA */}
+            {contact.googleBusinessUrl && (
+              <a href={contact.googleBusinessUrl}
+                 target="_blank" rel="noopener noreferrer"
+                 className="flex items-center justify-center gap-2 bg-white hover:bg-gold/5
+                            border border-gold/30 hover:border-gold text-teal-dark hover:text-gold-dark
+                            font-bold text-sm px-5 py-3 rounded-2xl transition-all duration-200
+                            shadow-card hover:-translate-y-0.5"
+                 data-ar="اطلع علينا على Google واترك تقييمك"
+                 data-en="View us on Google & leave a review">
+                <i className="fab fa-google text-gold text-base" />
+                اطلع علينا على Google واترك تقييمك
+              </a>
+            )}
           </div>
 
           {/* ── Form ─── */}

@@ -24,11 +24,13 @@ export const contact = {
   phone:    '+966 55 550 8979',                                // رقم الهاتفي
   whatsapp: '966556777063',                                    // الواتساب (بدون + ولا مسافات، مثال: 966500000000)
   email:    'info@belad-alharamain.com',                       // البريد الإلكتروني
-  address:  { ar: 'مكة المكرمة، المملكة العربية السعودية', en: 'Makkah, Saudi Arabia' },
+  address:  { ar: 'مكة المكرمة، شارع الحج، بجوار مسجد بن عبيد، بجوار سوق الخيام، المملكة العربية السعودية', en: 'Makkah, Al-Hajj Street, next to Ibn Obaid Mosque, near Al-Khiyam Market, Saudi Arabia' },
   hours:    { ar: 'السبت – الخميس: 8:00ص – 10:00م',          en: 'Sat – Thu: 8:00AM – 10:00PM' },
   // رابط Google Maps Embed (انسخه من Google Maps → Share → Embed a map → Copy HTML → خذ ما بين علامتي src)
   mapEmbedUrl:
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3713.856919612649!2d39.858454099999996!3d21.434868200000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15c20378a661133f%3A0xc1901a99535b1320!2z2LTYsdmD2Kkg2KjZhNin2K8g2KfZhNit2LHZhdmK2YYg2YTZhNit2Kwg2YjYp9mE2LnZhdix2Kkg2LAu2YUu2YUu!5e0!3m2!1sar!2ssa!4v1778407844524!5m2!1sar!2ssa',
+  // رابط ملف الشركة على Google My Business (لزر "اطلع علينا على Google" تحت الخريطة)
+  googleBusinessUrl: 'https://share.google/5QYB5rUC61TprQo9p',
 };
 
 /* ─────────────────────── 2) السوشيال ميديا ─────────────────────── */
@@ -75,18 +77,18 @@ export const about = {
 
   // الإحصائيات داخل قسم "من نحن"
   stats: [
-    { icon: 'fa-calendar-check', num: 15,    label: { ar: 'سنة خبرة',    en: 'Years Experience' } },
-    { icon: 'fa-users',          num: 50000, label: { ar: 'حاج ومعتمر',  en: 'Pilgrims Served'  } },
-    { icon: 'fa-building',       num: 200,   label: { ar: 'وكالة شريكة', en: 'Partner Agencies' } },
-    { icon: 'fa-trophy',         num: 30,    label: { ar: 'جائزة تميز',  en: 'Excellence Awards'} },
+    { icon: 'fa-calendar-check', num: 20,    label: { ar: 'سنة خبرة',    en: 'Years Experience' } },
+    { icon: 'fa-users',          num: 27000, label: { ar: 'حاج ومعتمر',  en: 'Pilgrims Served'  } },
+    { icon: 'fa-building',       num: 12,    label: { ar: 'وكالة شريكة', en: 'Partner Agencies' } },
+    { icon: 'fa-trophy',         num: 4,     label: { ar: 'جائزة تميز',  en: 'Excellence Awards'} },
   ],
 
   // شارات الثقة أسفل القسم
   badges: [
-    { icon: 'fa-shield-halved', label: { ar: 'شركة معتمدة', en: 'Certified Company' } },
-    { icon: 'fa-award',         label: { ar: 'ISO 9001',    en: 'ISO 9001'          } },
-    { icon: 'fa-star',          label: { ar: 'أفضل شركة',   en: 'Best Company'      } },
-    { icon: 'fa-check-circle',  label: { ar: 'ضمان الجودة', en: 'Quality Guarantee' } },
+    { icon: 'fa-shield-halved', label: { ar: 'شركة معتمدة',         en: 'Certified Company'    } },
+    { icon: 'fa-award',         label: { ar: 'ISO 9001',            en: 'ISO 9001'             } },
+    { icon: 'fa-lightbulb',     label: { ar: 'ISO الابتكار',        en: 'ISO Innovation'       } },
+    { icon: 'fa-check-circle',  label: { ar: 'ضمان الجودة',         en: 'Quality Guarantee'    } },
   ],
 };
 
@@ -130,8 +132,8 @@ export const journey = [
 //   https://www.youtube.com/watch?v=dQw4w9WgXcQ  →  youtubeId: 'dQw4w9WgXcQ'
 //   https://youtu.be/dQw4w9WgXcQ                 →  youtubeId: 'dQw4w9WgXcQ'
 export const videos = [
-  { youtubeId: 'uqIlNOIUvUE', title: { ar: '1446 موسم هـ ',     en: 'Hajj Season 1445 AH' },     subtitle: { ar: 'لقطات مميزة من الموسم الماضي',  en: 'Highlights from last Hajj season' } },
-  { youtubeId: 'dFGv83j1Sts', title: { ar: 'استقبال ضيوف الرحمن',  en: 'Premium Umrah Program' },   subtitle: { ar: 'استقبال ضيوف الرحمن',  en: 'Umrah experience with us' } },
+  { youtubeId: 'uqIlNOIUvUE', title: { ar: 'موسم الحج 1446 هـ',     en: 'Hajj Season 1446 AH' },     subtitle: { ar: 'لقطات مميزة من الموسم الماضي',  en: 'Highlights from last Hajj season' } },
+  { youtubeId: 'dFGv83j1Sts', title: { ar: 'استقبال ضيوف الرحمن',  en: 'Receiving the Guests of Allah' },   subtitle: { ar: 'تجربة العمرة مع بلاد الحرمين',  en: 'Umrah experience with us' } },
   { youtubeId: '2V3Upa9coNM', title: { ar: 'نهتم بالابتكار والابداع',       en: 'Our Luxury Services' },     subtitle: { ar: 'تمكين الابتكار في تقديم الخدمات',     en: 'Discover our premium services' } },
   { youtubeId: 'WUnjV0jupbM', title: { ar: 'شهادات الحجاج',         en: 'Pilgrim Testimonials' },    subtitle: { ar: 'آراء ومشاركات حجاجنا الكرام',   en: 'Reviews from our valued pilgrims' } },
   { youtubeId: 'JT4c99ibQm8', title: { ar: 'جولة المشاعر المقدسة',  en: 'Tour of Holy Sites' },      subtitle: { ar: 'الحرم المكي والمدني والمشاعر',  en: "Grand Mosque, Prophet's Mosque" } },
@@ -139,13 +141,23 @@ export const videos = [
 ];
 
 /* ─────────────────────── 8) قسم الجوائز (Awards) ─────────────────────── */
+// الجوائز والشهادات الحقيقية للشركة
+// ملاحظة: عدّل قيمة "year" أو "org" إذا احتجت لتحديث السنة أو الجهة المانحة
 export const awards = [
-  { icon: 'fa-trophy',        year: '2024', color: 'from-gold-dark to-gold', title: { ar: 'جائزة أفضل شركة خدمات حج',     en: 'Best Hajj Services Company' },        org: { ar: 'وزارة الحج والعمرة',          en: 'Ministry of Hajj & Umrah' } },
-  { icon: 'fa-medal',         year: '2023', color: 'from-teal-dark to-teal', title: { ar: 'جائزة التميز في خدمة العملاء', en: 'Customer Service Excellence' },       org: { ar: 'الهيئة السعودية للجودة',       en: 'Saudi Quality Authority' } },
-  { icon: 'fa-star',          year: '2023', color: 'from-gold-dark to-gold', title: { ar: 'شركة العام — السياحة الدينية', en: 'Company of the Year' },               org: { ar: 'مجلس الغرف السعودية',          en: 'Council of Saudi Chambers' } },
-  { icon: 'fa-certificate',   year: '2022', color: 'from-teal-dark to-teal', title: { ar: 'جائزة الابتكار في قطاع الحج', en: 'Innovation in Hajj Sector' },         org: { ar: 'الرابطة العالمية لشركات الحج', en: 'Global Hajj Companies Association' } },
-  { icon: 'fa-award',         year: '2022', color: 'from-gold-dark to-gold', title: { ar: 'شهادة الجودة ISO 9001',        en: 'ISO 9001 Quality Certificate' },      org: { ar: 'المنظمة الدولية للمعايير',     en: 'International Organization for Standardization' } },
-  { icon: 'fa-shield-halved', year: '2021', color: 'from-teal-dark to-teal', title: { ar: 'جائزة الشركة الأكثر ثقة',     en: 'Most Trusted Company Award' },        org: { ar: 'اتحاد وكالات السفر العربية',   en: 'Arab Travel Agencies Union' } },
+  { icon: 'fa-trophy',      year: '2024',
+    color: 'from-gold-dark to-gold',
+    title: { ar: 'جائزة مبدعون في المسار الرقمي', en: 'Creators in the Digital Track Award' },
+    org:   { ar: 'المملكة العربية السعودية',       en: 'Saudi Arabia' } },
+
+  { icon: 'fa-award',       year: '—',
+    color: 'from-teal-dark to-teal',
+    title: { ar: 'شهادة الجودة ISO 9001',          en: 'ISO 9001 Quality Certificate' },
+    org:   { ar: 'المنظمة الدولية للمعايير',         en: 'International Organization for Standardization' } },
+
+  { icon: 'fa-lightbulb',   year: '—',
+    color: 'from-gold-dark to-gold',
+    title: { ar: 'شهادة الابتكار ISO',              en: 'ISO Innovation Certificate' },
+    org:   { ar: 'المنظمة الدولية للمعايير',         en: 'International Organization for Standardization' } },
 ];
 
 /* ─────────────────────── 9) قسم الوكالات الخارجية (Agencies) ─────────────────────── */
@@ -171,12 +183,12 @@ export const agencies = {
 export const footer = {
   // النص التعريفي القصير
   description: {
-    ar: 'نخدم ضيوف الرحمن بشغف واحترافية منذ أكثر من 15 عاماً.',
-    en: 'Serving pilgrims with passion and professionalism for over 15 years.',
+    ar: 'نخدم ضيوف الرحمن بشغف واحترافية منذ أكثر من 20 عاماً.',
+    en: 'Serving pilgrims with passion and professionalism for over 20 years.',
   },
   // نص حقوق النشر (سنة + اسم)
   copyright: {
-    ar: '© 2025 بلاد الحرمين للحج والعمرة. جميع الحقوق محفوظة.',
-    en: '© 2025 Belad Alharamain Hajj & Umrah. All rights reserved.',
+    ar: '© 2026 بلاد الحرمين للحج والعمرة. جميع الحقوق محفوظة.',
+    en: '© 2026 Belad Alharamain Hajj & Umrah. All rights reserved.',
   },
 };
