@@ -48,7 +48,18 @@ export default function Navbar() {
   };
 
   const scrollTo = (href: string) => {
-    const el = document.querySelector(href);
+    // Cross-page links (any href starting with "/")
+    if (href.startsWith('/') && !href.startsWith('/#')) {
+      window.location.href = href;
+      return;
+    }
+    // Hash links — only valid on home page; if not home, navigate to /<href>
+    const hash = href.startsWith('#') ? href : href.replace(/^\/+/, '');
+    if (window.location.pathname !== '/') {
+      window.location.href = '/' + hash;
+      return;
+    }
+    const el = document.querySelector(hash);
     if (!el) return;
     const top = (el as HTMLElement).offsetTop - 72;
     window.scrollTo({ top, behavior: 'smooth' });
