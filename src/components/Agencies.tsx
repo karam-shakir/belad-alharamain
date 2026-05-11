@@ -53,22 +53,34 @@ export default function Agencies() {
     return ok;
   };
 
+  const [errorMsg, setErrorMsg] = useState('');
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setErrorMsg('');
     if (!validate()) return;
     setLoading(true);
 
-    /* ── Simulate API upload ──
-       Replace with:
-       const fd = new FormData();
-       Object.entries(fields).forEach(([k,v]) => fd.append(k, v.value));
-       fd.append('contract', file!);
-       await fetch('/api/agency-register', { method: 'POST', body: fd });
-    ── */
-    await new Promise(r => setTimeout(r, 2000));
+    try {
+      const fd = new FormData();
+      Object.entries(fields).forEach(([k, v]) => fd.append(k, v.value));
+      fd.append('contract', file!);
+      const hp = (document.getElementById('agency-hp') as HTMLInputElement | null)?.value ?? '';
+      fd.append('hp', hp);
 
-    setLoading(false);
-    setSuccess(true);
+      const res = await fetch('/api/agency', { method: 'POST', body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setErrorMsg(data?.error || 'تعذّر إرسال الطلب، حاول لاحقاً.');
+        setLoading(false);
+        return;
+      }
+      setSuccess(true);
+    } catch {
+      setErrorMsg('تعذّر الاتصال بالخادم، تحقّق من الإنترنت.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputCls = (key: string) =>
@@ -126,15 +138,16 @@ export default function Agencies() {
                    data-en="Download the contract template, complete it, and submit it signed">
                   حمّل نموذج العقد، أكمله وأرسله موقعاً
                 </p>
-                <button
-                  onClick={() => alert('سيتم رفع ملف العقد قريباً\nThe contract PDF will be available soon.')}
+                <a
+                  href="/contract_umrah.pdf"
+                  download="نموذج-عقد-بلاد-الحرمين.pdf"
                   className="flex items-center gap-2 bg-gold hover:bg-gold-light text-white
                              font-bold px-5 py-2.5 rounded-full transition-all duration-200
                              hover:-translate-y-0.5 shadow-gold text-sm w-full justify-center"
                   data-ar="تحميل نموذج العقد (PDF)" data-en="Download Contract (PDF)">
                   <i className="fas fa-file-pdf" />
                   تحميل نموذج العقد (PDF)
-                </button>
+                </a>
               </div>
 
               {/* Partner flags */}
@@ -169,6 +182,21 @@ export default function Agencies() {
                   </div>
 
                   <form onSubmit={onSubmit} noValidate className="space-y-4">
+
+                    {/* Honeypot — hidden from humans */}
+                    <input
+                      type="text" name="hp" id="agency-hp" tabIndex={-1} autoComplete="off"
+                      aria-hidden="true"
+                      style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, opacity: 0 }}
+                    />
+
+                    {errorMsg && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 text-sm
+                                      rounded-lg p-3 flex items-start gap-2">
+                        <i className="fas fa-circle-exclamation mt-0.5 flex-shrink-0" />
+                        <span>{errorMsg}</span>
+                      </div>
+                    )}
 
                     {/* Agency Name */}
                     <div>

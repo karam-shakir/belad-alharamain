@@ -31,3 +31,9 @@ Thumbs.db
 
 # Claude Code
 .claude/
+
+# Never commit API keys
+public/resen*
+*.secret
+.env*.local
+

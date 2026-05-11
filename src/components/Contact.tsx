@@ -47,13 +47,32 @@ export default function Contact() {
     return Object.keys(e).length === 0;
   };
 
+  const [errorMsg, setErrorMsg] = useState('');
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setErrorMsg('');
     if (!validate()) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1500));
-    setLoading(false);
-    setSuccess(true);
+    try {
+      const hp = (document.getElementById('contact-hp') as HTMLInputElement | null)?.value ?? '';
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...fields, hp }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setErrorMsg(data?.error || 'تعذّر إرسال الرسالة، حاول لاحقاً.');
+        setLoading(false);
+        return;
+      }
+      setSuccess(true);
+    } catch {
+      setErrorMsg('تعذّر الاتصال بالخادم، تحقّق من الإنترنت.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const cls = (k: string) =>
@@ -144,6 +163,21 @@ export default function Contact() {
                   </div>
 
                   <form onSubmit={onSubmit} noValidate className="space-y-4">
+                    {/* Honeypot — hidden from humans, bots fill it */}
+                    <input
+                      type="text" name="hp" id="contact-hp" tabIndex={-1} autoComplete="off"
+                      aria-hidden="true"
+                      style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, opacity: 0 }}
+                    />
+
+                    {errorMsg && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 text-sm
+                                      rounded-lg p-3 flex items-start gap-2">
+                        <i className="fas fa-circle-exclamation mt-0.5 flex-shrink-0" />
+                        <span>{errorMsg}</span>
+                      </div>
+                    )}
+
                     <div>
                       <label className="block text-sm font-bold text-teal-dark mb-1.5"
                              data-ar="الاسم الكامل *" data-en="Full Name *">الاسم الكامل *</label>
