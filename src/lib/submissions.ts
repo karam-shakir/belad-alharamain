@@ -34,6 +34,15 @@ export interface Submission {
 const INDEX_KEY = 'submissions:all';
 const itemKey = (id: string) => `submission:${id}`;
 
+/* Strip undefined/null fields so HSET doesn't reject them */
+function clean(obj: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v !== undefined && v !== null) out[k] = v;
+  }
+  return out;
+}
+
 /* ── Create ─── */
 export async function createSubmission(
   data: Omit<Submission, 'id' | 'status' | 'notes' | 'createdAt' | 'updatedAt'>,
@@ -48,7 +57,7 @@ export async function createSubmission(
     createdAt: now,
     updatedAt: now,
   };
-  await kv.hset(itemKey(id), sub as unknown as Record<string, unknown>);
+  await kv.hset(itemKey(id), clean(sub as unknown as Record<string, unknown>));
   await kv.zadd(INDEX_KEY, { score: now, member: id });
   return sub;
 }
@@ -85,7 +94,7 @@ export async function updateSubmission(
     ...patch,
     updatedAt: Date.now(),
   };
-  await kv.hset(itemKey(id), updated as unknown as Record<string, unknown>);
+  await kv.hset(itemKey(id), clean(updated as unknown as Record<string, unknown>));
   return updated;
 }
 

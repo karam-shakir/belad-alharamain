@@ -83,8 +83,10 @@ export async function POST(req: Request) {
 
   /* ── Persist to KV (admin dashboard) ─── */
   let savedToDb = false;
-  try {
-    if (process.env.KV_REST_API_URL) {
+  if (!process.env.KV_REST_API_URL) {
+    console.warn('[agency] KV_REST_API_URL missing — skipping DB save');
+  } else {
+    try {
       await createSubmission({
         type: 'agency',
         agencyName, country, contactPerson, email, phone,
@@ -92,9 +94,10 @@ export async function POST(req: Request) {
         ip,
       });
       savedToDb = true;
+      console.log('[agency] saved to KV');
+    } catch (e) {
+      console.error('[agency] KV save failed:', e instanceof Error ? e.message : e);
     }
-  } catch (e) {
-    console.error('[agency] KV save failed', e);
   }
 
   /* ── Send email notification ─── */
