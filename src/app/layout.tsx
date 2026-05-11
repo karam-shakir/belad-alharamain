@@ -1,24 +1,146 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { contact, social } from '@/content/site';
+
+const SITE_URL  = 'https://belad-alharamain.com';
+const SITE_NAME = 'بلاد الحرمين للحج والعمرة';
+const SITE_NAME_EN = 'Belad Alharamain Hajj & Umrah';
+const DESCRIPTION_AR = 'شركة بلاد الحرمين للحج والعمرة — شركة سعودية رائدة في خدمات الحج الداخلي والعمرة والباقات الفاخرة. نخدم ضيوف الرحمن بشغف واحترافية بأعلى معايير الجودة.';
+const DESCRIPTION_EN = 'Belad Alharamain — A leading Saudi company specializing in domestic Hajj & Umrah services, luxury packages, and premium hospitality for pilgrims.';
 
 export const metadata: Metadata = {
-  title: 'بلاد الحرمين للحج والعمرة | Belad Alharamain Hajj & Umrah',
-  description:
-    'شركة بلاد الحرمين للحج والعمرة — نخدم ضيوف الرحمن بشغف واحترافية. خدمات الحج الداخلي، العمرة، والباقات الفاخرة.',
-  keywords: 'حج, عمرة, بلاد الحرمين, خدمات الحج, خدمات العمرة, باقات حج وعمرة, حج داخلي',
-  authors: [{ name: 'Belad Alharamain Co.' }],
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | ${SITE_NAME_EN}`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: DESCRIPTION_AR,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME_EN, url: SITE_URL }],
+  creator: SITE_NAME_EN,
+  publisher: SITE_NAME_EN,
+
+  keywords: [
+    'بلاد الحرمين', 'حج', 'عمرة', 'حج داخلي', 'حج الداخل',
+    'باقات حج', 'باقات عمرة', 'خدمات الحج', 'خدمات العمرة',
+    'حج VIP', 'عمرة VIP', 'مكة المكرمة', 'المدينة المنورة',
+    'شركة حج', 'شركة عمرة', 'وكالات حج',
+    'Hajj', 'Umrah', 'Belad Alharamain', 'Saudi Arabia',
+    'Hajj packages', 'Umrah packages', 'Makkah', 'Medina',
+  ],
+
+  alternates: {
+    canonical: SITE_URL,
+    languages: {
+      'ar-SA': SITE_URL,
+      'en':    SITE_URL,
+    },
+  },
+
   openGraph: {
-    title: 'بلاد الحرمين للحج والعمرة',
-    description: 'نخدم ضيوف الرحمن بشغف واحترافية',
     type: 'website',
     locale: 'ar_SA',
+    alternateLocale: ['en_US'],
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} | ${SITE_NAME_EN}`,
+    description: DESCRIPTION_AR,
+    images: [
+      {
+        url: '/images/logo.png',
+        width: 1200,
+        height: 630,
+        alt: SITE_NAME,
+      },
+    ],
   },
-  robots: { index: true, follow: true },
+
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_NAME,
+    description: DESCRIPTION_AR,
+    images: ['/images/logo.png'],
+    site: '@beelad_harameen',
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+
+  icons: {
+    icon: [
+      { url: '/images/logo.png', type: 'image/png' },
+    ],
+    apple: '/images/logo.png',
+  },
+
+  // 👇 بعد إنشاء Google Search Console، ضع رمز التحقق هنا (تعليمات في README)
+  verification: {
+    // google: 'PUT_YOUR_GOOGLE_VERIFICATION_CODE_HERE',
+  },
+
+  category: 'travel',
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  themeColor: '#1F7A8C',
+};
+
+/* ── JSON-LD structured data (rich results in Google) ── */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TravelAgency',
+  '@id': `${SITE_URL}/#organization`,
+  name: SITE_NAME,
+  alternateName: SITE_NAME_EN,
+  url: SITE_URL,
+  logo: `${SITE_URL}/images/logo.png`,
+  image: `${SITE_URL}/images/logo.png`,
+  description: DESCRIPTION_AR,
+  telephone: contact.phone,
+  email: contact.email,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'مكة المكرمة',
+    addressRegion: 'منطقة مكة المكرمة',
+    addressCountry: 'SA',
+    streetAddress: contact.address.ar,
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 21.4348682,
+    longitude: 39.8584541,
+  },
+  openingHours: 'Sa-Th 08:00-22:00',
+  areaServed: { '@type': 'Country', name: 'Saudi Arabia' },
+  sameAs: [
+    social.twitter,
+    social.facebook,
+    social.instagram,
+    social.youtube,
+    social.linkedin,
+    social.tiktok,
+  ].filter(u => u && !u.includes('your_account')),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'باقات الحج والعمرة',
+    itemListElement: [
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'حج الداخل' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'خدمات العمرة' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'باقات VIP' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'خدمات الضيافة والنقل' } },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -36,6 +158,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link
           href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet"
+        />
+
+        {/* JSON-LD: Organization / TravelAgency structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body suppressHydrationWarning>
