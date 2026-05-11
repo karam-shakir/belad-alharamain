@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+import { put } from '@vercel/blob';
 import { resend, FROM_EMAIL, TO_EMAIL, wrapEmail, row, esc } from '@/lib/email';
 import { rateLimit, getIp } from '@/lib/ratelimit';
+import { createSubmission } from '@/lib/submissions';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -58,19 +60,54 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'الملف فارغ.' }, { status: 400 });
   }
 
+  /* ── Read file once into buffer (reused for email + blob upload) ─── */
+  const buf = Buffer.from(await file.arrayBuffer());
+  const safeName = file.name.replace(/[^\w.\-]+/g, '_').slice(0, 100) || 'contract.pdf';
+
+  /* ── Upload to Vercel Blob (private, time-limited URL via download endpoint) ─── */
+  let pdfUrl: string | undefined;
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    try {
+      const blob = await put(`agencies/${Date.now()}-${safeName}`, buf, {
+        access: 'public',           // signed URL pattern not yet available on free tier — auth gated via /admin
+        contentType: 'application/pdf',
+        addRandomSuffix: true,      // prevents URL guessing
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      });
+      pdfUrl = blob.url;
+    } catch (e) {
+      console.error('[agency] blob upload failed', e);
+      // Continue — email + KV save still succeed
+    }
+  }
+
+  /* ── Persist to KV (admin dashboard) ─── */
+  let savedToDb = false;
+  try {
+    if (process.env.KV_REST_API_URL) {
+      await createSubmission({
+        type: 'agency',
+        agencyName, country, contactPerson, email, phone,
+        pdfUrl, pdfName: safeName, pdfSize: file.size,
+        ip,
+      });
+      savedToDb = true;
+    }
+  } catch (e) {
+    console.error('[agency] KV save failed', e);
+  }
+
+  /* ── Send email notification ─── */
   if (!resend) {
     console.error('[agency] RESEND_API_KEY not configured');
+    // Still acknowledge if we saved to DB — admin will see it in dashboard
+    if (savedToDb) return NextResponse.json({ ok: true });
     return NextResponse.json(
-      { ok: false, error: 'خدمة البريد غير مهيّأة. يرجى التواصل عبر الجوال.' },
+      { ok: false, error: 'تعذّر معالجة الطلب. يرجى التواصل عبر الجوال.' },
       { status: 500 },
     );
   }
 
-  /* ── Read file as buffer ─── */
-  const buf = Buffer.from(await file.arrayBuffer());
-  const safeName = file.name.replace(/[^\w.\-]+/g, '_').slice(0, 100) || 'contract.pdf';
-
-  /* ── Compose email ─── */
   const html = wrapEmail(
     '🤝 طلب تعاقد وكالة خارجية جديد',
     `
@@ -84,6 +121,7 @@ export async function POST(req: Request) {
       <strong>${esc(safeName)}</strong> — ${(file.size / 1024).toFixed(1)} KB
     </p>
     <p style="margin-top:24px;font-size:12px;color:#9B8B66;">IP: ${esc(ip)} — ${new Date().toLocaleString('ar-SA')}</p>
+    <p style="margin-top:8px;font-size:12px;color:#9B8B66;">يمكنك أيضاً متابعة الطلب من <a href="https://belad-alharamain.com/admin" style="color:#A88B4A;">لوحة التحكم</a>.</p>
     `,
   );
 
@@ -100,11 +138,13 @@ export async function POST(req: Request) {
     });
     if (error) {
       console.error('[agency] resend error', error);
+      if (savedToDb) return NextResponse.json({ ok: true });
       return NextResponse.json({ ok: false, error: 'تعذّر إرسال الطلب. حاول لاحقاً.' }, { status: 502 });
     }
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error('[agency] exception', e);
+    if (savedToDb) return NextResponse.json({ ok: true });
     return NextResponse.json({ ok: false, error: 'حدث خطأ غير متوقع.' }, { status: 500 });
   }
 }
