@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 import { faq } from '@/content/site';
+import { useLang } from '@/lib/useLang';
 
 export default function Faq() {
   const [open, setOpen] = useState<number | null>(0);  // first question expanded by default
+  const lang = useLang();
+  const t = <T,>(item: { ar: T; en: T }) => (lang === 'en' ? item.en : item.ar);
 
   return (
     <section id="faq" className="py-24 bg-pattern-white relative overflow-hidden">
@@ -17,16 +20,17 @@ export default function Faq() {
         {/* Header */}
         <div className="text-center mb-12 reveal">
           <span className="inline-block bg-teal text-white text-xs font-bold tracking-widest
-                           uppercase px-4 py-1.5 rounded-full mb-4"
-                data-ar="الأسئلة الشائعة" data-en="FAQ">الأسئلة الشائعة</span>
-          <h2 className="text-3xl sm:text-4xl font-black text-teal-dark mb-4"
-              data-ar="هل لديك سؤال؟ إجابتنا هنا" data-en="Got a Question? We've Got Answers">
-            هل لديك سؤال؟ إجابتنا هنا
+                           uppercase px-4 py-1.5 rounded-full mb-4">
+            {t({ ar: 'الأسئلة الشائعة', en: 'FAQ' })}
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-black text-teal-dark mb-4">
+            {t({ ar: 'هل لديك سؤال؟ إجابتنا هنا', en: "Got a Question? We've Got Answers" })}
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed"
-             data-ar="إجابات على أكثر الأسئلة شيوعاً حول خدمات الحج والعمرة لدينا"
-             data-en="Answers to the most common questions about our Hajj & Umrah services">
-            إجابات على أكثر الأسئلة شيوعاً حول خدمات الحج والعمرة لدينا
+          <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            {t({
+              ar: 'إجابات على أكثر الأسئلة شيوعاً حول خدمات الحج والعمرة لدينا',
+              en: 'Answers to the most common questions about our Hajj & Umrah services',
+            })}
           </p>
           <div className="gold-divider"><span><i className="fas fa-circle-question" /></span></div>
         </div>
@@ -53,9 +57,8 @@ export default function Faq() {
                   </span>
                   <h3 className={`flex-1 font-black text-sm sm:text-base leading-snug
                                  transition-colors duration-200
-                                 ${isOpen ? 'text-gold-dark' : 'text-teal-dark group-hover:text-gold-dark'}`}
-                      data-ar={item.q.ar} data-en={item.q.en}>
-                    {item.q.ar}
+                                 ${isOpen ? 'text-gold-dark' : 'text-teal-dark group-hover:text-gold-dark'}`}>
+                    {t(item.q)}
                   </h3>
                   <i className={`fas fa-chevron-down text-gold transition-transform duration-300
                                  flex-shrink-0 text-sm
@@ -67,8 +70,7 @@ export default function Faq() {
                   <div className="overflow-hidden">
                     <div className="px-5 pb-5 sm:px-6 sm:pb-6 ps-[68px] sm:ps-[80px]
                                     text-sm sm:text-[15px] text-gray-700 leading-loose"
-                         data-ar={item.a.ar} data-en={item.a.en}
-                         dangerouslySetInnerHTML={{ __html: item.a.ar }} />
+                         dangerouslySetInnerHTML={{ __html: t(item.a) }} />
                   </div>
                 </div>
               </div>
@@ -78,18 +80,18 @@ export default function Faq() {
 
         {/* Bottom CTA */}
         <div className="text-center mt-10 reveal">
-          <p className="text-gray-500 text-sm mb-4"
-             data-ar="لم تجد إجابتك؟ تواصل معنا مباشرة ونحن هنا للمساعدة."
-             data-en="Didn't find your answer? Contact us directly — we're here to help.">
-            لم تجد إجابتك؟ تواصل معنا مباشرة ونحن هنا للمساعدة.
+          <p className="text-gray-500 text-sm mb-4">
+            {t({
+              ar: 'لم تجد إجابتك؟ تواصل معنا مباشرة ونحن هنا للمساعدة.',
+              en: "Didn't find your answer? Contact us directly — we're here to help.",
+            })}
           </p>
           <a href="#contact"
              className="inline-flex items-center gap-2 bg-gold hover:bg-gold-light
                         text-white font-bold px-6 py-3 rounded-full transition-all
-                        duration-300 hover:-translate-y-0.5 shadow-gold"
-             data-ar="تواصل معنا" data-en="Contact Us">
+                        duration-300 hover:-translate-y-0.5 shadow-gold">
             <i className="fas fa-envelope" />
-            تواصل معنا
+            {t({ ar: 'تواصل معنا', en: 'Contact Us' })}
           </a>
         </div>
 

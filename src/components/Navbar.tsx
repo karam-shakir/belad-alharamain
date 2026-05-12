@@ -46,6 +46,8 @@ export default function Navbar() {
     document.querySelectorAll<HTMLElement>('[data-ar][data-en]').forEach(el => {
       el.textContent = l === 'ar' ? (el.dataset.ar ?? '') : (el.dataset.en ?? '');
     });
+    // Notify React components that opt into language via the useLang() hook
+    window.dispatchEvent(new CustomEvent('langchange', { detail: l }));
   };
 
   const scrollTo = (href: string) => {
