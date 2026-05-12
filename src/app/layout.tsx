@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { contact, social } from '@/content/site';
+import { contact, social, faq } from '@/content/site';
 
 const SITE_URL  = 'https://belad-alharamain.com';
 const SITE_NAME = 'بلاد الحرمين للحج والعمرة';
@@ -91,6 +91,23 @@ export const viewport: Viewport = {
   themeColor: '#1F7A8C',
 };
 
+/* Strip HTML tags from answer text for JSON-LD (Google requires plain text). */
+const stripHtml = (s: string) => s.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+
+/* ── JSON-LD: FAQPage (rich results in Google for the FAQ section) ── */
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.slice(0, 10).map(item => ({
+    '@type': 'Question',
+    name: item.q.ar,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: stripHtml(item.a.ar),
+    },
+  })),
+};
+
 /* ── JSON-LD structured data (rich results in Google) ── */
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -159,6 +176,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        {/* JSON-LD: FAQPage — eligible for rich results in Google */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       </head>
       <body suppressHydrationWarning>

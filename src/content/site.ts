@@ -205,6 +205,84 @@ export const testimonials = [
   },
 ];
 
+/* ─────────────────────── 7.7) قسم الأسئلة الشائعة (FAQ) ─────────────────────── */
+// إضافة/حذف سؤال: انسخ كائن { ... } كاملاً وعدّل النص.
+// الإجابات تدعم HTML بسيط (مثل <strong> و <a>) — استخدم بحذر.
+export const faq = [
+  {
+    q: { ar: 'ما الفرق بين الحج والعمرة؟',
+         en: 'What is the difference between Hajj and Umrah?' },
+    a: { ar: 'الحج فريضة على المسلم القادر مرة واحدة في العمر، يُؤدّى في أشهر معلومة من العام الهجري. أما العمرة فهي سُنّة مؤكدة يمكن أداؤها في أي وقت من السنة، وتشمل الطواف والسعي والحلق أو التقصير.',
+         en: 'Hajj is an obligatory pilgrimage performed once in a Muslim\'s lifetime during specific months. Umrah is a recommended pilgrimage that can be performed any time of the year.' },
+  },
+  {
+    q: { ar: 'متى يفتح التسجيل لموسم الحج؟',
+         en: 'When does Hajj registration open?' },
+    a: { ar: 'تُحدّد وزارة الحج والعمرة موعد فتح التسجيل سنوياً عبر منصة "نُسُك" الرسمية. عادةً ما يبدأ التسجيل قبل موسم الحج بعدة أشهر. تابعونا للحصول على آخر التحديثات.',
+         en: 'The Ministry of Hajj announces the opening date annually via the official Nusuk platform. Registration typically opens several months before the Hajj season.' },
+  },
+  {
+    q: { ar: 'ما هي الوثائق المطلوبة للتسجيل في الحج الداخلي؟',
+         en: 'What documents are needed for domestic Hajj?' },
+    a: { ar: 'يلزم للمواطنين والمقيمين في المملكة: الهوية الوطنية أو الإقامة سارية المفعول، تصريح الحج من منصة "نُسُك"، شهادة التطعيمات الموصى بها، وأي وثائق إضافية حسب الباقة المختارة.',
+         en: 'Required documents include: valid Saudi National ID or Iqama, Hajj permit from Nusuk platform, recommended vaccinations certificate, and any additional documents per the chosen package.' },
+  },
+  {
+    q: { ar: 'ما الذي تشمله باقات الحج لديكم؟',
+         en: 'What is included in your Hajj packages?' },
+    a: { ar: 'تشمل باقاتنا عادةً: السكن في فنادق قريبة من الحرمين، النقل المكيّف بين المشاعر المقدّسة، الإعاشة الكاملة، خدمات الإرشاد الديني، الدعم الميداني على مدار الساعة، والمخيمات المجهّزة في منى وعرفات. تختلف التفاصيل حسب نوع الباقة (عادية / VIP).',
+         en: 'Packages typically include: hotel accommodation near the Two Mosques, air-conditioned transport, full meals, religious guidance, 24/7 field support, and equipped camps in Mina and Arafat. Details vary by package tier.' },
+  },
+  {
+    q: { ar: 'هل العمرة متاحة طوال السنة؟',
+         en: 'Is Umrah available year-round?' },
+    a: { ar: 'نعم، نقدّم برامج العمرة طوال أيام السنة الميلادية، باستثناء فترات الحج المحددة. لدينا باقات متنوعة تناسب جميع الميزانيات والاحتياجات، سواء للأفراد أو العائلات أو المجموعات.',
+         en: 'Yes, we offer Umrah programs throughout the year, except during the specific Hajj period. We have packages for individuals, families, and groups.' },
+  },
+  {
+    q: { ar: 'هل يمكن للنساء أداء العمرة بدون محرم؟',
+         en: 'Can women perform Umrah without a Mahram?' },
+    a: { ar: 'نعم، وفقاً لقرارات وزارة الحج والعمرة الصادرة، يُسمح للمرأة بأداء العمرة دون محرم وفق ضوابط محددة (الانضمام لمجموعة منظّمة). نوفّر مرشدات نساء في باقات خاصة لتيسير الرحلة.',
+         en: 'Yes, per current Saudi regulations, women may perform Umrah without a Mahram under specific conditions (organized group). We provide female guides in special packages.' },
+  },
+  {
+    q: { ar: 'كم تستغرق رحلة الحج معكم؟',
+         en: 'How long does the Hajj journey take?' },
+    a: { ar: 'تتراوح مدة برامج الحج لدينا بين 5 إلى 12 يوماً حسب الباقة، تشمل أيام التحضير، أداء المناسك في المشاعر المقدّسة، وزيارة المدينة المنوّرة (في بعض الباقات).',
+         en: 'Hajj programs range from 5 to 12 days depending on the package, including preparation, performing rituals at the holy sites, and visiting Madinah (in some packages).' },
+  },
+  {
+    q: { ar: 'ما الفرق بين الباقة العادية وباقة VIP؟',
+         en: 'What\'s the difference between regular and VIP packages?' },
+    a: { ar: 'تتميّز باقة VIP بـ: فنادق 5 نجوم بأقرب الأبراج للحرمين، خدمة شخصية لكل حاج، نقل في حافلات فاخرة، وجبات راقية، مخيمات VIP في منى، ومرافق ميداني خاص. الباقة العادية توفّر تجربة مريحة بمعايير عالية لكن بأسعار أنسب.',
+         en: 'VIP includes 5-star hotels closest to the Haram, personal service, luxury transport, gourmet meals, VIP camps in Mina, and dedicated field escort. Regular packages offer comfort and high standards at more accessible pricing.' },
+  },
+  {
+    q: { ar: 'ما هي سياسة الإلغاء واسترداد المبالغ؟',
+         en: 'What is the cancellation and refund policy?' },
+    a: { ar: 'تختلف سياسة الإلغاء حسب موعد الإلغاء قبل بداية الرحلة، وتُحدَّد بالتفصيل في العقد المبرم. عموماً: الإلغاء المبكر يضمن استرداد أكبر، أما الإلغاء قبل أيام قليلة فيستوجب رسوماً إدارية. الظروف القاهرة (وفاة، مرض موثّق) تُعالَج وفق الأنظمة.',
+         en: 'Cancellation terms vary by timing relative to trip start, detailed in the contract. Early cancellation yields larger refunds; late cancellation incurs administrative fees. Force-majeure cases (death, documented illness) are handled per regulations.' },
+  },
+  {
+    q: { ar: 'كيف يمكنني الحجز والدفع؟',
+         en: 'How do I book and pay?' },
+    a: { ar: 'يمكنكم التواصل معنا عبر نموذج "تواصل معنا" أو الاتصال المباشر على رقمنا، ثم نُرسل لكم تفاصيل الباقات والأسعار. الدفع يتم عبر تحويل بنكي رسمي بعد توقيع العقد. لا نطلب أي مبالغ نقدية مسبقة عبر الموقع.',
+         en: 'Contact us via the form or by phone — we\'ll send package details and pricing. Payment is made via official bank transfer after signing the contract. We never request cash payments through the website.' },
+  },
+  {
+    q: { ar: 'هل توفّرون باقات للوكالات الخارجية؟',
+         en: 'Do you offer packages for external agencies?' },
+    a: { ar: 'نعم، لدينا برنامج تعاقد شامل للوكالات الخارجية يشمل: عمولات تنافسية، باقات مخصّصة، دعم تشغيلي، ومواد تسويقية. سجّل وكالتك مباشرة عبر <a href="/agencies">صفحة الوكالات</a>.',
+         en: 'Yes, we have a comprehensive partner program for external agencies including: competitive commissions, custom packages, operational support, and marketing materials. Register your agency via the <a href="/agencies">Agencies page</a>.' },
+  },
+  {
+    q: { ar: 'هل يمكنني تخصيص الباقة حسب احتياجي؟',
+         en: 'Can I customize the package?' },
+    a: { ar: 'بالتأكيد. نقدّم باقات مرنة قابلة للتخصيص حسب: عدد الأفراد، نوع السكن المفضّل، مدة الرحلة، الخدمات الإضافية (زيارة المدينة، خدمات VIP، إلخ). تواصل معنا لتفصيل باقة على مقاسك.',
+         en: 'Absolutely. We offer flexible packages customizable by group size, accommodation type, trip duration, and add-ons (Madinah visit, VIP services, etc.). Contact us for a tailored quote.' },
+  },
+];
+
 /* ─────────────────────── 8) قسم الجوائز (Awards) ─────────────────────── */
 // الجوائز والشهادات الحقيقية للشركة
 // ملاحظة: عدّل قيمة "year" أو "org" إذا احتجت لتحديث السنة أو الجهة المانحة

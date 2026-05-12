@@ -2,6 +2,7 @@ import Navbar          from '@/components/Navbar';
 import Hero            from '@/components/Hero';
 import About           from '@/components/About';
 import Services        from '@/components/Services';
+import Faq             from '@/components/Faq';
 import Journey         from '@/components/Journey';
 import VideoGallery    from '@/components/VideoGallery';
 import Testimonials    from '@/components/Testimonials';
@@ -25,6 +26,7 @@ export default function Home() {
         <VideoGallery />
         <Testimonials />
         <Awards />
+        <Faq />
         <Agencies />
         <Contact />
       </main>

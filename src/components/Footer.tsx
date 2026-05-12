@@ -2,14 +2,18 @@ import Image from 'next/image';
 import { contact, social, footer, services as siteServices, business } from '@/content/site';
 
 const quickLinks = [
-  { href: '#about',        ar: 'من نحن',           en: 'About Us'         },
-  { href: '#services',     ar: 'خدماتنا',          en: 'Services'         },
-  { href: '#journey',      ar: 'رحلة الحاج',       en: 'Pilgrim Journey'  },
-  { href: '#videos',       ar: 'معرض الفيديو',     en: 'Video Gallery'    },
-  { href: '#testimonials', ar: 'آراء العملاء',     en: 'Testimonials'     },
-  { href: '#awards',       ar: 'جوائزنا',          en: 'Our Awards'       },
-  { href: '#agencies',     ar: 'للوكالات الخارجية', en: 'External Agencies'},
+  { href: '#about',        ar: 'من نحن',            en: 'About Us'         },
+  { href: '#services',     ar: 'خدماتنا',           en: 'Services'         },
+  { href: '#journey',      ar: 'رحلة الحاج',        en: 'Pilgrim Journey'  },
+  { href: '#videos',       ar: 'معرض الفيديو',      en: 'Video Gallery'    },
+  { href: '#testimonials', ar: 'آراء العملاء',      en: 'Testimonials'     },
+  { href: '#awards',       ar: 'جوائزنا',           en: 'Our Awards'       },
+  { href: '#faq',          ar: 'الأسئلة الشائعة',    en: 'FAQ'              },
+  { href: '#agencies',     ar: 'للوكالات الخارجية',  en: 'External Agencies'},
 ];
+
+// Hide social icons whose URL is still a placeholder (e.g. "your_account")
+const isPlaceholder = (url: string) => !url || /your_account|placeholder|example\.com/i.test(url);
 
 const socials = [
   { icon: 'fa-x-twitter',   label: 'X (Twitter)', url: social.twitter   },
@@ -18,7 +22,7 @@ const socials = [
   { icon: 'fa-youtube',     label: 'YouTube',     url: social.youtube   },
   { icon: 'fa-linkedin-in', label: 'LinkedIn',    url: social.linkedin  },
   { icon: 'fa-tiktok',      label: 'TikTok',      url: social.tiktok    },
-];
+].filter(s => !isPlaceholder(s.url));
 
 export default function Footer() {
   return (
