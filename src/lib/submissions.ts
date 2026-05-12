@@ -12,18 +12,26 @@ import { kv } from '@vercel/kv';
  * ───────────────────────────────────────────────────────────── */
 
 export type SubmissionStatus = 'new' | 'contacted' | 'approved' | 'rejected';
+export type SubmissionType   = 'agency' | 'contact';
 
 export interface Submission {
   id:            string;
-  type:          'agency';
-  agencyName:    string;
-  country:       string;
-  contactPerson: string;
+  type:          SubmissionType;
+  /* Common contact fields */
   email:         string;
   phone:         string;
+  /* Agency fields (type='agency') */
+  agencyName?:   string;
+  country?:      string;
+  contactPerson?: string;
   pdfUrl?:       string;
   pdfName?:      string;
   pdfSize?:      number;
+  /* Contact fields (type='contact') */
+  name?:         string;
+  subject?:      string;
+  message?:      string;
+  /* Workflow */
   status:        SubmissionStatus;
   notes:         string;
   ip:            string;

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { resend, FROM_EMAIL, TO_EMAIL, wrapEmail, row, esc } from '@/lib/email';
 import { rateLimit, getIp } from '@/lib/ratelimit';
+import { createSubmission } from '@/lib/submissions';
 
 export const runtime = 'nodejs';
 
@@ -54,8 +55,24 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'البريد الإلكتروني غير صحيح.' }, { status: 400 });
   }
 
+  /* ── Persist to KV (admin dashboard) ─── */
+  let savedToDb = false;
+  if (process.env.KV_REST_API_URL) {
+    try {
+      await createSubmission({
+        type: 'contact',
+        name, phone, email, subject, message, ip,
+      });
+      savedToDb = true;
+      console.log('[contact] saved to KV');
+    } catch (e) {
+      console.error('[contact] KV save failed:', e instanceof Error ? e.message : e);
+    }
+  }
+
   if (!resend) {
     console.error('[contact] RESEND_API_KEY not configured');
+    if (savedToDb) return NextResponse.json({ ok: true });
     return NextResponse.json(
       { ok: false, error: 'خدمة البريد غير مهيّأة. يرجى التواصل عبر الجوال.' },
       { status: 500 },
@@ -88,11 +105,13 @@ export async function POST(req: Request) {
     });
     if (error) {
       console.error('[contact] resend error', error);
+      if (savedToDb) return NextResponse.json({ ok: true });
       return NextResponse.json({ ok: false, error: 'تعذّر إرسال الرسالة. حاول لاحقاً.' }, { status: 502 });
     }
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error('[contact] exception', e);
+    if (savedToDb) return NextResponse.json({ ok: true });
     return NextResponse.json({ ok: false, error: 'حدث خطأ غير متوقع.' }, { status: 500 });
   }
 }

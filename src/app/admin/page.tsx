@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import type { Submission, SubmissionStatus } from '@/lib/submissions';
 
 type StatusFilter = SubmissionStatus | 'all';
+type TypeFilter   = 'all' | 'agency' | 'contact';
 
 interface Stats {
   total: number;
@@ -57,6 +58,7 @@ export default function AdminDashboard() {
   const [error,    setError]    = useState('');
   const [query,    setQuery]    = useState('');
   const [filter,   setFilter]   = useState<StatusFilter>('all');
+  const [typeFilt, setTypeFilt] = useState<TypeFilter>('all');
   const [editing,  setEditing]  = useState<string | null>(null);
   const [draft,    setDraft]    = useState<string>('');
 
@@ -84,11 +86,12 @@ export default function AdminDashboard() {
     const q = query.trim().toLowerCase();
     return items.filter(it => {
       if (filter !== 'all' && it.status !== filter) return false;
+      if (typeFilt !== 'all' && it.type !== typeFilt) return false;
       if (!q) return true;
-      return [it.agencyName, it.country, it.contactPerson, it.email, it.phone]
+      return [it.agencyName, it.country, it.contactPerson, it.name, it.subject, it.email, it.phone, it.message]
         .some(v => v?.toLowerCase().includes(q));
     });
-  }, [items, query, filter]);
+  }, [items, query, filter, typeFilt]);
 
   /* ── Actions ─── */
   const setStatus = async (id: string, status: SubmissionStatus) => {
@@ -136,10 +139,15 @@ export default function AdminDashboard() {
 
   const exportCsv = () => {
     const rows = [
-      ['التاريخ', 'اسم الوكالة', 'الدولة', 'الشخص', 'الجوال', 'الإيميل', 'الحالة', 'ملاحظات'],
+      ['التاريخ', 'النوع', 'الاسم/الوكالة', 'الدولة/الموضوع', 'الجوال', 'الإيميل', 'الرسالة', 'الحالة', 'ملاحظات'],
       ...filtered.map(it => [
-        fmtDate(it.createdAt), it.agencyName, it.country, it.contactPerson,
-        it.phone, it.email, STATUS_LABEL[it.status], it.notes || '',
+        fmtDate(it.createdAt),
+        it.type === 'agency' ? 'وكالة' : 'تواصل',
+        it.type === 'agency' ? (it.agencyName ?? '') : (it.name ?? ''),
+        it.type === 'agency' ? (it.country ?? '')    : (it.subject ?? ''),
+        it.phone, it.email,
+        it.type === 'contact' ? (it.message ?? '') : '',
+        STATUS_LABEL[it.status], it.notes || '',
       ]),
     ];
     const csv = rows.map(r => r.map(csvEscape).join(',')).join('\n');
@@ -163,7 +171,7 @@ export default function AdminDashboard() {
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-sm sm:text-base font-black leading-tight truncate">لوحة التحكم</h1>
-            <p className="text-[11px] text-gold-light/80">بلاد الحرمين — طلبات الوكالات</p>
+            <p className="text-[11px] text-gold-light/80">بلاد الحرمين — الطلبات والرسائل</p>
           </div>
           <button onClick={fetchData}
                   className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
@@ -214,10 +222,17 @@ export default function AdminDashboard() {
               className="form-input ps-10"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <select value={typeFilt}
+                    onChange={e => setTypeFilt(e.target.value as TypeFilter)}
+                    className="form-input flex-1 sm:w-36">
+              <option value="all">كل الأنواع</option>
+              <option value="agency">وكالات</option>
+              <option value="contact">تواصل</option>
+            </select>
             <select value={filter}
                     onChange={e => setFilter(e.target.value as StatusFilter)}
-                    className="form-input flex-1 sm:w-44">
+                    className="form-input flex-1 sm:w-40">
               <option value="all">جميع الحالات</option>
               <option value="new">جديد</option>
               <option value="contacted">تواصلت</option>
@@ -260,8 +275,17 @@ export default function AdminDashboard() {
                 <div className="flex flex-wrap items-start gap-3 mb-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
+                      {/* Type badge */}
+                      <span className={`inline-flex items-center gap-1 text-[10px] font-bold
+                                        px-2 py-0.5 rounded-full border
+                                        ${it.type === 'agency'
+                                          ? 'bg-purple-50 text-purple-800 border-purple-200'
+                                          : 'bg-cyan-50 text-cyan-800 border-cyan-200'}`}>
+                        <i className={`fas ${it.type === 'agency' ? 'fa-handshake' : 'fa-envelope'} text-[9px]`} />
+                        {it.type === 'agency' ? 'وكالة' : 'تواصل'}
+                      </span>
                       <h3 className="font-black text-teal-dark text-base sm:text-lg truncate">
-                        {it.agencyName}
+                        {it.type === 'agency' ? it.agencyName : it.name}
                       </h3>
                       <span className={`inline-flex items-center gap-1 text-[11px] font-bold
                                         px-2 py-0.5 rounded-full border
@@ -271,19 +295,32 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                     <p className="text-xs text-gray-500 flex items-center gap-2 flex-wrap">
-                      <span><i className="fas fa-flag text-gold me-1" />{it.country}</span>
-                      <span className="text-gray-300">•</span>
+                      {it.type === 'agency' && it.country && (
+                        <>
+                          <span><i className="fas fa-flag text-gold me-1" />{it.country}</span>
+                          <span className="text-gray-300">•</span>
+                        </>
+                      )}
+                      {it.type === 'contact' && it.subject && (
+                        <>
+                          <span><i className="fas fa-tag text-gold me-1" />{it.subject}</span>
+                          <span className="text-gray-300">•</span>
+                        </>
+                      )}
                       <span><i className="fas fa-clock text-gold me-1" />{fmtDate(it.createdAt)}</span>
                     </p>
                   </div>
                 </div>
 
                 {/* Contact grid */}
-                <div className="grid sm:grid-cols-3 gap-2 mb-4 text-sm">
-                  <div className="bg-cream/60 rounded-lg px-3 py-2">
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">الشخص المسؤول</p>
-                    <p className="text-teal-dark font-semibold truncate">{it.contactPerson}</p>
-                  </div>
+                <div className={`grid gap-2 mb-4 text-sm
+                                 ${it.type === 'agency' ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
+                  {it.type === 'agency' && (
+                    <div className="bg-cream/60 rounded-lg px-3 py-2">
+                      <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">الشخص المسؤول</p>
+                      <p className="text-teal-dark font-semibold truncate">{it.contactPerson}</p>
+                    </div>
+                  )}
                   <div className="bg-cream/60 rounded-lg px-3 py-2">
                     <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">الجوال</p>
                     <a href={`tel:${it.phone}`} dir="ltr"
@@ -299,6 +336,16 @@ export default function AdminDashboard() {
                     </a>
                   </div>
                 </div>
+
+                {/* Contact message body */}
+                {it.type === 'contact' && it.message && (
+                  <div className="bg-cyan-50/50 border border-cyan-100 rounded-lg p-3 mb-3">
+                    <p className="text-[10px] text-cyan-700 font-bold uppercase tracking-wider mb-1">
+                      <i className="fas fa-comment me-1" />الرسالة
+                    </p>
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{it.message}</p>
+                  </div>
+                )}
 
                 {/* Notes editor */}
                 {editing === it.id ? (
@@ -332,17 +379,27 @@ export default function AdminDashboard() {
 
                 {/* Actions */}
                 <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-gold/10">
-                  {it.pdfUrl ? (
-                    <a href={it.pdfUrl} target="_blank" rel="noopener noreferrer"
+                  {it.type === 'agency' && (
+                    it.pdfUrl ? (
+                      <a href={it.pdfUrl} target="_blank" rel="noopener noreferrer"
+                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold
+                                    bg-red-100 hover:bg-red-200 text-red-800 transition">
+                        <i className="fas fa-file-pdf" />تنزيل العقد
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs
+                                       bg-gray-100 text-gray-500">
+                        <i className="fas fa-file-pdf" />العقد في الإيميل
+                      </span>
+                    )
+                  )}
+                  {it.type === 'contact' && (
+                    <a href={`https://wa.me/${it.phone.replace(/\D/g,'')}`}
+                       target="_blank" rel="noopener noreferrer"
                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold
-                                  bg-red-100 hover:bg-red-200 text-red-800 transition">
-                      <i className="fas fa-file-pdf" />تنزيل العقد
+                                  bg-green-100 hover:bg-green-200 text-green-800 transition">
+                      <i className="fab fa-whatsapp" />واتساب
                     </a>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs
-                                     bg-gray-100 text-gray-500">
-                      <i className="fas fa-file-pdf" />العقد في الإيميل
-                    </span>
                   )}
 
                   <select value={it.status}

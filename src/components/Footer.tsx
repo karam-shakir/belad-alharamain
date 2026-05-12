@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { contact, social, footer, services as siteServices } from '@/content/site';
+import { contact, social, footer, services as siteServices, business } from '@/content/site';
 
 const quickLinks = [
   { href: '#about',        ar: 'من نحن',           en: 'About Us'         },
@@ -142,6 +142,31 @@ export default function Footer() {
         </div>
       </div>
 
+      {/* Business registration strip */}
+      <div className="border-t border-white/8 py-4 bg-black/15">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6
+                        flex flex-wrap items-center justify-center gap-x-5 gap-y-2
+                        text-[11px] text-white/55">
+          <span className="flex items-center gap-1.5">
+            <i className="fas fa-id-card text-gold" />
+            <span data-ar="السجل التجاري:" data-en="CR:">السجل التجاري:</span>
+            <span dir="ltr" className="font-mono">{business.cr}</span>
+          </span>
+          <span className="hidden sm:inline text-white/15">|</span>
+          <span className="flex items-center gap-1.5">
+            <i className="fas fa-receipt text-gold" />
+            <span data-ar="الرقم الضريبي:" data-en="VAT:">الرقم الضريبي:</span>
+            <span dir="ltr" className="font-mono">{business.vat}</span>
+          </span>
+          <span className="hidden sm:inline text-white/15">|</span>
+          <span className="flex items-center gap-1.5">
+            <i className="fas fa-kaaba text-gold" />
+            <span data-ar="ترخيص وزارة الحج والعمرة:" data-en="Hajj License:">ترخيص وزارة الحج والعمرة:</span>
+            <span dir="ltr" className="font-mono">{business.hajjLicense}</span>
+          </span>
+        </div>
+      </div>
+
       {/* Bottom */}
       <div className="border-t border-white/8 py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row
@@ -151,13 +176,13 @@ export default function Footer() {
           </p>
           <div className="flex items-center gap-3">
             {[
-              { ar: 'سياسة الخصوصية', en: 'Privacy Policy' },
-              { ar: 'الشروط والأحكام', en: 'Terms & Conditions' },
-              { ar: 'خريطة الموقع',   en: 'Sitemap' },
+              { href: '/privacy', ar: 'سياسة الخصوصية', en: 'Privacy Policy' },
+              { href: '/terms',   ar: 'الشروط والأحكام', en: 'Terms & Conditions' },
+              { href: '/sitemap', ar: 'خريطة الموقع',   en: 'Sitemap' },
             ].map((l, i) => (
-              <span key={i} className="flex items-center gap-3">
+              <span key={l.href} className="flex items-center gap-3">
                 {i > 0 && <span className="text-white/20">|</span>}
-                <a href="#" className="hover:text-gold-light transition-colors duration-200"
+                <a href={l.href} className="hover:text-gold-light transition-colors duration-200"
                    data-ar={l.ar} data-en={l.en}>{l.ar}</a>
               </span>
             ))}

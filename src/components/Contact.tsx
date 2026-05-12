@@ -11,12 +11,24 @@ const fmtWa = (n: string) => {
 };
 const waDisplay = fmtWa(contact.whatsapp);
 
+const waMsg = encodeURIComponent('السلام عليكم، أودّ الاستفسار عن خدمات الحج/العمرة.');
+
 const contactInfo = [
-  { icon: 'fa-location-dot', title_ar: 'العنوان',           title_en: 'Address',        value_ar: contact.address.ar, value_en: contact.address.en, ltr: false },
-  { icon: 'fa-phone',        title_ar: 'الهاتف',            title_en: 'Phone',          value_ar: contact.phone,       value_en: contact.phone,       ltr: true  },
-  { icon: 'fab fa-whatsapp', title_ar: 'واتساب',            title_en: 'WhatsApp',       value_ar: waDisplay,            value_en: waDisplay,            ltr: true  },
-  { icon: 'fa-envelope',     title_ar: 'البريد الإلكتروني', title_en: 'Email',          value_ar: contact.email,       value_en: contact.email,       ltr: true  },
-  { icon: 'fa-clock',        title_ar: 'ساعات العمل',       title_en: 'Working Hours',  value_ar: contact.hours.ar,    value_en: contact.hours.en,    ltr: false },
+  { icon: 'fa-location-dot', title_ar: 'العنوان',           title_en: 'Address',
+    value_ar: contact.address.ar, value_en: contact.address.en,
+    ltr: false, link: '' },
+  { icon: 'fa-phone',        title_ar: 'الهاتف',            title_en: 'Phone',
+    value_ar: contact.phone,      value_en: contact.phone,
+    ltr: true,  link: `tel:${contact.phone.replace(/\s+/g, '')}` },
+  { icon: 'fab fa-whatsapp', title_ar: 'واتساب',            title_en: 'WhatsApp',
+    value_ar: waDisplay,          value_en: waDisplay,
+    ltr: true,  link: `https://wa.me/${contact.whatsapp}?text=${waMsg}` },
+  { icon: 'fa-envelope',     title_ar: 'البريد الإلكتروني', title_en: 'Email',
+    value_ar: contact.email,      value_en: contact.email,
+    ltr: true,  link: `mailto:${contact.email}` },
+  { icon: 'fa-clock',        title_ar: 'ساعات العمل',       title_en: 'Working Hours',
+    value_ar: contact.hours.ar,   value_en: contact.hours.en,
+    ltr: false, link: '' },
 ];
 
 const subjects = [
@@ -120,14 +132,26 @@ export default function Contact() {
                       <i className={`${c.icon.startsWith('fab') ? c.icon : `fas ${c.icon}`}
                                      text-gold-light text-sm`} />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="text-white/55 text-xs font-semibold mb-0.5"
                          data-ar={c.title_ar} data-en={c.title_en}>{c.title_ar}</p>
-                      <p className={`text-white text-sm font-medium ${c.ltr ? 'dir-ltr' : ''}`}
-                         dir={c.ltr ? 'ltr' : undefined}
-                         data-ar={c.value_ar} data-en={c.value_en}>
-                        {c.value_ar}
-                      </p>
+                      {c.link ? (
+                        <a href={c.link}
+                           target={c.link.startsWith('http') ? '_blank' : undefined}
+                           rel={c.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+                           dir={c.ltr ? 'ltr' : undefined}
+                           className="text-white text-sm font-medium hover:text-gold-light
+                                      transition-colors duration-200 break-words"
+                           data-ar={c.value_ar} data-en={c.value_en}>
+                          {c.value_ar}
+                        </a>
+                      ) : (
+                        <p className="text-white text-sm font-medium"
+                           dir={c.ltr ? 'ltr' : undefined}
+                           data-ar={c.value_ar} data-en={c.value_en}>
+                          {c.value_ar}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}

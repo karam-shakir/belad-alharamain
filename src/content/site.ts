@@ -33,6 +33,15 @@ export const contact = {
   googleBusinessUrl: 'https://share.google/5QYB5rUC61TprQo9p',
 };
 
+/* ─────────────────────── 1.5) معلومات الشركة الرسمية ─────────────────────── */
+export const business = {
+  companyName: { ar: 'شركة بلاد الحرمين للحج والعمرة', en: 'Belad Alharamain Hajj & Umrah Co.' },
+  cr:          '7001455810',          // السجل التجاري
+  vat:         '300231121300003',     // الرقم الضريبي
+  hajjLicense: '10125',               // ترخيص وزارة الحج والعمرة
+  established: 2006,                  // سنة التأسيس (تقريبية بناءً على 20 سنة خبرة)
+};
+
 /* ─────────────────────── 2) السوشيال ميديا ─────────────────────── */
 export const social = {
   twitter:   'https://x.com/beelad_harameen',           // ضع رابط حساب X (تويتر)
