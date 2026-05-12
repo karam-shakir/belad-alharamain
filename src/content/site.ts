@@ -230,7 +230,7 @@ export const faq = [
   {
     q: { ar: 'ما الذي تشمله باقات الحج لديكم؟',
          en: 'What is included in your Hajj packages?' },
-    a: { ar: 'تشمل باقاتنا عادةً: السكن في فنادق قريبة من الحرمين، النقل المكيّف بين المشاعر المقدّسة، الإعاشة الكاملة، خدمات الإرشاد الديني، الدعم الميداني على مدار الساعة، والمخيمات المجهّزة في منى وعرفات. تختلف التفاصيل حسب نوع الباقة (عادية / VIP).',
+    a: { ar: 'تشمل باقاتنا عادةً: السكن في المشاعر المقدسة، النقل المكيّف بين المشاعر المقدّسة سواء بالمترو أو الباصات، الإعاشة الكاملة، خدمات الإرشاد الديني، الدعم الميداني على مدار الساعة، والمخيمات المجهّزة في منى وعرفات. تختلف التفاصيل حسب نوع الباقة (عادية / VIP).',
          en: 'Packages typically include: hotel accommodation near the Two Mosques, air-conditioned transport, full meals, religious guidance, 24/7 field support, and equipped camps in Mina and Arafat. Details vary by package tier.' },
   },
   {
