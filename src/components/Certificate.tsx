@@ -40,9 +40,8 @@ export default function Certificate({ name, hajjYear, verifyCode, qrDataUrl, iss
             <span className="bhc-corner bhc-corner-bl">۞</span>
             <span className="bhc-corner bhc-corner-br">۞</span>
 
-            {/* ── Row 1: bismillah + logo ── */}
+            {/* ── Row 1: logo ── */}
             <div className="bhc-top">
-              <p className="bhc-bismillah">﷽</p>
               <div className="bhc-logo-row">
                 <Image
                   src="/images/logo.png"
