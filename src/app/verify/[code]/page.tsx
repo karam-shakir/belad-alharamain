@@ -3,12 +3,68 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getPilgrimByVerifyCode } from '@/lib/pilgrims';
 
-export const metadata: Metadata = {
-  title: 'التحقق من تذكار الحج | Verify Hajj Memento',
-  robots: { index: false, follow: false },
-};
-
 export const dynamic = 'force-dynamic';
+
+/* Dynamic per-pilgrim metadata so social shares (WhatsApp, Twitter, FB, etc.)
+ * show a rich preview with the pilgrim's name and Hajj year. */
+export async function generateMetadata(
+  { params }: { params: { code: string } },
+): Promise<Metadata> {
+  const code    = params.code.toUpperCase();
+  const pilgrim = await getPilgrimByVerifyCode(code).catch(() => null);
+
+  const SITE = 'https://belad-alharamain.com';
+  const baseTitle = 'تذكار الحج المبارك — بلاد الحرمين';
+  const baseDesc  = 'تذكار رسمي معتمد من شركة بلاد الحرمين للحج والعمرة.';
+
+  if (!pilgrim) {
+    return {
+      title: `التحقق من تذكار الحج | Verify Hajj Memento`,
+      description: baseDesc,
+      robots: { index: false, follow: false },
+      openGraph: {
+        title: baseTitle,
+        description: baseDesc,
+        url: `${SITE}/verify/${code}`,
+        type: 'article',
+        locale: 'ar_SA',
+        siteName: 'بلاد الحرمين',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: baseTitle,
+        description: baseDesc,
+      },
+    };
+  }
+
+  const revoked = !!pilgrim.revokedAt;
+  const title = revoked
+    ? `تذكار ملغى — ${pilgrim.name}`
+    : `تذكار الحج المبارك — ${pilgrim.name}`;
+  const description = revoked
+    ? `هذا التذكار تمّ إلغاؤه من قِبل إدارة شركة بلاد الحرمين.`
+    : `تشرّفت شركة بلاد الحرمين بخدمة ${pilgrim.name} في أداء فريضة الحج لعام ${pilgrim.hajjYear} هـ — تقبّل الله منا ومنه.`;
+
+  return {
+    title,
+    description,
+    robots: { index: false, follow: false },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE}/verify/${code}`,
+      type: 'article',
+      locale: 'ar_SA',
+      siteName: 'بلاد الحرمين',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+  };
+}
 
 function toArabicDigits(s: string | number): string {
   return String(s).replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[Number(d)]);

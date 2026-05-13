@@ -83,17 +83,18 @@ export default function CertificateClient() {
 
   const share = async () => {
     if (state.stage !== 'found') return;
-    const url = `${window.location.origin}/verify/${state.pilgrim.verifyCode}`;
+    const url  = `${window.location.origin}/verify/${state.pilgrim.verifyCode}`;
+    const text = `الحمد لله، تمّ إتمام مناسك الحج لعام ${state.pilgrim.hajjYear} هـ — تقبّل الله منا ومنكم.\n\nتذكار الحج المبارك — شركة بلاد الحرمين 🤍`;
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'تذكار الحج المبارك',
-          text:  `الحمد لله، تمّ إتمام مناسك الحج لعام ${state.pilgrim.hajjYear}هـ — تقبّل الله منا ومنكم.`,
+          title: `تذكار الحج المبارك — ${state.pilgrim.name}`,
+          text,
           url,
         });
       } catch {}
     } else {
-      try { await navigator.clipboard.writeText(url); alert('تم نسخ رابط التحقّق.'); } catch {}
+      try { await navigator.clipboard.writeText(`${text}\n${url}`); alert('تم نسخ التذكار للحافظة. شاركوه عبر أي تطبيق.'); } catch {}
     }
   };
 
