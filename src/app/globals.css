@@ -436,11 +436,11 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: clamp(3px, 0.6vw, 7px);
+  justify-content: space-evenly;   /* distribute lines evenly, no top/bottom clipping */
+  gap: clamp(2px, 0.4vw, 6px);
   padding: 0 2%;
-  min-height: 0;           /* allow shrinking inside grid */
-  overflow: hidden;        /* clip body if content exceeds, never push footer */
+  min-height: 0;
+  overflow: hidden;
 }
 .bhc-intro-ar {
   font-size: clamp(13px, 1.6vw, 18px);
@@ -612,23 +612,23 @@ html, body {
 }
 
 /* Hand-stamped company seal — looks like ink pressed onto paper.
- * Hide automatically if /images/seal.png is missing (no broken-image icon). */
+ * Positioned in the lower-middle area, slightly toward the QR side so it
+ * doesn't overlap the date column. */
 .bhc-seal {
   position: absolute;
-  bottom: 6%;
-  inset-inline-start: 10%;       /* in RTL this is on the left side of the cert */
-  width: clamp(85px, 11vw, 150px);
+  bottom: 14%;
+  inset-inline-end: 22%;          /* RTL: 22% from the LEFT edge (above QR area) */
+  width: clamp(75px, 9.5vw, 125px);
   height: auto;
-  transform: rotate(-9deg);
-  opacity: 0.78;
-  mix-blend-mode: multiply;       /* makes ink absorb into paper */
+  transform: rotate(-12deg);
+  opacity: 0.72;
+  mix-blend-mode: multiply;
   pointer-events: none;
   z-index: 5;
-  /* graceful degrade if file missing */
+  filter: contrast(1.05);
   font-size: 0;
   color: transparent;
 }
-/* If image fails to load, alt text doesn't show because alt="" */
 .bhc-seal[src=""] { display: none; }
 
 @media print {

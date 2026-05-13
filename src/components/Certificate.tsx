@@ -94,12 +94,6 @@ export default function Certificate({ name, hajjYear, verifyCode, qrDataUrl, iss
                 </p>
               </div>
 
-              <div className="bhc-sep">
-                <span className="bhc-sep-line" />
-                <i className="fas fa-mosque bhc-sep-icon" />
-                <span className="bhc-sep-line" />
-              </div>
-
               <div className="bhc-close">
                 <p className="bhc-close-ar">
                   «تشرّفنا بخدمتكم في رحلة العمر، لتبقى ذكرى مباركة تُنير دروبكم»
