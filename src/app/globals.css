@@ -361,10 +361,11 @@ html, body {
   height: 100%;
   border: 1px solid #C4A55E;
   border-radius: 2px;
-  padding: 2% 3.5%;
+  padding: 1.6% 3.5% 2.2%;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  row-gap: 0.6%;
+  /* minmax(0, 1fr) lets body shrink so footer is always pinned inside the frame */
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  row-gap: 0.4%;
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
@@ -438,6 +439,8 @@ html, body {
   justify-content: center;
   gap: clamp(3px, 0.6vw, 7px);
   padding: 0 2%;
+  min-height: 0;           /* allow shrinking inside grid */
+  overflow: hidden;        /* clip body if content exceeds, never push footer */
 }
 .bhc-intro-ar {
   font-size: clamp(13px, 1.6vw, 18px);
@@ -590,13 +593,14 @@ html, body {
   margin: 0;
 }
 .bhc-qr {
-  width: clamp(60px, 8vw, 95px);
-  height: clamp(60px, 8vw, 95px);
-  padding: 4px;
+  width: clamp(55px, 7vw, 82px);
+  height: clamp(55px, 7vw, 82px);
+  padding: 3px;
   background: #fff;
   border: 1.5px solid #A88B4A;
   border-radius: 4px;
   box-shadow: 0 2px 6px rgba(168,139,74,0.2);
+  display: block;
 }
 .bhc-verify-code {
   font-family: 'Courier New', monospace;
