@@ -612,17 +612,16 @@ html, body {
 }
 
 /* Hand-stamped company seal — looks like ink pressed onto paper.
- * Positioned in the bottom-CENTER empty area between the QR (left) and
- * date (right) cells of the footer. This keeps it well clear of all
- * critical text (prayer, name, closing) while still visible. */
+ * Compact, fits entirely inside the footer band (between QR and date).
+ * Stays out of all body text including the italic closing line. */
 .bhc-seal {
   position: absolute;
-  bottom: 4%;
+  bottom: 1.5%;
   left: 50%;
-  transform: translateX(-50%) rotate(-8deg);
-  width: clamp(70px, 8.5vw, 110px);
+  transform: translateX(-50%) rotate(-7deg);
+  width: clamp(55px, 6.5vw, 85px);
   height: auto;
-  opacity: 0.62;
+  opacity: 0.55;
   mix-blend-mode: multiply;
   pointer-events: none;
   z-index: 5;
