@@ -443,18 +443,20 @@ html, body {
   overflow: hidden;
 }
 .bhc-intro-ar {
-  font-size: clamp(13px, 1.6vw, 18px);
+  font-size: clamp(12px, 1.4vw, 16px);
   color: #2a2a2a;
   margin: 0;
   font-weight: 500;
+  line-height: 1.4;
 }
 .bhc-intro-en {
   font-family: 'Poppins', serif;
-  font-size: clamp(10px, 1.1vw, 13px);
+  font-size: clamp(9.5px, 1vw, 12px);
   color: #7D6530;
-  letter-spacing: 2px;
-  margin: 0 0 4px;
+  letter-spacing: 1.5px;
+  margin: 0 0 2px;
   font-style: italic;
+  line-height: 1.3;
 }
 .bhc-name-frame {
   display: inline-flex;
@@ -501,21 +503,21 @@ html, body {
   margin: 2px 0 4px;
   font-style: italic;
 }
-.bhc-prayer { max-width: 85%; margin: clamp(1px, 0.3vw, 4px) 0; }
+.bhc-prayer { max-width: 88%; margin: 0; }
 .bhc-prayer-ar {
-  font-size: clamp(12px, 1.4vw, 15px);
+  font-size: clamp(11px, 1.3vw, 14px);
   color: #155E6B;
-  line-height: 1.7;
+  line-height: 1.55;
   margin: 0;
   font-weight: 500;
 }
 .bhc-prayer-en {
   font-family: 'Poppins', serif;
-  font-size: clamp(9.5px, 1.05vw, 12.5px);
+  font-size: clamp(9px, 1vw, 11.5px);
   color: #7D6530;
   font-style: italic;
-  margin: 2px 0 0;
-  line-height: 1.5;
+  margin: 1px 0 0;
+  line-height: 1.4;
 }
 .bhc-sep {
   display: flex;
@@ -531,27 +533,27 @@ html, body {
 }
 .bhc-sep-icon { color: #A88B4A; font-size: clamp(12px, 1.4vw, 16px); }
 
-.bhc-close { max-width: 90%; }
+.bhc-close { max-width: 92%; }
 .bhc-close-ar {
-  font-size: clamp(10.5px, 1.3vw, 13.5px);
+  font-size: clamp(9.5px, 1.15vw, 12.5px);
   color: #4a4a4a;
   font-style: italic;
-  line-height: 1.7;
+  line-height: 1.55;
   margin: 0;
 }
 .bhc-close-en {
   font-family: 'Poppins', serif;
-  font-size: clamp(9px, 1vw, 11.5px);
+  font-size: clamp(8px, 0.9vw, 10.5px);
   color: #7D6530;
   font-style: italic;
-  margin: 2px 0 0;
-  line-height: 1.5;
+  margin: 1px 0 0;
+  line-height: 1.4;
 }
 .bhc-team {
-  font-size: clamp(9.5px, 1.1vw, 12.5px);
+  font-size: clamp(8.5px, 1vw, 11.5px);
   color: #A88B4A;
   font-weight: 700;
-  margin: clamp(2px, 0.4vw, 5px) 0 0;
+  margin: clamp(1px, 0.3vw, 4px) 0 0;
   letter-spacing: 0.5px;
 }
 
