@@ -233,7 +233,7 @@ export default function CertificateClient() {
 
       {/* ────── Certificate display ────── */}
       {state.stage === 'found' && (
-        <div className="w-full">
+        <div className="w-full max-w-[1200px] mx-auto">
           {/* Welcome banner — hidden during print */}
           <div className="max-w-4xl mx-auto mb-6 text-center print:hidden">
             <div className="inline-flex flex-col items-center bg-white rounded-2xl
@@ -278,7 +278,7 @@ export default function CertificateClient() {
           </div>
 
           {/* Certificate */}
-          <div ref={certRef} className="cert-print-area">
+          <div ref={certRef} className="cert-print-area w-full">
             <Certificate
               name={state.pilgrim.name}
               hajjYear={state.pilgrim.hajjYear}
