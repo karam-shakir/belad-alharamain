@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Submission, SubmissionStatus } from '@/lib/submissions';
 
@@ -173,6 +174,15 @@ export default function AdminDashboard() {
             <h1 className="text-sm sm:text-base font-black leading-tight truncate">لوحة التحكم</h1>
             <p className="text-[11px] text-gold-light/80">بلاد الحرمين — الطلبات والرسائل</p>
           </div>
+          <nav className="hidden md:flex gap-1 text-xs font-bold">
+            <span className="px-3 py-1.5 rounded-lg bg-gold text-white">
+              <i className="fas fa-inbox me-1" />الطلبات
+            </span>
+            <Link href="/admin/pilgrims"
+                  className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">
+              <i className="fas fa-certificate me-1" />الشهادات
+            </Link>
+          </nav>
           <button onClick={fetchData}
                   className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
                              text-xs font-bold bg-white/10 hover:bg-white/20 transition">
@@ -183,6 +193,16 @@ export default function AdminDashboard() {
                              text-xs font-bold bg-gold hover:bg-gold-light transition">
             <i className="fas fa-right-from-bracket" /><span className="hidden sm:inline">خروج</span>
           </button>
+        </div>
+        {/* Mobile tab nav */}
+        <div className="md:hidden border-t border-white/10 px-4 sm:px-6 flex gap-1 text-xs font-bold">
+          <span className="flex-1 text-center py-2 bg-gold">
+            <i className="fas fa-inbox me-1" />الطلبات
+          </span>
+          <Link href="/admin/pilgrims"
+                className="flex-1 text-center py-2 hover:bg-white/10 transition">
+            <i className="fas fa-certificate me-1" />الشهادات
+          </Link>
         </div>
       </header>
 
