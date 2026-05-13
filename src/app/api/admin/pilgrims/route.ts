@@ -29,7 +29,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
 
   let body: { nationalId?: string; name?: string; hajjYear?: string; country?: string;
-              bulk?: { nationalId: string; name: string; hajjYear: string; country?: string }[] };
+              bulk?: { nationalId: string; name: string; hajjYear: string; country?: string }[];
+              skipExisting?: boolean };
   try { body = await req.json(); }
   catch { return NextResponse.json({ ok: false, error: 'Invalid JSON' }, { status: 400 }); }
 
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
       if (body.bulk.length > 5000) {
         return NextResponse.json({ ok: false, error: 'الحد الأقصى 5000 صف في المرّة' }, { status: 400 });
       }
-      const result = await bulkUpsertPilgrims(body.bulk);
+      const result = await bulkUpsertPilgrims(body.bulk, { skipExisting: body.skipExisting });
       return NextResponse.json({ ok: true, result });
     }
 

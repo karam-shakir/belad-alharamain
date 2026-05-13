@@ -511,10 +511,11 @@ function BulkModal({ parseCsv, onClose, onDone }: {
   onClose: () => void;
   onDone: () => void;
 }) {
-  const [rows,    setRows]    = useState<{ nationalId: string; name: string; hajjYear: string; country?: string }[]>([]);
-  const [busy,    setBusy]    = useState(false);
-  const [result,  setResult]  = useState<BulkResult | null>(null);
-  const [err,     setErr]     = useState('');
+  const [rows,         setRows]         = useState<{ nationalId: string; name: string; hajjYear: string; country?: string }[]>([]);
+  const [busy,         setBusy]         = useState(false);
+  const [result,       setResult]       = useState<BulkResult | null>(null);
+  const [err,          setErr]          = useState('');
+  const [skipExisting, setSkipExisting] = useState(true);  // default: skip duplicates
 
   const handleFile = async (f: File) => {
     setErr('');
@@ -552,7 +553,7 @@ function BulkModal({ parseCsv, onClose, onDone }: {
     try {
       const res = await fetch('/api/admin/pilgrims', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bulk: rows }),
+        body: JSON.stringify({ bulk: rows, skipExisting }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) { setErr(data?.error ?? 'فشل'); return; }
@@ -580,6 +581,36 @@ function BulkModal({ parseCsv, onClose, onDone }: {
             <>
               <div className="bg-cream/40 rounded-lg p-3 mb-3 text-sm">
                 <strong>{rows.length}</strong> صف للقراءة. الصفوف التالية معاينة:
+              </div>
+
+              {/* Duplicate handling toggle */}
+              <div className="bg-gold/5 border border-gold/20 rounded-lg p-3 mb-3">
+                <p className="text-[11px] font-bold text-teal-dark mb-2 flex items-center gap-1.5">
+                  <i className="fas fa-clone text-gold" />
+                  السلوك عند تكرار رقم الهوية:
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <label className={`flex-1 flex items-start gap-2 p-2.5 rounded-md cursor-pointer border-2 transition
+                    ${skipExisting ? 'border-gold bg-gold/5' : 'border-gray-200 bg-white hover:border-gold/40'}`}>
+                    <input type="radio" name="dup" checked={skipExisting}
+                           onChange={() => setSkipExisting(true)}
+                           className="mt-0.5 accent-gold-dark" />
+                    <span className="text-xs leading-tight">
+                      <strong className="block text-teal-dark mb-0.5">تخطّي المكرر (موصى به)</strong>
+                      <span className="text-gray-500">الحجاج الموجودون مسبقاً لن تُمسّ بياناتهم، يُضاف الجدد فقط.</span>
+                    </span>
+                  </label>
+                  <label className={`flex-1 flex items-start gap-2 p-2.5 rounded-md cursor-pointer border-2 transition
+                    ${!skipExisting ? 'border-gold bg-gold/5' : 'border-gray-200 bg-white hover:border-gold/40'}`}>
+                    <input type="radio" name="dup" checked={!skipExisting}
+                           onChange={() => setSkipExisting(false)}
+                           className="mt-0.5 accent-gold-dark" />
+                    <span className="text-xs leading-tight">
+                      <strong className="block text-teal-dark mb-0.5">تحديث المكرر</strong>
+                      <span className="text-gray-500">الحجاج الموجودون مسبقاً تُحدَّث بياناتهم بالنسخة من الملف.</span>
+                    </span>
+                  </label>
+                </div>
               </div>
               <div className="overflow-x-auto max-h-64 border border-gold/15 rounded-lg">
                 <table className="w-full text-xs">
@@ -623,7 +654,7 @@ function BulkModal({ parseCsv, onClose, onDone }: {
             <i className="fas fa-circle-check text-green-500 text-3xl mb-2" />
             <p className="font-black text-green-700">تم الرفع بنجاح</p>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-center mb-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center mb-3">
             <div className="bg-blue-50 rounded-lg p-3">
               <p className="text-2xl font-black text-blue-700">{result.added}</p>
               <p className="text-xs text-blue-600 font-bold">جديد</p>
@@ -632,9 +663,13 @@ function BulkModal({ parseCsv, onClose, onDone }: {
               <p className="text-2xl font-black text-amber-700">{result.updated}</p>
               <p className="text-xs text-amber-600 font-bold">محدّث</p>
             </div>
+            <div className="bg-purple-50 rounded-lg p-3">
+              <p className="text-2xl font-black text-purple-700">{result.duplicates ?? 0}</p>
+              <p className="text-xs text-purple-600 font-bold">مكرر</p>
+            </div>
             <div className="bg-red-50 rounded-lg p-3">
               <p className="text-2xl font-black text-red-700">{result.skipped.length}</p>
-              <p className="text-xs text-red-600 font-bold">مُتجاوز</p>
+              <p className="text-xs text-red-600 font-bold">خطأ</p>
             </div>
           </div>
           {result.skipped.length > 0 && (

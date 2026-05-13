@@ -187,13 +187,23 @@ export async function listPilgrims(limit = 1000): Promise<Pilgrim[]> {
 export interface BulkResult {
   added:     number;
   updated:   number;
+  duplicates: number;       // rows that already existed and were intentionally skipped
   skipped:   { row: number; reason: string; data?: Record<string, string> }[];
+}
+
+export interface BulkOptions {
+  /** When true (default): existing pilgrims are NOT touched, counted as duplicates.
+   *  When false: existing pilgrims are updated with the new row's data. */
+  skipExisting?: boolean;
 }
 
 export async function bulkUpsertPilgrims(
   rows: { nationalId: string; name: string; hajjYear: string; country?: string }[],
+  opts: BulkOptions = {},
 ): Promise<BulkResult> {
-  const result: BulkResult = { added: 0, updated: 0, skipped: [] };
+  const skipExisting = opts.skipExisting !== false;     // default ON
+  const result: BulkResult = { added: 0, updated: 0, duplicates: 0, skipped: [] };
+
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i];
     try {
@@ -210,6 +220,12 @@ export async function bulkUpsertPilgrims(
         continue;
       }
       const existed = await getPilgrim(r.nationalId);
+
+      if (existed && skipExisting) {
+        result.duplicates++;
+        continue;
+      }
+
       await upsertPilgrim(r);
       if (existed) result.updated++; else result.added++;
     } catch (e) {
