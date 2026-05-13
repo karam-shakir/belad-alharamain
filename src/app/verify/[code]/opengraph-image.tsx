@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { getPilgrimByVerifyCode } from '@/lib/pilgrims';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 export const alt = 'تذكار الحج المبارك — Hajj Memento';
@@ -13,32 +13,40 @@ function toArabicDigits(s: string | number): string {
 }
 
 /* ─────────────────────────────────────────────────────────────
- * Dynamic Open Graph image for /verify/[code]
- * Renders a rich social-card preview showing the pilgrim's name
- * and Hajj year when the link is shared on WhatsApp, Twitter,
- * Facebook, LinkedIn, iMessage, Telegram, etc.
+ * Dynamic OG image for /verify/[code]
+ * Renders an attractive social-card preview showing the pilgrim's
+ * name and Hajj year. Used by WhatsApp, X, LinkedIn, Facebook,
+ * Telegram, iMessage, Slack, Discord, etc.
+ *
+ * Uses static Amiri Bold (Arabic-capable) from jsDelivr.
+ * Falls back gracefully if font fetch fails.
  * ───────────────────────────────────────────────────────────── */
 export default async function Image({ params }: { params: { code: string } }) {
-  const code    = params.code.toUpperCase();
-  const pilgrim = await getPilgrimByVerifyCode(code);
+  const code = params.code.toUpperCase();
+
+  // Look up pilgrim (silently fall back to generic card if not found)
+  let pilgrim: Awaited<ReturnType<typeof getPilgrimByVerifyCode>> = null;
+  try { pilgrim = await getPilgrimByVerifyCode(code); }
+  catch { /* ignore */ }
 
   const valid    = !!pilgrim && !pilgrim.revokedAt;
   const revoked  = !!pilgrim?.revokedAt;
   const name     = pilgrim?.name     ?? 'تذكار الحج المبارك';
   const hajjYear = pilgrim?.hajjYear ?? '';
 
-  // Load Arabic-capable font (Cairo bold from Google Fonts CDN)
-  let cairoBold: ArrayBuffer | null = null;
+  // Load Amiri Bold (static TTF with Arabic support) from jsDelivr CDN.
+  // Pinned commit + jsDelivr's CDN = stable & fast from edge runtime.
+  let arabicFont: ArrayBuffer | null = null;
   try {
     const res = await fetch(
-      'https://github.com/google/fonts/raw/main/ofl/cairo/Cairo%5Bslnt%2Cwght%5D.ttf',
+      'https://cdn.jsdelivr.net/gh/aliftype/amiri@1.000/fonts/Amiri-Bold.ttf',
       { cache: 'force-cache' },
     );
-    if (res.ok) cairoBold = await res.arrayBuffer();
-  } catch { /* fall back to default font */ }
+    if (res.ok) arabicFont = await res.arrayBuffer();
+  } catch { /* will render with default font */ }
 
-  const fonts = cairoBold
-    ? [{ name: 'Cairo', data: cairoBold, weight: 700 as const, style: 'normal' as const }]
+  const fonts = arabicFont
+    ? [{ name: 'Amiri', data: arabicFont, weight: 700 as const, style: 'normal' as const }]
     : undefined;
 
   return new ImageResponse(
@@ -51,19 +59,19 @@ export default async function Image({ params }: { params: { code: string } }) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '60px 80px',
+          padding: '50px 70px',
           background:
             'linear-gradient(135deg, #FFFCF5 0%, #FAFAF7 50%, #F5EFE3 100%)',
-          fontFamily: 'Cairo, sans-serif',
+          fontFamily: 'Amiri, serif',
           position: 'relative',
         }}
       >
-        {/* Gold double frame */}
+        {/* Double gold frame */}
         <div
           style={{
             position: 'absolute',
-            inset: '24px',
-            border: '4px solid #A88B4A',
+            inset: '20px',
+            border: '5px solid #A88B4A',
             borderRadius: '8px',
             display: 'flex',
           }}
@@ -71,34 +79,33 @@ export default async function Image({ params }: { params: { code: string } }) {
         <div
           style={{
             position: 'absolute',
-            inset: '34px',
+            inset: '32px',
             border: '1.5px solid #C4A55E',
             borderRadius: '4px',
             display: 'flex',
           }}
         />
 
-        {/* Top brand band */}
+        {/* TOP: logo */}
         <div
           style={{
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
             zIndex: 1,
-            marginTop: '20px',
+            marginTop: '10px',
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={`${SITE}/images/logo.png`}
             alt=""
-            width={260}
-            height={100}
+            width={280}
+            height={108}
             style={{ objectFit: 'contain' }}
           />
         </div>
 
-        {/* Center content */}
+        {/* CENTER: title + name + year */}
         <div
           style={{
             display: 'flex',
@@ -106,7 +113,9 @@ export default async function Image({ params }: { params: { code: string } }) {
             alignItems: 'center',
             textAlign: 'center',
             zIndex: 1,
-            gap: '12px',
+            gap: '14px',
+            flex: 1,
+            justifyContent: 'center',
           }}
         >
           {revoked && (
@@ -115,64 +124,75 @@ export default async function Image({ params }: { params: { code: string } }) {
                 fontSize: 24,
                 color: '#B45309',
                 background: '#FEF3C7',
-                padding: '6px 18px',
+                padding: '6px 22px',
                 borderRadius: 999,
                 border: '2px solid #F59E0B',
-                marginBottom: 10,
+                marginBottom: 8,
                 display: 'flex',
               }}
             >
-              تذكار ملغى · Revoked
+              ❌ تذكار ملغى · Revoked
             </div>
           )}
 
           <p
             style={{
-              fontSize: 26,
+              fontSize: 28,
               color: valid ? '#15803D' : '#7D6530',
               letterSpacing: '4px',
               textTransform: 'uppercase',
               margin: 0,
               fontWeight: 700,
+              display: 'flex',
             }}
           >
-            {valid ? '✓ تذكار صحيح ومُعتمد' : 'تذكار الحج المبارك'}
+            {valid ? '✓ تذكار صحيح ومعتمد' : 'تذكار الحج المبارك'}
           </p>
 
-          <h1
+          <div
             style={{
-              fontSize: 64,
-              color: '#7D6530',
-              margin: '8px 0',
-              fontWeight: 700,
-              lineHeight: 1.1,
-              maxWidth: 1000,
-              textAlign: 'center',
-              direction: 'rtl',
-              padding: '14px 40px',
-              borderTop: '3px solid #A88B4A',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '16px 50px',
+              borderTop:    '3px solid #A88B4A',
               borderBottom: '3px solid #A88B4A',
               background:
                 'linear-gradient(to bottom, transparent, rgba(168,139,74,0.07), transparent)',
+              maxWidth: 1050,
             }}
           >
-            {name}
-          </h1>
+            <h1
+              style={{
+                fontSize: 60,
+                color: '#7D6530',
+                margin: 0,
+                fontWeight: 700,
+                lineHeight: 1.15,
+                textAlign: 'center',
+              }}
+            >
+              {name}
+            </h1>
+          </div>
 
           {hajjYear && (
             <p
               style={{
-                fontSize: 34,
+                fontSize: 36,
                 color: '#155E6B',
-                margin: '8px 0 0',
+                margin: '6px 0 0',
                 fontWeight: 700,
-                direction: 'rtl',
+                display: 'flex',
+                alignItems: 'baseline',
+                gap: '14px',
               }}
             >
-              في أداء فريضة الحج لعام
-              <span style={{ color: '#A88B4A', margin: '0 12px' }}>
-                {toArabicDigits(hajjYear)} هـ
+              <span>في أداء فريضة الحج لعام</span>
+              <span style={{ color: '#A88B4A', fontSize: 44 }}>
+                {toArabicDigits(hajjYear)}
               </span>
+              <span>هـ</span>
             </p>
           )}
 
@@ -182,8 +202,8 @@ export default async function Image({ params }: { params: { code: string } }) {
                 fontSize: 22,
                 color: '#7D6530',
                 margin: 0,
-                fontStyle: 'italic',
-                letterSpacing: '2px',
+                letterSpacing: '3px',
+                display: 'flex',
               }}
             >
               HAJJ {hajjYear} AH · BELAD ALHARAMAIN
@@ -191,7 +211,7 @@ export default async function Image({ params }: { params: { code: string } }) {
           )}
         </div>
 
-        {/* Bottom band */}
+        {/* BOTTOM: company + code */}
         <div
           style={{
             display: 'flex',
@@ -199,16 +219,15 @@ export default async function Image({ params }: { params: { code: string } }) {
             alignItems: 'center',
             width: '100%',
             zIndex: 1,
-            marginBottom: '10px',
-            fontSize: 18,
+            marginBottom: '6px',
+            fontSize: 20,
             color: '#7D6530',
-            direction: 'rtl',
           }}
         >
-          <p style={{ margin: 0, fontWeight: 700 }}>
+          <p style={{ margin: 0, fontWeight: 700, display: 'flex' }}>
             شركة بلاد الحرمين للحج والعمرة
           </p>
-          <p style={{ margin: 0, letterSpacing: '2px', fontFamily: 'monospace' }}>
+          <p style={{ margin: 0, letterSpacing: '3px', fontFamily: 'monospace', display: 'flex' }}>
             {code}
           </p>
         </div>
