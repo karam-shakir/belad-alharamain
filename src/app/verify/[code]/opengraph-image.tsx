@@ -145,7 +145,7 @@ export default async function Image({ params }: { params: { code: string } }) {
               letterSpacing: 6,
               display: 'flex',
             }}>
-              تذكار الحج المبارك
+              A BLESSED PILGRIMAGE
             </p>
           </div>
 
