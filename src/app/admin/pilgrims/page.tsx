@@ -19,8 +19,23 @@ function csvEscape(v: string | number) {
   return /[,"\n]/.test(s) ? `"${s}"` : s;
 }
 
-/* Minimal CSV parser supporting quoted fields and commas inside quotes. */
+/* Auto-detect delimiter from the first line (handles , ; \t). */
+function detectDelimiter(text: string): string {
+  const firstLine = text.split(/\r?\n/, 1)[0] || '';
+  const counts: Record<string, number> = {
+    ',':  (firstLine.match(/,/g)  || []).length,
+    ';':  (firstLine.match(/;/g)  || []).length,
+    '\t': (firstLine.match(/\t/g) || []).length,
+  };
+  // Pick the delimiter with the highest count, default to comma
+  return Object.entries(counts).reduce((best, [d, c]) => c > counts[best] ? d : best, ',');
+}
+
+/* Minimal CSV parser with delimiter auto-detection + quoted-field support. */
 function parseCsv(text: string): string[][] {
+  // Strip UTF-8 BOM if present
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  const delim = detectDelimiter(text);
   const rows: string[][] = [];
   let row: string[] = [];
   let field = '';
@@ -34,7 +49,7 @@ function parseCsv(text: string): string[][] {
       } else field += c;
     } else {
       if (c === '"') inQuotes = true;
-      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === delim) { row.push(field); field = ''; }
       else if (c === '\n' || c === '\r') {
         if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
         field = ''; row = [];
