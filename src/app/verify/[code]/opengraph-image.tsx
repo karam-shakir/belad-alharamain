@@ -1,23 +1,17 @@
 import { ImageResponse } from 'next/og';
 import { getPilgrimByVerifyCode } from '@/lib/pilgrims';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 export const alt = 'Belad Alharamain — Hajj Memento';
 
 const SITE = 'https://belad-alharamain.com';
 
-/* ─────────────────────────────────────────────────────────────
- * Dynamic OG image for /verify/[code]
- *
- * NOTE on Arabic: Satori (the engine behind ImageResponse) does NOT
- * fully apply Arabic glyph shaping — Arabic letters render disconnected.
- * Therefore the IMAGE itself uses English + decorative branding only.
- * The Arabic pilgrim name + Hajj year are exposed via the page's
- * `og:title` and `og:description` metadata (rendered as TEXT by social
- * platforms — WhatsApp, X, LinkedIn, Facebook — and display correctly).
- * ───────────────────────────────────────────────────────────── */
+/* Dynamic OG image — ASCII/Latin only for maximum Satori compatibility.
+ * Arabic content (pilgrim name, descriptions) is delivered via
+ * og:title and og:description metadata which social platforms render
+ * as native text — Arabic shaping works correctly there. */
 export default async function Image({ params }: { params: { code: string } }) {
   const code = params.code.toUpperCase();
 
@@ -27,6 +21,13 @@ export default async function Image({ params }: { params: { code: string } }) {
   const valid    = !!pilgrim && !pilgrim.revokedAt;
   const revoked  = !!pilgrim?.revokedAt;
   const hajjYear = pilgrim?.hajjYear ?? '';
+
+  const statusLabel = revoked ? 'REVOKED' : valid ? 'VERIFIED' : 'HAJJ MEMENTO';
+  const statusColor = revoked
+    ? { bg: '#FEF3C7', border: '#F59E0B', fg: '#B45309' }
+    : valid
+      ? { bg: '#D1FAE5', border: '#10B981', fg: '#065F46' }
+      : { bg: '#FAFAF7', border: '#A88B4A', fg: '#7D6530' };
 
   return new ImageResponse(
     (
@@ -46,20 +47,14 @@ export default async function Image({ params }: { params: { code: string } }) {
         }}
       >
         {/* Double gold frame */}
-        <div style={{ position: 'absolute', inset: '22px', border: '5px solid #A88B4A',  borderRadius: '8px', display: 'flex' }} />
-        <div style={{ position: 'absolute', inset: '34px', border: '1.5px solid #C4A55E', borderRadius: '4px', display: 'flex' }} />
-
-        {/* Decorative corner stars */}
-        {[
-          { top: 36, left: 36 }, { top: 36, right: 36 },
-          { bottom: 36, left: 36 }, { bottom: 36, right: 36 },
-        ].map((pos, i) => (
-          <div key={i} style={{
-            position: 'absolute', ...pos, width: 30, height: 30, display: 'flex',
-            alignItems: 'center', justifyContent: 'center',
-            color: '#C4A55E', fontSize: 28,
-          }}>✦</div>
-        ))}
+        <div style={{
+          position: 'absolute', top: 22, left: 22, right: 22, bottom: 22,
+          border: '5px solid #A88B4A', borderRadius: 8, display: 'flex',
+        }} />
+        <div style={{
+          position: 'absolute', top: 34, left: 34, right: 34, bottom: 34,
+          border: '1.5px solid #C4A55E', borderRadius: 4, display: 'flex',
+        }} />
 
         {/* TOP: logo */}
         <div style={{ display: 'flex', alignItems: 'center', zIndex: 1, marginTop: 10 }}>
@@ -67,8 +62,8 @@ export default async function Image({ params }: { params: { code: string } }) {
           <img
             src={`${SITE}/images/logo.png`}
             alt=""
-            width={320}
-            height={120}
+            width={300}
+            height={114}
             style={{ objectFit: 'contain' }}
           />
         </div>
@@ -78,50 +73,32 @@ export default async function Image({ params }: { params: { code: string } }) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          textAlign: 'center',
           zIndex: 1,
           flex: 1,
           justifyContent: 'center',
-          gap: 14,
+          gap: 20,
         }}>
-          {revoked ? (
-            <div style={{
-              display: 'flex',
-              padding: '8px 26px',
-              background: '#FEF3C7',
-              border: '2px solid #F59E0B',
-              color: '#B45309',
-              borderRadius: 999,
-              fontSize: 26,
-              fontWeight: 700,
-              letterSpacing: 2,
-              marginBottom: 12,
-            }}>
-              REVOKED
-            </div>
-          ) : valid && (
-            <div style={{
-              display: 'flex',
-              padding: '8px 28px',
-              background: '#D1FAE5',
-              border: '2px solid #10B981',
-              color: '#065F46',
-              borderRadius: 999,
-              fontSize: 26,
-              fontWeight: 700,
-              letterSpacing: 3,
-              marginBottom: 12,
-            }}>
-              ✓ VERIFIED
-            </div>
-          )}
+          {/* Status pill */}
+          <div style={{
+            display: 'flex',
+            padding: '10px 30px',
+            background: statusColor.bg,
+            border: `2px solid ${statusColor.border}`,
+            color: statusColor.fg,
+            borderRadius: 999,
+            fontSize: 26,
+            fontWeight: 700,
+            letterSpacing: 3,
+          }}>
+            {statusLabel}
+          </div>
 
-          {/* Big bilingual title — uses serif font (works for Latin) */}
+          {/* Big title */}
           <div style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: '24px 60px',
+            padding: '24px 70px',
             borderTop:    '4px solid #A88B4A',
             borderBottom: '4px solid #A88B4A',
             background:
@@ -129,17 +106,17 @@ export default async function Image({ params }: { params: { code: string } }) {
           }}>
             <p style={{
               margin: 0,
-              fontSize: 64,
+              fontSize: 68,
               fontWeight: 700,
               color: '#7D6530',
-              letterSpacing: 1,
+              letterSpacing: 2,
               display: 'flex',
               lineHeight: 1.1,
             }}>
               HAJJ MEMENTO
             </p>
             <p style={{
-              margin: '6px 0 0',
+              margin: '8px 0 0',
               fontSize: 22,
               color: '#A88B4A',
               letterSpacing: 6,
@@ -152,10 +129,10 @@ export default async function Image({ params }: { params: { code: string } }) {
           {hajjYear && (
             <p style={{
               margin: 0,
-              fontSize: 38,
+              fontSize: 40,
               color: '#155E6B',
               fontWeight: 700,
-              letterSpacing: 4,
+              letterSpacing: 5,
               display: 'flex',
             }}>
               HAJJ {hajjYear} AH
@@ -166,26 +143,26 @@ export default async function Image({ params }: { params: { code: string } }) {
             margin: 0,
             fontSize: 22,
             color: '#7D6530',
-            letterSpacing: 3,
+            letterSpacing: 4,
             display: 'flex',
           }}>
-            BELAD ALHARAMAIN · belad-alharamain.com
+            BELAD ALHARAMAIN
           </p>
         </div>
 
-        {/* BOTTOM: code */}
+        {/* BOTTOM */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           width: '100%',
           zIndex: 1,
-          marginBottom: 8,
+          marginBottom: 6,
           fontSize: 18,
           color: '#7D6530',
         }}>
           <p style={{ margin: 0, fontWeight: 700, letterSpacing: 2, display: 'flex' }}>
-            HAJJ &amp; UMRAH SERVICES
+            HAJJ AND UMRAH SERVICES
           </p>
           <p style={{
             margin: 0,
