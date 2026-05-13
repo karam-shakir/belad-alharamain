@@ -607,6 +607,26 @@ html, body {
   font-weight: 700;
 }
 
+/* Hand-stamped company seal — looks like ink pressed onto paper.
+ * Hide automatically if /images/seal.png is missing (no broken-image icon). */
+.bhc-seal {
+  position: absolute;
+  bottom: 6%;
+  inset-inline-start: 10%;       /* in RTL this is on the left side of the cert */
+  width: clamp(85px, 11vw, 150px);
+  height: auto;
+  transform: rotate(-9deg);
+  opacity: 0.78;
+  mix-blend-mode: multiply;       /* makes ink absorb into paper */
+  pointer-events: none;
+  z-index: 5;
+  /* graceful degrade if file missing */
+  font-size: 0;
+  color: transparent;
+}
+/* If image fails to load, alt text doesn't show because alt="" */
+.bhc-seal[src=""] { display: none; }
+
 @media print {
   @page { size: A4 landscape; margin: 0; }
   .bhc-wrap { padding: 0; }
@@ -617,6 +637,11 @@ html, body {
     box-shadow: none;
     border-radius: 0;
     page-break-inside: avoid;
+  }
+  /* Preserve seal blend-mode on print (some browsers strip it) */
+  .bhc-seal {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
 
