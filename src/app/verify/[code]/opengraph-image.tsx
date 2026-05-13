@@ -44,17 +44,12 @@ export default async function Image({ params }: { params: { code: string } }) {
             'linear-gradient(135deg, #FFFCF5 0%, #FAFAF7 50%, #F5EFE3 100%)',
           fontFamily: 'serif',
           position: 'relative',
+          boxSizing: 'border-box',
+          border: '8px solid #A88B4A',
+          outline: '2px solid #C4A55E',
+          outlineOffset: '-14px',
         }}
       >
-        {/* Double gold frame */}
-        <div style={{
-          position: 'absolute', top: 22, left: 22, right: 22, bottom: 22,
-          border: '5px solid #A88B4A', borderRadius: 8, display: 'flex',
-        }} />
-        <div style={{
-          position: 'absolute', top: 34, left: 34, right: 34, bottom: 34,
-          border: '1.5px solid #C4A55E', borderRadius: 4, display: 'flex',
-        }} />
 
         {/* TOP: logo */}
         <div style={{ display: 'flex', alignItems: 'center', zIndex: 1, marginTop: 10 }}>
