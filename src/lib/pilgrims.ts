@@ -95,12 +95,36 @@ export async function upsertPilgrim(
   return pilgrim;
 }
 
+/* Coerce a raw KV record into a strict Pilgrim shape. KV may return strings,
+ * numbers, or missing fields depending on history — this guarantees safe types. */
+function normalize(raw: Record<string, unknown> | null | undefined): Pilgrim | null {
+  if (!raw || !raw.nationalId) return null;
+  const num = (v: unknown): number => {
+    if (typeof v === 'number') return v;
+    if (typeof v === 'string' && v.trim() !== '') { const n = Number(v); return Number.isFinite(n) ? n : 0; }
+    return 0;
+  };
+  const str = (v: unknown): string => (v == null ? '' : String(v));
+  return {
+    nationalId:   str(raw.nationalId),
+    name:         str(raw.name),
+    hajjYear:     str(raw.hajjYear),
+    country:      raw.country      ? str(raw.country)      : undefined,
+    verifyCode:   str(raw.verifyCode),
+    revokedAt:    raw.revokedAt    ? (num(raw.revokedAt)    || undefined) : undefined,
+    revokeReason: raw.revokeReason ? str(raw.revokeReason) : undefined,
+    viewCount:    num(raw.viewCount),
+    lastViewedAt: raw.lastViewedAt ? (num(raw.lastViewedAt) || undefined) : undefined,
+    createdAt:    num(raw.createdAt),
+    updatedAt:    num(raw.updatedAt),
+  };
+}
+
 /* ── Lookup by national ID ─── */
 export async function getPilgrim(nationalId: string): Promise<Pilgrim | null> {
   if (!isValidNationalId(nationalId)) return null;
   const data = await kv.hgetall<Record<string, unknown>>(itemKey(nationalId));
-  if (!data || !data.nationalId) return null;
-  return data as unknown as Pilgrim;
+  return normalize(data);
 }
 
 /* ── Lookup by verify code (QR scan) ─── */
@@ -179,8 +203,8 @@ export async function listPilgrims(limit = 1000): Promise<Pilgrim[]> {
   ids.forEach(id => pipe.hgetall(itemKey(id)));
   const results = await pipe.exec<Record<string, unknown>[]>();
   return results
-    .filter((s): s is Record<string, unknown> => !!s && !!s.nationalId)
-    .map(s => s as unknown as Pilgrim);
+    .map(r => normalize(r))
+    .filter((p): p is Pilgrim => p !== null);
 }
 
 /* ── Bulk upsert with validation result ─── */

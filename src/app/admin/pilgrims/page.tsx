@@ -102,7 +102,10 @@ export default function AdminPilgrimsPage() {
       if (statusF === 'active'  && p.revokedAt) return false;
       if (statusF === 'revoked' && !p.revokedAt) return false;
       if (!q) return true;
-      return p.name.toLowerCase().includes(q) || p.nationalId.includes(q) || (p.country ?? '').toLowerCase().includes(q);
+      const name    = String(p.name        ?? '').toLowerCase();
+      const nid     = String(p.nationalId  ?? '');
+      const country = String(p.country     ?? '').toLowerCase();
+      return name.includes(q) || nid.includes(q) || country.includes(q);
     });
   }, [items, query, yearF, statusF]);
 
