@@ -298,14 +298,15 @@ export default function CertificateClient() {
   );
 }
 
-/* ── Sub-component: "حاج غير موجود" with bug-report form ── */
+/* ── Sub-component shown when entered ID is NOT in our pilgrim list ── */
 function NotFoundForm({ enteredId, onCancel }: { enteredId: string; onCancel: () => void }) {
-  const [name,    setName]    = useState('');
-  const [phone,   setPhone]   = useState('');
-  const [note,    setNote]    = useState('');
-  const [loading, setLoading] = useState(false);
-  const [done,    setDone]    = useState(false);
-  const [error,   setError]   = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [name,     setName]     = useState('');
+  const [phone,    setPhone]    = useState('');
+  const [note,     setNote]     = useState('');
+  const [loading,  setLoading]  = useState(false);
+  const [done,     setDone]     = useState(false);
+  const [error,    setError]    = useState('');
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -337,9 +338,9 @@ function NotFoundForm({ enteredId, onCancel }: { enteredId: string; onCancel: ()
         <div className="inline-flex w-16 h-16 rounded-full bg-green-50 items-center justify-center mb-4">
           <i className="fas fa-circle-check text-green-500 text-2xl" />
         </div>
-        <h3 className="font-black text-teal-dark mb-2">تم استلام البلاغ</h3>
+        <h3 className="font-black text-teal-dark mb-2">تم استلام بلاغكم</h3>
         <p className="text-sm text-gray-500 mb-5">
-          سيتواصل معكم فريقنا للتحقق من بياناتكم قريباً.
+          سيتواصل معكم فريقنا للتحقّق من بياناتكم خلال أقرب وقت.
         </p>
         <button onClick={onCancel}
                 className="inline-flex items-center gap-2 bg-gold hover:bg-gold-light
@@ -352,52 +353,100 @@ function NotFoundForm({ enteredId, onCancel }: { enteredId: string; onCancel: ()
 
   return (
     <div>
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-sm
-                      text-amber-900 flex items-start gap-2">
-        <i className="fas fa-circle-info mt-0.5 text-amber-600" />
-        <div>
-          <p className="font-bold">رقم الهوية غير موجود في قائمتنا.</p>
-          <p className="text-xs mt-1">إن كنت من حجاجنا، عبّئ النموذج وسنتواصل معك للتحقق.</p>
+      {/* ── Clear, prominent "not registered" message ── */}
+      <div className="text-center mb-5">
+        <div className="inline-flex w-16 h-16 rounded-full bg-amber-50 items-center justify-center mb-3">
+          <i className="fas fa-circle-info text-amber-500 text-2xl" />
         </div>
+        <h3 className="text-lg sm:text-xl font-black text-teal-dark mb-2 leading-snug">
+          عذراً، رقم الهوية غير مسجّل في قائمتنا
+        </h3>
+        <p className="text-sm text-gray-600 leading-relaxed">
+          هذا الرقم غير مدرج ضمن حجاج <strong>شركة بلاد الحرمين</strong>
+          <br className="hidden sm:block" /> لهذا الموسم.
+        </p>
+        <p className="text-xs text-gray-400 mt-2 font-mono" dir="ltr">{enteredId}</p>
       </div>
 
-      <form onSubmit={submit} className="space-y-3" noValidate>
-        <input type="text" value={enteredId} disabled dir="ltr"
-               className="form-input text-center text-sm tracking-widest font-mono bg-gray-100" />
-
-        <input type="text" placeholder="الاسم الكامل" value={name} maxLength={200}
-               onChange={e => setName(e.target.value)}
-               className="form-input" />
-
-        <input type="tel" placeholder="رقم الجوال للتواصل" value={phone} maxLength={20}
-               onChange={e => setPhone(e.target.value)} dir="ltr"
-               className="form-input" />
-
-        <textarea placeholder="ملاحظة (اختياري)" rows={2} value={note} maxLength={500}
-                  onChange={e => setNote(e.target.value)}
-                  className="form-input resize-none" />
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg p-2">
-            <i className="fas fa-circle-exclamation me-1" />{error}
+      {/* ── Two actions: contact OR open report form ── */}
+      {!showForm ? (
+        <>
+          <div className="bg-cream/60 border border-gold/20 rounded-xl p-4 mb-4 text-sm
+                          text-gray-700 leading-relaxed">
+            <p className="font-bold text-teal-dark mb-2">
+              <i className="fas fa-question-circle text-gold me-1" />
+              تعتقد أن هذا خطأ؟
+            </p>
+            <p className="text-xs">
+              إن كنت من حجاج بلاد الحرمين لهذا الموسم وتأكّدت من رقم الهوية،
+              يمكنك التواصل معنا مباشرة أو إرسال بلاغ سيُراجَع من الإدارة.
+            </p>
           </div>
-        )}
 
-        <div className="flex gap-2">
-          <button type="submit" disabled={loading}
-                  className="flex-1 flex items-center justify-center gap-2 bg-gold hover:bg-gold-light
-                             disabled:bg-gold/40 text-white text-sm font-bold py-2.5 rounded-lg transition">
-            {loading
-              ? <><i className="fas fa-spinner fa-spin" />جاري الإرسال...</>
-              : <><i className="fas fa-paper-plane" />إرسال البلاغ</>}
+          <div className="flex flex-col sm:flex-row gap-2">
+            <a href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
+              `السلام عليكم، أحاول استخراج شهادة الحج لرقم هوية ${enteredId} لكن لم يُعرف. أرجو المساعدة.`,
+            )}`} target="_blank" rel="noopener noreferrer"
+               className="flex-1 inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700
+                          text-white text-sm font-bold px-4 py-3 rounded-xl transition shadow-sm">
+              <i className="fab fa-whatsapp" />تواصل عبر واتساب
+            </a>
+            <button onClick={() => setShowForm(true)}
+                    className="flex-1 inline-flex items-center justify-center gap-2 bg-white
+                               border-2 border-gold/40 hover:border-gold text-teal-dark hover:text-gold
+                               text-sm font-bold px-4 py-3 rounded-xl transition">
+              <i className="fas fa-paper-plane" />إرسال بلاغ
+            </button>
+          </div>
+
+          <button onClick={onCancel}
+                  className="w-full mt-2 text-xs text-gray-400 hover:text-teal py-2 transition">
+            <i className="fas fa-arrow-rotate-left me-1" />رجوع للبحث برقم آخر
           </button>
-          <button type="button" onClick={onCancel}
-                  className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700
-                             text-sm font-bold rounded-lg transition">
-            رجوع
-          </button>
-        </div>
-      </form>
+        </>
+      ) : (
+        <form onSubmit={submit} className="space-y-3" noValidate>
+          <p className="text-xs text-gray-500 mb-2 text-center">
+            عبّئ بياناتك وسيتواصل معك فريقنا للتحقّق.
+          </p>
+
+          <input type="text" value={enteredId} disabled dir="ltr"
+                 className="form-input text-center text-sm tracking-widest font-mono bg-gray-100" />
+
+          <input type="text" placeholder="الاسم الكامل" value={name} maxLength={200}
+                 onChange={e => setName(e.target.value)}
+                 className="form-input" />
+
+          <input type="tel" placeholder="رقم الجوال للتواصل" value={phone} maxLength={20}
+                 onChange={e => setPhone(e.target.value)} dir="ltr"
+                 className="form-input" />
+
+          <textarea placeholder="ملاحظة (اختياري)" rows={2} value={note} maxLength={500}
+                    onChange={e => setNote(e.target.value)}
+                    className="form-input resize-none" />
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg p-2">
+              <i className="fas fa-circle-exclamation me-1" />{error}
+            </div>
+          )}
+
+          <div className="flex gap-2">
+            <button type="submit" disabled={loading}
+                    className="flex-1 flex items-center justify-center gap-2 bg-gold hover:bg-gold-light
+                               disabled:bg-gold/40 text-white text-sm font-bold py-2.5 rounded-lg transition">
+              {loading
+                ? <><i className="fas fa-spinner fa-spin" />جاري الإرسال...</>
+                : <><i className="fas fa-paper-plane" />إرسال البلاغ</>}
+            </button>
+            <button type="button" onClick={() => setShowForm(false)}
+                    className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700
+                               text-sm font-bold rounded-lg transition">
+              رجوع
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }
