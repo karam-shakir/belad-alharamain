@@ -34,12 +34,6 @@ export default function Certificate({ name, hajjYear, verifyCode, qrDataUrl, iss
         <div className="bhc-outer">
           <div className="bhc-inner">
 
-            {/* Corner ornaments */}
-            <span className="bhc-corner bhc-corner-tl">۞</span>
-            <span className="bhc-corner bhc-corner-tr">۞</span>
-            <span className="bhc-corner bhc-corner-bl">۞</span>
-            <span className="bhc-corner bhc-corner-br">۞</span>
-
             {/* ── Row 1: logo ── */}
             <div className="bhc-top">
               <div className="bhc-logo-row">
@@ -60,7 +54,7 @@ export default function Certificate({ name, hajjYear, verifyCode, qrDataUrl, iss
               <p className="bhc-title-en">HAJJ COMPLETION CERTIFICATE</p>
               <div className="bhc-divider">
                 <span className="bhc-divider-line" />
-                <span className="bhc-divider-mark">۞</span>
+                <span className="bhc-divider-mark">✦</span>
                 <span className="bhc-divider-line" />
               </div>
             </div>
