@@ -10,7 +10,7 @@ export async function GET(_req: Request, { params }: { params: { code: string } 
   const p = await getPilgrimByVerifyCode(code);
 
   if (!p) {
-    return NextResponse.json({ ok: false, valid: false, error: 'الشهادة غير موجودة.' }, { status: 404 });
+    return NextResponse.json({ ok: false, valid: false, error: 'التذكار غير موجود.' }, { status: 404 });
   }
 
   if (p.revokedAt) {

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getPilgrimByVerifyCode } from '@/lib/pilgrims';
 
 export const metadata: Metadata = {
-  title: 'التحقق من شهادة الحج | Verify Certificate',
+  title: 'التحقق من تذكار الحج | Verify Hajj Memento',
   robots: { index: false, follow: false },
 };
 
@@ -40,11 +40,11 @@ export default async function VerifyPage({ params }: PageProps) {
               <div className="inline-flex w-20 h-20 rounded-full bg-red-50 items-center justify-center mb-5">
                 <i className="fas fa-circle-xmark text-red-500 text-4xl" />
               </div>
-              <h1 className="text-xl font-black text-red-700 mb-2">شهادة غير صحيحة</h1>
+              <h1 className="text-xl font-black text-red-700 mb-2">تذكار غير صحيح</h1>
               <p className="text-gray-500 text-sm leading-relaxed mb-1">
-                لا توجد شهادة بهذا الرمز في سجلّاتنا.
+                لا يوجد تذكار بهذا الرمز في سجلّاتنا.
               </p>
-              <p className="text-gray-400 text-xs mb-6">Invalid certificate code.</p>
+              <p className="text-gray-400 text-xs mb-6">Invalid memento code.</p>
               <p className="font-mono text-xs text-gray-400 bg-gray-50 inline-block px-3 py-1 rounded">
                 {code}
               </p>
@@ -54,11 +54,11 @@ export default async function VerifyPage({ params }: PageProps) {
               <div className="inline-flex w-20 h-20 rounded-full bg-amber-50 items-center justify-center mb-5">
                 <i className="fas fa-ban text-amber-500 text-4xl" />
               </div>
-              <h1 className="text-xl font-black text-amber-700 mb-2">شهادة ملغاة</h1>
+              <h1 className="text-xl font-black text-amber-700 mb-2">تذكار ملغى</h1>
               <p className="text-gray-500 text-sm leading-relaxed mb-1">
-                هذه الشهادة كانت مُصدرة بالاسم التالي ثم تمّ إلغاؤها.
+                هذا التذكار كان مُصدراً بالاسم التالي ثم تمّ إلغاؤه.
               </p>
-              <p className="text-gray-400 text-xs mb-5">Revoked certificate.</p>
+              <p className="text-gray-400 text-xs mb-5">Revoked memento.</p>
               <div className="bg-gray-50 rounded-xl p-4 mb-3 text-start">
                 <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">الاسم</p>
                 <p className="font-black text-teal-dark mb-3">{pilgrim.name}</p>
@@ -77,7 +77,7 @@ export default async function VerifyPage({ params }: PageProps) {
                               items-center justify-center mb-5 shadow-lg">
                 <i className="fas fa-circle-check text-white text-4xl" />
               </div>
-              <h1 className="text-xl font-black text-green-700 mb-1">شهادة صحيحة ومُعتمدة</h1>
+              <h1 className="text-xl font-black text-green-700 mb-1">تذكار صحيح ومُعتمد</h1>
               <p className="text-gray-400 text-xs mb-6">Certified by Belad Alharamain</p>
 
               <div className="bg-gradient-to-br from-cream to-cream-dark rounded-2xl
@@ -112,7 +112,7 @@ export default async function VerifyPage({ params }: PageProps) {
 
               <p className="text-xs text-gray-500 leading-relaxed">
                 <i className="fas fa-shield-halved text-gold me-1" />
-                هذه الشهادة صادرة رسمياً من شركة بلاد الحرمين للحج والعمرة.
+                هذا التذكار صادر رسمياً من شركة بلاد الحرمين للحج والعمرة.
               </p>
               <p className="text-[10px] text-gray-400 mt-1 font-mono" dir="ltr">
                 Verification code: {code}

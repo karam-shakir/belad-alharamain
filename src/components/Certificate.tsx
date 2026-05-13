@@ -50,8 +50,8 @@ export default function Certificate({ name, hajjYear, verifyCode, qrDataUrl, iss
 
             {/* ── Row 2: titles + divider ── */}
             <div className="bhc-title">
-              <h1 className="bhc-title-ar">شهادة إتمام مناسك الحج</h1>
-              <p className="bhc-title-en">HAJJ COMPLETION CERTIFICATE</p>
+              <h1 className="bhc-title-ar">تذكار الحج المبارك</h1>
+              <p className="bhc-title-en">A MEMENTO OF THE BLESSED HAJJ</p>
               <div className="bhc-divider">
                 <span className="bhc-divider-line" />
                 <span className="bhc-divider-mark">✦</span>

@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
   if (p.revokedAt) {
     return NextResponse.json(
-      { ok: false, revoked: true, error: 'هذه الشهادة ملغاة.', reason: p.revokeReason ?? '' },
+      { ok: false, revoked: true, error: 'هذا التذكار ملغى.', reason: p.revokeReason ?? '' },
       { status: 410 },
     );
   }

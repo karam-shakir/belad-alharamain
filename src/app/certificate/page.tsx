@@ -2,12 +2,12 @@ import type { Metadata } from 'next';
 import CertificateClient from './CertificateClient';
 
 export const metadata: Metadata = {
-  title: 'شهادة إتمام الحج | Hajj Certificate',
-  description: 'احصل على شهادة إتمام مناسك الحج من شركة بلاد الحرمين بإدخال رقم الهوية.',
+  title: 'تذكار الحج المبارك | Hajj Memento',
+  description: 'احصل على تذكار الحج المبارك من شركة بلاد الحرمين بإدخال رقم الهوية.',
   alternates: { canonical: 'https://belad-alharamain.com/certificate' },
   openGraph: {
-    title: 'شهادة إتمام الحج — بلاد الحرمين',
-    description: 'احصل على شهادتك الإلكترونية باسمك واستخرجها كملف PDF.',
+    title: 'تذكار الحج المبارك — بلاد الحرمين',
+    description: 'احصل على تذكاركم الإلكتروني باسمكم واستخرجوه كملف PDF.',
     url: 'https://belad-alharamain.com/certificate',
     type: 'website',
     locale: 'ar_SA',

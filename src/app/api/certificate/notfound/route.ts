@@ -39,17 +39,17 @@ export async function POST(req: Request) {
   }
 
   const html = wrapEmail(
-    '⚠️ بلاغ: حاج غير موجود في قائمة الشهادات',
+    '⚠️ بلاغ: حاج غير موجود في قائمة التذاكير',
     `
     <p style="margin:0 0 16px;padding:12px;background:#FEF3C7;border-right:4px solid #F59E0B;border-radius:6px;font-size:13px;color:#92400E;">
-      حاج لم يجد بياناته في صفحة الشهادات. يرجى التحقق من القائمة وإضافته إن كان مستحقاً.
+      حاج لم يجد بياناته في صفحة التذكار. يرجى التحقق من القائمة وإضافته إن كان مستحقاً.
     </p>
     ${row('الاسم كما ذكره', name)}
     ${row('رقم الهوية', nationalId, { ltr: true })}
     ${row('رقم الجوال', phone, { ltr: true })}
     ${note ? row('ملاحظة', note) : ''}
     <p style="margin-top:18px;font-size:12px;color:#9B8B66;">
-      مصدر البلاغ: صفحة <a href="https://belad-alharamain.com/certificate" style="color:#A88B4A;">الشهادة الإلكترونية</a><br/>
+      مصدر البلاغ: صفحة <a href="https://belad-alharamain.com/certificate" style="color:#A88B4A;">تذكار الحج الإلكتروني</a><br/>
       IP: ${esc(ip)} — ${new Date().toLocaleString('ar-SA')}
     </p>
     `,

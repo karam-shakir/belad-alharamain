@@ -180,7 +180,7 @@ export default function AdminDashboard() {
             </span>
             <Link href="/admin/pilgrims"
                   className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">
-              <i className="fas fa-certificate me-1" />الشهادات
+              <i className="fas fa-certificate me-1" />التذاكير
             </Link>
           </nav>
           <button onClick={fetchData}
@@ -201,7 +201,7 @@ export default function AdminDashboard() {
           </span>
           <Link href="/admin/pilgrims"
                 className="flex-1 text-center py-2 hover:bg-white/10 transition">
-            <i className="fas fa-certificate me-1" />الشهادات
+            <i className="fas fa-certificate me-1" />التذاكير
           </Link>
         </div>
       </header>

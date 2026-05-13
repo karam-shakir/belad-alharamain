@@ -143,14 +143,14 @@ export default function AdminPilgrimsPage() {
 
   const toggleRevoke = async (p: Pilgrim) => {
     if (p.revokedAt) {
-      if (!confirm('إعادة تفعيل هذه الشهادة؟')) return;
+      if (!confirm('إعادة تفعيل هذا التذكار؟')) return;
       const res = await fetch(`/api/admin/pilgrims/${p.nationalId}`, {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'unrevoke' }),
       });
       if (!res.ok) { setError('فشل'); return; }
     } else {
-      const reason = prompt('سبب إلغاء الشهادة:');
+      const reason = prompt('سبب إلغاء التذكار:');
       if (!reason) return;
       const res = await fetch(`/api/admin/pilgrims/${p.nationalId}`, {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
@@ -176,7 +176,7 @@ export default function AdminPilgrimsPage() {
                    className="h-8 w-auto object-contain" />
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-sm sm:text-base font-black leading-tight truncate">لوحة التحكم — شهادات الحج</h1>
+            <h1 className="text-sm sm:text-base font-black leading-tight truncate">لوحة التحكم — تذاكير الحج</h1>
             <p className="text-[11px] text-gold-light/80">إدارة قائمة الحجاج</p>
           </div>
           <nav className="hidden md:flex gap-1 text-xs font-bold">
@@ -185,7 +185,7 @@ export default function AdminPilgrimsPage() {
               <i className="fas fa-inbox me-1" />الطلبات
             </Link>
             <span className="px-3 py-1.5 rounded-lg bg-gold text-white">
-              <i className="fas fa-certificate me-1" />الشهادات
+              <i className="fas fa-certificate me-1" />التذاكير
             </span>
           </nav>
           <button onClick={fetchData}
@@ -206,7 +206,7 @@ export default function AdminPilgrimsPage() {
             <i className="fas fa-inbox me-1" />الطلبات
           </Link>
           <span className="flex-1 text-center py-2 bg-gold">
-            <i className="fas fa-certificate me-1" />الشهادات
+            <i className="fas fa-certificate me-1" />التذاكير
           </span>
         </div>
       </header>
@@ -217,7 +217,7 @@ export default function AdminPilgrimsPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
           {([
             { label: 'إجمالي الحجاج', value: stats.total,   icon: 'fa-users',         color: 'from-teal-dark to-teal' },
-            { label: 'استخرجوا الشهادة', value: stats.viewed, icon: 'fa-certificate', color: 'from-gold-dark to-gold' },
+            { label: 'استخرجوا التذكار', value: stats.viewed, icon: 'fa-certificate', color: 'from-gold-dark to-gold' },
             { label: 'لم يستخرجوا',   value: stats.total - stats.viewed, icon: 'fa-clock', color: 'from-blue-600 to-blue-500' },
             { label: 'ملغاة',         value: stats.revoked, icon: 'fa-ban',          color: 'from-red-600 to-red-500' },
           ]).map((c, i) => (
@@ -346,7 +346,7 @@ export default function AdminPilgrimsPage() {
                       <td className="px-3 py-3 text-end">
                         <div className="inline-flex gap-1">
                           <a href={`/verify/${p.verifyCode}`} target="_blank" rel="noopener noreferrer"
-                             title="معاينة الشهادة" aria-label="معاينة"
+                             title="معاينة التذكار" aria-label="معاينة"
                              className="w-7 h-7 inline-flex items-center justify-center rounded-md
                                         text-gold hover:bg-gold/10 transition">
                             <i className="fas fa-eye text-xs" />

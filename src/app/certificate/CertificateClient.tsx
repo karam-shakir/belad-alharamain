@@ -87,7 +87,7 @@ export default function CertificateClient() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'شهادة إتمام الحج',
+          title: 'تذكار الحج المبارك',
           text:  `الحمد لله، تمّ إتمام مناسك الحج لعام ${state.pilgrim.hajjYear}هـ — تقبّل الله منا ومنكم.`,
           url,
         });
@@ -135,10 +135,10 @@ export default function CertificateClient() {
                 <i className="fas fa-certificate text-gold text-2xl" />
               </div>
               <h1 className="text-2xl sm:text-3xl font-black text-teal-dark mb-2">
-                شهادة إتمام مناسك الحج
+                تذكار الحج المبارك
               </h1>
               <p className="text-sm text-gray-500">
-                أدخل رقم الهوية الوطنية أو الإقامة لاستخراج شهادتك
+                أدخل رقم الهوية الوطنية أو الإقامة لاستخراج تذكاركم
               </p>
             </div>
 
@@ -186,7 +186,7 @@ export default function CertificateClient() {
                                    shadow-gold hover:shadow-gold-lg">
                   {state.stage === 'loading'
                     ? <><i className="fas fa-spinner fa-spin" /><span>جاري البحث...</span></>
-                    : <><i className="fas fa-search" /><span>استخراج الشهادة</span></>
+                    : <><i className="fas fa-search" /><span>استخراج التذكار</span></>
                   }
                 </button>
               </form>
@@ -198,7 +198,7 @@ export default function CertificateClient() {
                 <div className="inline-flex w-16 h-16 rounded-full bg-red-50 items-center justify-center mb-4">
                   <i className="fas fa-ban text-red-500 text-2xl" />
                 </div>
-                <h3 className="font-black text-red-700 mb-2">هذه الشهادة ملغاة</h3>
+                <h3 className="font-black text-red-700 mb-2">هذا التذكار ملغى</h3>
                 {state.reason && (
                   <p className="text-sm text-gray-500 mb-4">السبب: {state.reason}</p>
                 )}
@@ -246,7 +246,7 @@ export default function CertificateClient() {
                 تقبّل الله منكم 🤍
               </h2>
               <p className="text-sm text-gray-500 leading-relaxed">
-                شهادتكم جاهزة — يمكنكم طباعتها أو حفظها كملف PDF
+                تذكاركم جاهز — يمكنكم طباعته أو حفظه كملف PDF
               </p>
             </div>
           </div>
@@ -385,7 +385,7 @@ function NotFoundForm({ enteredId, onCancel }: { enteredId: string; onCancel: ()
 
           <div className="flex flex-col sm:flex-row gap-2">
             <a href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-              `السلام عليكم، أحاول استخراج شهادة الحج لرقم هوية ${enteredId} لكن لم يُعرف. أرجو المساعدة.`,
+              `السلام عليكم، أحاول استخراج تذكار الحج لرقم هوية ${enteredId} لكن لم يُعرف. أرجو المساعدة.`,
             )}`} target="_blank" rel="noopener noreferrer"
                className="flex-1 inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700
                           text-white text-sm font-bold px-4 py-3 rounded-xl transition shadow-sm">
