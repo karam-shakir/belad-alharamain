@@ -368,7 +368,7 @@ html, body {
   row-gap: 0.4%;
   position: relative;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
 }
 .bhc-corner {
   position: absolute;
@@ -436,11 +436,11 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;   /* distribute lines evenly, no top/bottom clipping */
-  gap: clamp(2px, 0.4vw, 6px);
+  justify-content: center;
+  gap: clamp(4px, 0.7vw, 8px);
   padding: 0 2%;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 .bhc-intro-ar {
   font-size: clamp(12px, 1.4vw, 16px);
