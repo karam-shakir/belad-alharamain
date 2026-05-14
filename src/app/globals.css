@@ -400,10 +400,10 @@ html, body {
   overflow: hidden;
 }
 /* Fixed-share sections — explicit basis so content never overlaps */
-.bhc-top    { flex: 0 0 18%; display: flex; align-items: center; justify-content: center; }
-.bhc-title  { flex: 0 0 14%; }
+.bhc-top    { flex: 0 0 15%; display: flex; align-items: center; justify-content: center; }
+.bhc-title  { flex: 0 0 11%; }
 .bhc-body   { flex: 1 1 0;  min-height: 0; }       /* remaining space, no content-grow */
-.bhc-footer { flex: 0 0 18%; }
+.bhc-footer { flex: 0 0 16%; }
 .bhc-corner {
   position: absolute;
   color: #A88B4A;
@@ -471,13 +471,13 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(4px, 0.7vw, 8px);
-  padding: 0.6% 2%;
+  gap: clamp(2px, 0.5vw, 6px);
+  padding: 0.4% 2%;
   min-height: 0;
   overflow: hidden;
 }
 .bhc-intro-ar {
-  font-size: clamp(14px, 1.7vw, 19px);
+  font-size: clamp(13px, 1.55vw, 17px);
   color: #2a2a2a;
   margin: 0;
   font-weight: 500;
@@ -509,7 +509,7 @@ html, body {
   font-size: clamp(16px, 2.2vw, 26px);
 }
 .bhc-name {
-  font-size: clamp(26px, 5vw, 52px);
+  font-size: clamp(24px, 4.5vw, 46px);
   font-weight: 900;
   color: #7D6530;
   margin: 0;
@@ -518,14 +518,14 @@ html, body {
   text-shadow: 0 1px 0 rgba(168,139,74,0.2);
 }
 .bhc-event-ar {
-  font-size: clamp(15px, 2.1vw, 22px);
+  font-size: clamp(14px, 1.95vw, 20px);
   color: #155E6B;
   margin: clamp(2px, 0.5vw, 6px) 0 0;
   font-weight: 500;
 }
 .bhc-year {
   color: #A88B4A;
-  font-size: clamp(20px, 2.8vw, 28px);
+  font-size: clamp(19px, 2.6vw, 26px);
   font-weight: 900;
   margin: 0 4px;
 }
@@ -539,7 +539,7 @@ html, body {
 }
 .bhc-prayer { max-width: 88%; margin: 0; }
 .bhc-prayer-ar {
-  font-size: clamp(13px, 1.55vw, 17px);
+  font-size: clamp(12px, 1.45vw, 15.5px);
   color: #155E6B;
   line-height: 1.55;
   margin: 0;
@@ -569,7 +569,7 @@ html, body {
 
 .bhc-close { max-width: 92%; }
 .bhc-close-ar {
-  font-size: clamp(11px, 1.35vw, 14.5px);
+  font-size: clamp(10.5px, 1.25vw, 13.5px);
   color: #4a4a4a;
   font-style: italic;
   line-height: 1.55;

@@ -180,10 +180,10 @@ export default function CertificateClient() {
           }
 
           /* Restore A4-landscape internal proportions even if mobile rules tried to flatten them */
-          .bhc-top    { flex: 0 0 18% !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important; }
-          .bhc-title  { flex: 0 0 14% !important; padding: 0 !important; }
-          .bhc-body   { flex: 1 1 0 !important; min-height: 0 !important; padding: 0 2% !important; gap: clamp(4px, 0.7vw, 8px) !important; }
-          .bhc-footer { flex: 0 0 18% !important; padding-top: 1% !important; flex-wrap: nowrap !important; gap: 16px !important; }
+          .bhc-top    { flex: 0 0 15% !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important; }
+          .bhc-title  { flex: 0 0 11% !important; padding: 0 !important; }
+          .bhc-body   { flex: 1 1 0 !important; min-height: 0 !important; padding: 0 2% !important; gap: clamp(2px, 0.5vw, 6px) !important; }
+          .bhc-footer { flex: 0 0 16% !important; padding-top: 1% !important; flex-wrap: nowrap !important; gap: 16px !important; }
 
           /* Footer cells: date right (RTL flex-start), QR left (RTL flex-end) — desktop style */
           .bhc-cell-date {
