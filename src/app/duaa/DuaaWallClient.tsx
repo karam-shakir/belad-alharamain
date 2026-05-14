@@ -134,57 +134,57 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
     <>
       <ScrollInit />
       <Navbar />
-      <main className="bg-pattern-white min-h-screen pt-24 pb-20">
+      <main className="bg-pattern-white min-h-screen pt-20 sm:pt-24 pb-16 sm:pb-20">
 
         {/* ── Hero ─── */}
-        <section className="relative max-w-4xl mx-auto px-4 sm:px-6 mb-8">
+        <section className="relative max-w-4xl mx-auto px-3 sm:px-6 mb-6 sm:mb-8">
           <div className="text-center reveal">
-            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20
+            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20
                             rounded-full bg-gradient-to-br from-gold to-gold-dark
-                            shadow-gold mb-5">
-              <i className="fas fa-hands-praying text-white text-2xl sm:text-3xl" />
+                            shadow-gold mb-4 sm:mb-5">
+              <i className="fas fa-hands-praying text-white text-xl sm:text-3xl" />
             </div>
-            <h1 className="text-3xl sm:text-5xl font-black text-teal-dark mb-3 leading-tight">
+            <h1 className="text-2xl sm:text-5xl font-black text-teal-dark mb-2 sm:mb-3 leading-tight">
               تذكروني في دعائكم
             </h1>
-            <p className="text-gold-dark text-sm sm:text-base mb-1">
+            <p className="text-gold-dark text-xs sm:text-base mb-1 px-4">
               حائط مفتوح للأمّة — شاركوا دعواتكم، وادعوا لإخوانكم
             </p>
 
             {/* Verse card */}
-            <div className="mt-6 mx-auto max-w-2xl">
+            <div className="mt-5 sm:mt-6 mx-auto max-w-2xl">
               <div className="bg-gradient-to-br from-cream via-white to-cream-dark
-                              border-2 border-gold/30 rounded-3xl p-5 sm:p-7
+                              border-2 border-gold/30 rounded-2xl sm:rounded-3xl p-4 sm:p-7
                               shadow-card relative overflow-hidden">
-                <div className="absolute top-2 left-3 text-gold/30 text-4xl">❝</div>
-                <div className="absolute bottom-2 right-3 text-gold/30 text-4xl">❞</div>
-                <p className="text-teal-dark text-base sm:text-xl font-bold leading-loose px-6">
+                <div className="absolute top-1 left-2 text-gold/30 text-3xl sm:text-4xl">❝</div>
+                <div className="absolute bottom-1 right-2 text-gold/30 text-3xl sm:text-4xl">❞</div>
+                <p className="text-teal-dark text-sm sm:text-xl font-bold leading-loose px-4 sm:px-6">
                   {verse.ar}
                 </p>
-                <p className="text-gold-dark text-xs sm:text-sm mt-3 font-semibold">— {verse.ref}</p>
+                <p className="text-gold-dark text-[11px] sm:text-sm mt-2 sm:mt-3 font-semibold">— {verse.ref}</p>
               </div>
             </div>
 
             {/* Stats */}
             {stats.total > 0 && (
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3
-                              text-xs sm:text-sm">
-                <span className="inline-flex items-center gap-1.5 text-teal-dark font-bold
-                                 bg-white px-3 sm:px-4 py-1.5 rounded-full border border-gold/20 shadow-card">
-                  <i className="fas fa-bookmark text-gold" />
+              <div className="mt-5 sm:mt-6 flex flex-wrap items-center justify-center gap-1.5 sm:gap-3
+                              text-[11px] sm:text-sm">
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 text-teal-dark font-bold
+                                 bg-white px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full border border-gold/20 shadow-card">
+                  <i className="fas fa-bookmark text-gold text-[10px] sm:text-sm" />
                   <span>{stats.total}</span>
                   <span className="text-gray-500 font-medium">دعاء</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 text-teal-dark font-bold
-                                 bg-white px-3 sm:px-4 py-1.5 rounded-full border border-gold/20 shadow-card">
-                  <i className="fas fa-hands-praying text-gold" />
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 text-teal-dark font-bold
+                                 bg-white px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full border border-gold/20 shadow-card">
+                  <i className="fas fa-hands-praying text-gold text-[10px] sm:text-sm" />
                   <span>{stats.totalReacts}</span>
                   <span className="text-gray-500 font-medium">تفاعل</span>
                 </span>
                 {stats.pilgrimReacts > 0 && (
-                  <span className="inline-flex items-center gap-1.5 text-amber-700 font-bold
-                                   bg-amber-50 px-3 sm:px-4 py-1.5 rounded-full border border-amber-200 shadow-card">
-                    <i className="fas fa-star text-amber-500" />
+                  <span className="inline-flex items-center gap-1 sm:gap-1.5 text-amber-700 font-bold
+                                   bg-amber-50 px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full border border-amber-200 shadow-card">
+                    <i className="fas fa-star text-amber-500 text-[10px] sm:text-sm" />
                     <span>{stats.pilgrimReacts}</span>
                     <span className="text-amber-600 font-medium">من حجاجنا</span>
                   </span>
@@ -195,37 +195,37 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
         </section>
 
         {/* ── Identity Panel ─── */}
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 mb-6">
+        <section className="max-w-3xl mx-auto px-3 sm:px-6 mb-4 sm:mb-6">
           <IdentityPanel identity={identity}
                          onIdentified={(id) => { saveIdentity(id); setIdentity(id); }}
                          onCleared={() => { clearIdentity(); setIdentity(null); }} />
         </section>
 
         {/* ── Submit form ─── */}
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 mb-8">
+        <section className="max-w-3xl mx-auto px-3 sm:px-6 mb-6 sm:mb-8">
           <SubmitForm identity={identity} onSubmitted={fetchList} />
         </section>
 
         {/* ── Sort tabs ─── */}
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 mb-5 flex items-center justify-center gap-2">
+        <section className="max-w-3xl mx-auto px-3 sm:px-6 mb-4 sm:mb-5 flex items-center justify-center gap-2">
           <button onClick={() => setSort('latest')}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all
+                  className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all
                     ${sort === 'latest'
                       ? 'bg-gold text-white shadow-gold'
                       : 'bg-white text-teal-dark border border-gold/20 hover:border-gold/40'}`}>
-            <i className="fas fa-clock me-1.5" />الأحدث
+            <i className="fas fa-clock me-1" />الأحدث
           </button>
           <button onClick={() => setSort('popular')}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all
+                  className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all
                     ${sort === 'popular'
                       ? 'bg-gold text-white shadow-gold'
                       : 'bg-white text-teal-dark border border-gold/20 hover:border-gold/40'}`}>
-            <i className="fas fa-fire me-1.5" />الأكثر طلباً للدعاء
+            <i className="fas fa-fire me-1" />الأكثر طلباً
           </button>
         </section>
 
         {/* ── Feed ─── */}
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 space-y-4">
+        <section className="max-w-3xl mx-auto px-3 sm:px-6 space-y-3 sm:space-y-4">
           {loading && items.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
               <i className="fas fa-spinner fa-spin text-3xl mb-3" />
@@ -626,21 +626,21 @@ function DuaaCard({
   return (
     <article id={`duaa-${duaa.id}`}
              className="bg-white rounded-2xl border border-gold/15 shadow-card
-                        p-5 sm:p-6 relative overflow-hidden transition-shadow hover:shadow-card-lg">
+                        p-4 sm:p-6 relative overflow-hidden transition-shadow hover:shadow-card-lg">
 
       <div className="absolute top-0 inset-x-0 h-1 bg-gold-gradient" />
-      <div className="absolute top-3 right-4 text-gold/20 text-3xl leading-none select-none" aria-hidden>❝</div>
-      <div className="absolute bottom-3 left-4  text-gold/20 text-3xl leading-none select-none" aria-hidden>❞</div>
+      <div className="absolute top-2 right-2 sm:top-3 sm:right-4 text-gold/20 text-2xl sm:text-3xl leading-none select-none" aria-hidden>❝</div>
+      <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-4 text-gold/20 text-2xl sm:text-3xl leading-none select-none" aria-hidden>❞</div>
 
       {/* Message */}
-      <p className="text-teal-dark text-base sm:text-lg leading-loose
-                    font-medium mb-5 px-6 sm:px-8 whitespace-pre-wrap text-center">
+      <p className="text-teal-dark text-[15px] sm:text-lg leading-loose
+                    font-medium mb-4 sm:mb-5 px-3 sm:px-8 whitespace-pre-wrap text-center">
         {duaa.message}
       </p>
 
       {/* Meta */}
-      <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1
-                      text-xs text-gray-500 mb-4 pb-4 border-b border-gold/10">
+      <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1
+                      text-[11px] sm:text-xs text-gray-500 mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-gold/10">
         {duaa.hajjYear && (
           <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800
                            px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-amber-300">
@@ -718,22 +718,24 @@ function DuaaCard({
       </div>
 
       {/* Actions row 2: write a custom prayer + view replies */}
-      <div className="mt-2 flex items-center gap-2">
+      <div className="mt-2 flex flex-wrap items-center gap-2">
         <button onClick={() => setReplyFormOpen(o => !o)}
-                className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg
+                className={`flex-1 min-w-0 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg
                            text-xs font-bold transition-all
                            ${replyFormOpen
                              ? 'bg-teal text-white'
                              : 'bg-teal/5 text-teal-dark hover:bg-teal/15 border border-teal/20'}`}>
           <i className="fas fa-pen-to-square" />
-          {identity ? 'اكتب دعاءك بصفتك حاجاً ⭐' : 'اكتب دعاءك له'}
+          <span className="truncate">
+            {identity ? 'اكتب دعاءك (حاج ⭐)' : 'اكتب دعاءك له'}
+          </span>
         </button>
         {replyCount > 0 && (
           <button onClick={toggleReplies}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg
+                  className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg
                              bg-cream text-teal-dark text-xs font-bold hover:bg-cream-dark transition border border-gold/15">
-            <i className={`fas fa-chevron-${repliesOpen ? 'up' : 'down'}`} />
-            <span>{repliesOpen ? 'إخفاء الدعوات' : `عرض ${replyCount} ${replyCount > 10 ? 'دعاء' : replyCount > 2 ? 'دعوات' : 'دعاء'}`}</span>
+            <i className={`fas fa-chevron-${repliesOpen ? 'up' : 'down'} text-[10px]`} />
+            <span>{repliesOpen ? 'إخفاء' : `${replyCount} ${replyCount > 10 ? 'دعاء' : replyCount > 2 ? 'دعوات' : 'دعاء'}`}</span>
           </button>
         )}
       </div>
@@ -850,7 +852,7 @@ function ReplyForm({
              aria-hidden="true"
              style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, opacity: 0 }} />
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <input type="text" placeholder="اسمك (اختياري)" maxLength={60}
                className="form-input text-sm py-2"
                value={name} onChange={e => setName(e.target.value)} />
