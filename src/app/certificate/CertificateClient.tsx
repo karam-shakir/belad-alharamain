@@ -197,27 +197,7 @@ export default function CertificateClient() {
             width: auto !important;
           }
 
-          /* Seal back to absolute hand-stamp position for print */
-          .bhc-seal {
-            position: absolute !important;
-            bottom: 1.5% !important;
-            left: 50% !important;
-            top: auto !important;
-            right: auto !important;
-            inset-inline-start: auto !important;
-            inset-inline-end: auto !important;
-            margin: 0 !important;
-            display: block !important;
-            width: clamp(55px, 6.5vw, 85px) !important;
-            height: auto !important;
-            transform: translateX(-50%) rotate(-7deg) !important;
-            opacity: 0.55 !important;
-            mix-blend-mode: multiply !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-
-          /* Ensure seal & QR colors render */
+          /* Ensure QR & logo colors render */
           .bhc-qr, .bhc-logo {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;

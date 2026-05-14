@@ -102,10 +102,6 @@ export default function Certificate({ name, hajjYear, verifyCode, qrDataUrl, iss
               </div>
             </div>
 
-            {/* ── Hand-stamped company seal (overlay) ── */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/seal.png" alt="" aria-hidden="true" className="bhc-seal" />
-
             {/* ── Row 4: date + QR ── */}
             <div className="bhc-footer">
               <div className="bhc-cell bhc-cell-date">

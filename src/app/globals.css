@@ -372,21 +372,6 @@ html, body {
     text-align: center !important;
     width: 100%;
   }
-  /* Seal becomes inline on mobile — between body & footer, no overlap with QR */
-  .bhc-seal {
-    position: relative !important;
-    top: auto !important;
-    bottom: auto !important;
-    left: auto !important;
-    right: auto !important;
-    inset-inline-start: auto !important;
-    inset-inline-end: auto !important;
-    display: block !important;
-    margin: 8px auto 0 !important;
-    width: 80px !important;
-    opacity: 0.65 !important;
-    transform: rotate(-6deg) !important;
-  }
 }
 .bhc-outer {
   width: 100%;
@@ -443,14 +428,14 @@ html, body {
 }
 .bhc-logo-row { display: flex; justify-content: center; }
 .bhc-logo {
-  height: clamp(60px, 9vw, 110px) !important;
+  height: clamp(72px, 10vw, 125px) !important;
   width: auto !important;
   object-fit: contain;
 }
 
 .bhc-title { text-align: center; }
 .bhc-title-ar {
-  font-size: clamp(20px, 3.2vw, 34px);
+  font-size: clamp(24px, 3.8vw, 40px);
   font-weight: 900;
   color: #155E6B;
   margin: 0;
@@ -459,7 +444,7 @@ html, body {
 }
 .bhc-title-en {
   font-family: 'Poppins', 'Cormorant Garamond', serif;
-  font-size: clamp(10px, 1.3vw, 14px);
+  font-size: clamp(11.5px, 1.5vw, 16px);
   color: #7D6530;
   letter-spacing: clamp(2px, 0.4vw, 6px);
   text-transform: uppercase;
@@ -492,7 +477,7 @@ html, body {
   overflow: hidden;
 }
 .bhc-intro-ar {
-  font-size: clamp(12px, 1.4vw, 16px);
+  font-size: clamp(14px, 1.7vw, 19px);
   color: #2a2a2a;
   margin: 0;
   font-weight: 500;
@@ -500,7 +485,7 @@ html, body {
 }
 .bhc-intro-en {
   font-family: 'Poppins', serif;
-  font-size: clamp(9.5px, 1vw, 12px);
+  font-size: clamp(11px, 1.2vw, 14px);
   color: #7D6530;
   letter-spacing: 1.5px;
   margin: 0 0 2px;
@@ -524,7 +509,7 @@ html, body {
   font-size: clamp(16px, 2.2vw, 26px);
 }
 .bhc-name {
-  font-size: clamp(22px, 4.2vw, 44px);
+  font-size: clamp(26px, 5vw, 52px);
   font-weight: 900;
   color: #7D6530;
   margin: 0;
@@ -533,20 +518,20 @@ html, body {
   text-shadow: 0 1px 0 rgba(168,139,74,0.2);
 }
 .bhc-event-ar {
-  font-size: clamp(13px, 1.8vw, 18px);
+  font-size: clamp(15px, 2.1vw, 22px);
   color: #155E6B;
   margin: clamp(2px, 0.5vw, 6px) 0 0;
   font-weight: 500;
 }
 .bhc-year {
   color: #A88B4A;
-  font-size: clamp(18px, 2.4vw, 24px);
+  font-size: clamp(20px, 2.8vw, 28px);
   font-weight: 900;
   margin: 0 4px;
 }
 .bhc-event-en {
   font-family: 'Poppins', serif;
-  font-size: clamp(10px, 1.2vw, 14px);
+  font-size: clamp(11.5px, 1.4vw, 16px);
   color: #7D6530;
   letter-spacing: 1.5px;
   margin: 2px 0 4px;
@@ -554,7 +539,7 @@ html, body {
 }
 .bhc-prayer { max-width: 88%; margin: 0; }
 .bhc-prayer-ar {
-  font-size: clamp(11px, 1.3vw, 14px);
+  font-size: clamp(13px, 1.55vw, 17px);
   color: #155E6B;
   line-height: 1.55;
   margin: 0;
@@ -562,7 +547,7 @@ html, body {
 }
 .bhc-prayer-en {
   font-family: 'Poppins', serif;
-  font-size: clamp(9px, 1vw, 11.5px);
+  font-size: clamp(10.5px, 1.2vw, 13.5px);
   color: #7D6530;
   font-style: italic;
   margin: 1px 0 0;
@@ -584,7 +569,7 @@ html, body {
 
 .bhc-close { max-width: 92%; }
 .bhc-close-ar {
-  font-size: clamp(9.5px, 1.15vw, 12.5px);
+  font-size: clamp(11px, 1.35vw, 14.5px);
   color: #4a4a4a;
   font-style: italic;
   line-height: 1.55;
@@ -592,14 +577,14 @@ html, body {
 }
 .bhc-close-en {
   font-family: 'Poppins', serif;
-  font-size: clamp(8px, 0.9vw, 10.5px);
+  font-size: clamp(9.5px, 1.1vw, 12.5px);
   color: #7D6530;
   font-style: italic;
   margin: 1px 0 0;
   line-height: 1.4;
 }
 .bhc-team {
-  font-size: clamp(8.5px, 1vw, 11.5px);
+  font-size: clamp(10px, 1.2vw, 13.5px);
   color: #A88B4A;
   font-weight: 700;
   margin: clamp(1px, 0.3vw, 4px) 0 0;
@@ -622,7 +607,7 @@ html, body {
 .bhc-cell-date { align-items: flex-start; text-align: start; }
 .bhc-cell-qr   { align-items: flex-end;   text-align: end;   }
 .bhc-label {
-  font-size: clamp(9px, 1vw, 11px);
+  font-size: clamp(10.5px, 1.15vw, 13px);
   color: #7D6530;
   font-weight: 700;
   letter-spacing: 1.5px;
@@ -630,7 +615,7 @@ html, body {
   text-transform: uppercase;
 }
 .bhc-value {
-  font-size: clamp(11px, 1.3vw, 14px);
+  font-size: clamp(13px, 1.55vw, 16.5px);
   color: #155E6B;
   font-weight: 700;
   margin: 0;
@@ -638,14 +623,14 @@ html, body {
 }
 .bhc-value-en {
   font-family: 'Poppins', serif;
-  font-size: clamp(9.5px, 1.05vw, 12px);
+  font-size: clamp(11px, 1.25vw, 14px);
   color: #7D6530;
   font-style: italic;
   margin: 0;
 }
 .bhc-qr {
-  width: clamp(55px, 7vw, 82px);
-  height: clamp(55px, 7vw, 82px);
+  width: clamp(70px, 8vw, 95px);
+  height: clamp(70px, 8vw, 95px);
   padding: 3px;
   background: #fff;
   border: 1.5px solid #A88B4A;
@@ -655,32 +640,12 @@ html, body {
 }
 .bhc-verify-code {
   font-family: 'Courier New', monospace;
-  font-size: clamp(8.5px, 0.95vw, 11px);
+  font-size: clamp(10px, 1.1vw, 12.5px);
   color: #7D6530;
   letter-spacing: 1px;
   margin: 3px 0 0;
   font-weight: 700;
 }
-
-/* Hand-stamped company seal — looks like ink pressed onto paper.
- * Compact, fits entirely inside the footer band (between QR and date).
- * Stays out of all body text including the italic closing line. */
-.bhc-seal {
-  position: absolute;
-  bottom: 1.5%;
-  left: 50%;
-  transform: translateX(-50%) rotate(-7deg);
-  width: clamp(55px, 6.5vw, 85px);
-  height: auto;
-  opacity: 0.55;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  z-index: 5;
-  filter: contrast(1.05);
-  font-size: 0;
-  color: transparent;
-}
-.bhc-seal[src=""] { display: none; }
 
 @media print {
   @page { size: A4 landscape; margin: 0; }
@@ -692,11 +657,6 @@ html, body {
     box-shadow: none;
     border-radius: 0;
     page-break-inside: avoid;
-  }
-  /* Preserve seal blend-mode on print (some browsers strip it) */
-  .bhc-seal {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
   }
 }
 
