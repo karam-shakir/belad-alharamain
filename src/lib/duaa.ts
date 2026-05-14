@@ -27,11 +27,26 @@ export interface Duaa {
   hajjYear?:             string;          // e.g. '1447'
   reactionCount:         number;          // total reactions
   reactionCountPilgrims: number;          // reactions from verified pilgrims only
+  replyCount:            number;          // number of free-text prayer replies
   hidden?:               boolean;
   ip:                    string;
   createdAt:             number;
   updatedAt:             number;
 }
+
+export interface DuaaReply {
+  id:        string;
+  duaaId:    string;
+  name:      string;
+  country:   string;
+  hajjYear?: string;
+  message:   string;
+  hidden?:   boolean;
+  ip:        string;
+  createdAt: number;
+}
+
+export const MAX_REPLY_LEN = 200;
 
 const INDEX_LATEST  = 'duaa:all';
 const INDEX_POPULAR = 'duaa:popular';
@@ -51,14 +66,15 @@ function clean(o: Record<string, unknown>): Record<string, unknown> {
   return out;
 }
 
+const num = (v: unknown): number => {
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string' && v.trim() !== '') { const n = Number(v); return Number.isFinite(n) ? n : 0; }
+  return 0;
+};
+const str = (v: unknown): string => (v == null ? '' : String(v));
+
 function normalize(raw: Record<string, unknown> | null | undefined): Duaa | null {
   if (!raw || !raw.id) return null;
-  const num = (v: unknown): number => {
-    if (typeof v === 'number') return v;
-    if (typeof v === 'string' && v.trim() !== '') { const n = Number(v); return Number.isFinite(n) ? n : 0; }
-    return 0;
-  };
-  const str = (v: unknown): string => (v == null ? '' : String(v));
   return {
     id:                    str(raw.id),
     name:                  str(raw.name),
@@ -67,10 +83,26 @@ function normalize(raw: Record<string, unknown> | null | undefined): Duaa | null
     hajjYear:              raw.hajjYear ? str(raw.hajjYear) : undefined,
     reactionCount:         num(raw.reactionCount),
     reactionCountPilgrims: num(raw.reactionCountPilgrims),
+    replyCount:            num(raw.replyCount),
     hidden:                Boolean(raw.hidden),
     ip:                    str(raw.ip),
     createdAt:             num(raw.createdAt),
     updatedAt:             num(raw.updatedAt),
+  };
+}
+
+function normalizeReply(raw: Record<string, unknown> | null | undefined): DuaaReply | null {
+  if (!raw || !raw.id) return null;
+  return {
+    id:        str(raw.id),
+    duaaId:    str(raw.duaaId),
+    name:      str(raw.name),
+    country:   str(raw.country),
+    hajjYear:  raw.hajjYear ? str(raw.hajjYear) : undefined,
+    message:   str(raw.message),
+    hidden:    Boolean(raw.hidden),
+    ip:        str(raw.ip),
+    createdAt: num(raw.createdAt),
   };
 }
 
@@ -135,6 +167,7 @@ export async function createDuaa(input: {
     hajjYear,
     reactionCount:         0,
     reactionCountPilgrims: 0,
+    replyCount:            0,
     ip:                    input.ip,
     createdAt:             now,
     updatedAt:             now,
@@ -288,4 +321,101 @@ export async function getDuaaStats(): Promise<DuaaStats> {
     if (d.country) stats.byCountry[d.country] = (stats.byCountry[d.country] ?? 0) + 1;
   }
   return stats;
+}
+
+/* ───────────────────────── Replies (free-text prayer responses) ───────────────────────── */
+
+const REPLIES_INDEX = (duaaId: string) => `duaa:replies:${duaaId}`;
+const replyKey      = (id: string) => `duaa:reply:${id}`;
+
+export function validateReplyContent(message: string): { ok: true } | { ok: false; reason: string } {
+  const m = message.trim();
+  if (!m) return { ok: false, reason: 'لا يمكن إرسال دعاء فارغ.' };
+  if (m.length > MAX_REPLY_LEN) return { ok: false, reason: `حد أقصى ${MAX_REPLY_LEN} حرف.` };
+  if (URL_RE.test(m))   return { ok: false, reason: 'لا تُسمح الروابط في الدعاء.' };
+  if (PHONE_RE.test(m)) return { ok: false, reason: 'لا تُسمح الأرقام الطويلة.' };
+  return { ok: true };
+}
+
+export async function createReply(input: {
+  duaaId:     string;
+  name?:      string;
+  country?:   string;
+  message:    string;
+  nationalId?: string;
+  ip:         string;
+}): Promise<DuaaReply> {
+  const check = validateReplyContent(input.message);
+  if (!check.ok) throw new Error(check.reason);
+
+  // Ensure parent duaa exists
+  const parent = await getDuaa(input.duaaId);
+  if (!parent || parent.hidden) throw new Error('الدعاء غير موجود.');
+
+  // Verify pilgrim badge
+  let hajjYear: string | undefined;
+  if (input.nationalId) {
+    try {
+      const p = await getPilgrim(input.nationalId.trim());
+      if (p && !p.revokedAt) hajjYear = p.hajjYear;
+    } catch { /* ignore */ }
+  }
+
+  const now = Date.now();
+  const reply: DuaaReply = {
+    id:        shortId(),
+    duaaId:    input.duaaId,
+    name:      (input.name    ?? '').trim().slice(0, MAX_NAME_LEN),
+    country:   (input.country ?? '').trim().slice(0, MAX_COUNTRY_LEN),
+    hajjYear,
+    message:   input.message.trim(),
+    ip:        input.ip,
+    createdAt: now,
+  };
+
+  await kv.hset(replyKey(reply.id), clean(reply as unknown as Record<string, unknown>));
+  await kv.zadd(REPLIES_INDEX(input.duaaId), { score: now, member: reply.id });
+
+  // Bump parent counters
+  const newReplyCount = (parent.replyCount ?? 0) + 1;
+  await kv.hset(itemKey(input.duaaId), { replyCount: newReplyCount, updatedAt: now });
+
+  return reply;
+}
+
+export async function listReplies(duaaId: string, opts: { limit?: number; includeHidden?: boolean } = {}): Promise<DuaaReply[]> {
+  const limit = Math.min(opts.limit ?? 50, 200);
+  const ids = await kv.zrange<string[]>(REPLIES_INDEX(duaaId), 0, limit - 1, { rev: true });
+  if (!ids?.length) return [];
+  const pipe = kv.pipeline();
+  ids.forEach(id => pipe.hgetall(replyKey(id)));
+  const results = await pipe.exec<Record<string, unknown>[]>();
+  return results
+    .map(r => normalizeReply(r))
+    .filter((r): r is DuaaReply => r !== null && (opts.includeHidden || !r.hidden));
+}
+
+export async function getReply(id: string): Promise<DuaaReply | null> {
+  const data = await kv.hgetall<Record<string, unknown>>(replyKey(id));
+  return normalizeReply(data);
+}
+
+export async function setReplyHidden(id: string, hidden: boolean): Promise<DuaaReply | null> {
+  const r = await getReply(id);
+  if (!r) return null;
+  await kv.hset(replyKey(id), { hidden });
+  return { ...r, hidden };
+}
+
+export async function deleteReply(id: string): Promise<boolean> {
+  const r = await getReply(id);
+  if (!r) return false;
+  await kv.del(replyKey(id));
+  await kv.zrem(REPLIES_INDEX(r.duaaId), id);
+  // Decrement parent counter (best effort)
+  const parent = await getDuaa(r.duaaId);
+  if (parent) {
+    await kv.hset(itemKey(r.duaaId), { replyCount: Math.max(0, (parent.replyCount ?? 0) - 1) });
+  }
+  return true;
 }

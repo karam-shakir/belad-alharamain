@@ -17,8 +17,19 @@ interface Duaa {
   hajjYear?:             string;
   reactionCount:         number;
   reactionCountPilgrims: number;
+  replyCount:            number;
   createdAt:             number;
   reactedByMe?:          boolean;
+}
+
+interface DuaaReply {
+  id:        string;
+  duaaId:    string;
+  name:      string;
+  country:   string;
+  hajjYear?: string;
+  message:   string;
+  createdAt: number;
 }
 
 interface Identity {
@@ -540,6 +551,28 @@ function DuaaCard({
   const [showThanks,   setShowThanks]   = useState(false);
   const [shareOpen,    setShareOpen]    = useState(false);
 
+  /* ── Replies state ─── */
+  const [replyCount,   setReplyCount]   = useState(duaa.replyCount ?? 0);
+  const [replies,      setReplies]      = useState<DuaaReply[]>([]);
+  const [repliesOpen,  setRepliesOpen]  = useState(false);
+  const [repliesLoaded, setRepliesLoaded] = useState(false);
+  const [replyFormOpen, setReplyFormOpen] = useState(false);
+
+  const loadReplies = useCallback(async () => {
+    if (repliesLoaded) return;
+    try {
+      const res = await fetch(`/api/duaa/${duaa.id}/reply`, { cache: 'no-store' });
+      const data = await res.json();
+      if (data?.ok) setReplies(data.items || []);
+      setRepliesLoaded(true);
+    } catch { /* ignore */ }
+  }, [duaa.id, repliesLoaded]);
+
+  const toggleReplies = async () => {
+    setRepliesOpen(o => !o);
+    if (!repliesLoaded) await loadReplies();
+  };
+
   const handleReact = async () => {
     if (busy || reactedNow) return;
     setBusy(true);
@@ -644,7 +677,7 @@ function DuaaCard({
         </div>
       )}
 
-      {/* Actions */}
+      {/* Actions row 1: react + share */}
       <div className="flex items-center justify-between gap-3 relative">
         <button onClick={handleReact} disabled={busy || reactedNow}
                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
@@ -684,6 +717,50 @@ function DuaaCard({
         )}
       </div>
 
+      {/* Actions row 2: write a custom prayer + view replies */}
+      <div className="mt-2 flex items-center gap-2">
+        <button onClick={() => setReplyFormOpen(o => !o)}
+                className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg
+                           text-xs font-bold transition-all
+                           ${replyFormOpen
+                             ? 'bg-teal text-white'
+                             : 'bg-teal/5 text-teal-dark hover:bg-teal/15 border border-teal/20'}`}>
+          <i className="fas fa-pen-to-square" />
+          {identity ? 'اكتب دعاءك بصفتك حاجاً ⭐' : 'اكتب دعاءك له'}
+        </button>
+        {replyCount > 0 && (
+          <button onClick={toggleReplies}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg
+                             bg-cream text-teal-dark text-xs font-bold hover:bg-cream-dark transition border border-gold/15">
+            <i className={`fas fa-chevron-${repliesOpen ? 'up' : 'down'}`} />
+            <span>{repliesOpen ? 'إخفاء الدعوات' : `عرض ${replyCount} ${replyCount > 10 ? 'دعاء' : replyCount > 2 ? 'دعوات' : 'دعاء'}`}</span>
+          </button>
+        )}
+      </div>
+
+      {/* Reply form (inline) */}
+      {replyFormOpen && (
+        <ReplyForm duaaId={duaa.id} identity={identity}
+                   onSent={(r) => {
+                     setReplies(prev => [r, ...prev]);
+                     setReplyCount(c => c + 1);
+                     setRepliesLoaded(true);
+                     setRepliesOpen(true);
+                     setReplyFormOpen(false);
+                   }} />
+      )}
+
+      {/* Replies list */}
+      {repliesOpen && replies.length > 0 && (
+        <div className="mt-4 pt-4 border-t border-gold/10 space-y-2.5">
+          <p className="text-[11px] font-bold text-gold-dark px-1 flex items-center gap-1.5">
+            <i className="fas fa-comments" />
+            دعوات الإخوة لـ {displayName}
+          </p>
+          {replies.map(r => <ReplyBubble key={r.id} reply={r} />)}
+        </div>
+      )}
+
       {showThanks && (
         <div className="absolute inset-0 flex items-center justify-center
                         bg-gradient-to-br from-gold/95 to-gold-dark/95 rounded-2xl
@@ -711,5 +788,136 @@ function ShareLink({ href, icon, label, color }: { href: string; icon: string; l
        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gold/10 text-sm font-bold text-teal-dark">
       <i className={`fab ${icon} ${color}`} />{label}
     </a>
+  );
+}
+
+/* ─────────────────────── Reply Form (inline) ─────────────────────── */
+const MAX_REPLY = 200;
+
+function ReplyForm({
+  duaaId, identity, onSent,
+}: {
+  duaaId: string;
+  identity: Identity | null;
+  onSent: (reply: DuaaReply) => void;
+}) {
+  const [name,    setName]    = useState('');
+  const [country, setCountry] = useState('');
+  const [message, setMessage] = useState('');
+  const [busy,    setBusy]    = useState(false);
+  const [error,   setError]   = useState('');
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!message.trim()) { setError('الدعاء مطلوب.'); return; }
+    setBusy(true);
+    try {
+      const hp = (document.getElementById(`reply-hp-${duaaId}`) as HTMLInputElement | null)?.value ?? '';
+      const res = await fetch(`/api/duaa/${duaaId}/reply`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, country, message,
+          nationalId: identity?.nationalId,
+          hp,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data?.error || 'تعذّر الإرسال.');
+        setBusy(false);
+        return;
+      }
+      onSent(data.reply);
+      setMessage(''); setName(''); setCountry('');
+    } catch {
+      setError('تعذّر الاتصال.');
+    } finally { setBusy(false); }
+  };
+
+  return (
+    <form onSubmit={submit} noValidate
+          className="mt-3 bg-gradient-to-br from-teal/5 to-cream rounded-xl border border-teal/20 p-3 space-y-2">
+      {identity && (
+        <div className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200
+                        rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
+          <i className="fas fa-star text-amber-600" />
+          <span>سيظهر دعاؤك بشارة <strong>"حاج {identity.hajjYear}"</strong></span>
+        </div>
+      )}
+
+      <input type="text" name="hp" id={`reply-hp-${duaaId}`} tabIndex={-1} autoComplete="off"
+             aria-hidden="true"
+             style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, opacity: 0 }} />
+
+      <div className="grid grid-cols-2 gap-2">
+        <input type="text" placeholder="اسمك (اختياري)" maxLength={60}
+               className="form-input text-sm py-2"
+               value={name} onChange={e => setName(e.target.value)} />
+        <input type="text" placeholder="البلد (اختياري)" maxLength={40}
+               className="form-input text-sm py-2"
+               value={country} onChange={e => setCountry(e.target.value)} />
+      </div>
+
+      <div>
+        <textarea className="form-input min-h-[70px] resize-y text-sm" rows={2}
+                  maxLength={MAX_REPLY}
+                  placeholder="اللهم استجب له..."
+                  value={message} onChange={e => setMessage(e.target.value)} />
+        <p className="text-[10px] text-gray-400 mt-1 flex items-center justify-between">
+          <span>تجنّب الروابط والأرقام الطويلة</span>
+          <span>{message.length}/{MAX_REPLY}</span>
+        </p>
+      </div>
+
+      {error && (
+        <p className="text-red-600 text-xs flex items-center gap-1">
+          <i className="fas fa-circle-exclamation" />{error}
+        </p>
+      )}
+
+      <button type="submit" disabled={busy || !message.trim()}
+              className="w-full bg-teal hover:bg-teal-light disabled:bg-teal/40
+                         text-white text-sm font-bold py-2.5 rounded-lg transition
+                         flex items-center justify-center gap-2">
+        {busy ? <><i className="fas fa-spinner fa-spin" />جاري الإرسال...</>
+              : <><i className="fas fa-paper-plane" />أرسل دعاءك</>}
+      </button>
+    </form>
+  );
+}
+
+/* ─────────────────────── Reply Bubble ─────────────────────── */
+function ReplyBubble({ reply }: { reply: DuaaReply }) {
+  const isPilgrim   = !!reply.hajjYear;
+  const displayName = reply.name?.trim() || 'زائر كريم';
+
+  return (
+    <div className={`rounded-xl px-3 py-2.5 border
+      ${isPilgrim
+        ? 'bg-gradient-to-br from-amber-50 to-white border-amber-200'
+        : 'bg-cream/40 border-gold/10'}`}>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-gray-500 mb-1">
+        {isPilgrim && (
+          <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800
+                           px-1.5 py-0.5 rounded-full text-[10px] font-bold border border-amber-300">
+            <i className="fas fa-star text-[8px]" />
+            حاج {reply.hajjYear}
+          </span>
+        )}
+        <span className="font-bold text-teal-dark">{displayName}</span>
+        {reply.country && (
+          <>
+            <span className="text-gray-300">·</span>
+            <span>{reply.country}</span>
+          </>
+        )}
+        <span className="text-gray-300">·</span>
+        <span>{fmtRelativeAr(reply.createdAt)}</span>
+      </div>
+      <p className="text-sm text-teal-dark leading-relaxed whitespace-pre-wrap">
+        {reply.message}
+      </p>
+    </div>
   );
 }
