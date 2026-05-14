@@ -1,0 +1,251 @@
+import { kv } from '@vercel/kv';
+import { getPilgrim } from '@/lib/pilgrims';
+
+/* ─────────────────────────────────────────────────────────────
+ * "تذكروني في دعائكم" — public prayer wall
+ *
+ * KV schema:
+ *   duaa:<id>                  → hash with all fields
+ *   duaa:all                   → sorted set, score=createdAt
+ *   duaa:popular               → sorted set, score=reactionCount
+ *   duaa:react:<id>:<ipHash>   → marker, prevents double-counting per IP
+ *                                (TTL: 30 days)
+ *
+ * Notes:
+ *   - All entries are PUBLIC by design (community of mutual prayer).
+ *   - Anyone may submit; verified pilgrims get a hajjYear badge.
+ *   - Reactions are idempotent per IP per duaa.
+ *   - Content filtered for obvious abuse (URLs, phone numbers).
+ * ───────────────────────────────────────────────────────────── */
+
+export interface Duaa {
+  id:             string;
+  name:           string;          // empty = "زائر كريم"
+  country:        string;          // empty = "—"
+  message:        string;
+  /* If submitter entered a valid Hajj nationalId, store the year for the badge */
+  hajjYear?:      string;          // e.g. '1447'
+  reactionCount:  number;
+  hidden?:        boolean;         // admin-hidden (still kept for moderation log)
+  ip:             string;
+  createdAt:      number;
+  updatedAt:      number;
+}
+
+const INDEX_LATEST  = 'duaa:all';
+const INDEX_POPULAR = 'duaa:popular';
+const itemKey       = (id: string) => `duaa:${id}`;
+const reactKey      = (id: string, ipHash: string) => `duaa:react:${id}:${ipHash}`;
+
+/* ── Constants ─── */
+export const MAX_MESSAGE_LEN = 300;
+export const MAX_NAME_LEN    = 60;
+export const MAX_COUNTRY_LEN = 40;
+const REACT_TTL_SEC          = 30 * 24 * 60 * 60;     // 30 days
+
+/* ── Helpers ─── */
+function clean(o: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(o)) if (v !== undefined && v !== null) out[k] = v;
+  return out;
+}
+
+function normalize(raw: Record<string, unknown> | null | undefined): Duaa | null {
+  if (!raw || !raw.id) return null;
+  const num = (v: unknown): number => {
+    if (typeof v === 'number') return v;
+    if (typeof v === 'string' && v.trim() !== '') { const n = Number(v); return Number.isFinite(n) ? n : 0; }
+    return 0;
+  };
+  const str = (v: unknown): string => (v == null ? '' : String(v));
+  return {
+    id:            str(raw.id),
+    name:          str(raw.name),
+    country:       str(raw.country),
+    message:       str(raw.message),
+    hajjYear:      raw.hajjYear ? str(raw.hajjYear) : undefined,
+    reactionCount: num(raw.reactionCount),
+    hidden:        Boolean(raw.hidden),
+    ip:            str(raw.ip),
+    createdAt:     num(raw.createdAt),
+    updatedAt:     num(raw.updatedAt),
+  };
+}
+
+/* Hash an IP for reaction idempotency without persisting the raw IP for the
+ * counter key. We still keep it on the record itself for moderation. */
+async function hashIp(ip: string): Promise<string> {
+  const data = new TextEncoder().encode(`bh-duaa-salt:${ip}`);
+  const buf  = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf))
+    .map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 24);
+}
+
+/* ── Content filters ─── */
+const URL_RE   = /https?:\/\/|www\.|\.com|\.net|\.org|\.io/i;
+const PHONE_RE = /[\d٠١٢٣٤٥٦٧٨٩]{6,}/;     // any 6+ digit run (Latin or Arabic)
+
+export function validateDuaaContent(message: string): { ok: true } | { ok: false; reason: string } {
+  const m = message.trim();
+  if (!m) return { ok: false, reason: 'لا يمكن إرسال دعاء فارغ.' };
+  if (m.length > MAX_MESSAGE_LEN) return { ok: false, reason: `حد أقصى ${MAX_MESSAGE_LEN} حرف.` };
+  if (URL_RE.test(m))   return { ok: false, reason: 'لا تُسمح الروابط في الدعاء.' };
+  if (PHONE_RE.test(m)) return { ok: false, reason: 'لا تُسمح الأرقام الطويلة (كأرقام الجوال).' };
+  return { ok: true };
+}
+
+function shortId(): string {
+  // 12-char URL-safe id
+  const bytes = new Uint8Array(9);
+  crypto.getRandomValues(bytes);
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  let id = '';
+  for (let i = 0; i < bytes.length; i++) id += alphabet[bytes[i] % alphabet.length];
+  return id;
+}
+
+/* ── Create ─── */
+export async function createDuaa(input: {
+  name?:       string;
+  country?:    string;
+  message:     string;
+  nationalId?: string;            // optional — for verified pilgrim badge
+  ip:          string;
+}): Promise<Duaa> {
+  const check = validateDuaaContent(input.message);
+  if (!check.ok) throw new Error(check.reason);
+
+  // Verify pilgrim badge (silent fail if not found)
+  let hajjYear: string | undefined;
+  if (input.nationalId) {
+    try {
+      const p = await getPilgrim(input.nationalId.trim());
+      if (p && !p.revokedAt) hajjYear = p.hajjYear;
+    } catch { /* ignore */ }
+  }
+
+  const now = Date.now();
+  const duaa: Duaa = {
+    id:            shortId(),
+    name:          (input.name    ?? '').trim().slice(0, MAX_NAME_LEN),
+    country:       (input.country ?? '').trim().slice(0, MAX_COUNTRY_LEN),
+    message:       input.message.trim(),
+    hajjYear,
+    reactionCount: 0,
+    ip:            input.ip,
+    createdAt:     now,
+    updatedAt:     now,
+  };
+
+  await kv.hset(itemKey(duaa.id), clean(duaa as unknown as Record<string, unknown>));
+  await kv.zadd(INDEX_LATEST,  { score: now, member: duaa.id });
+  await kv.zadd(INDEX_POPULAR, { score: 0,   member: duaa.id });
+  return duaa;
+}
+
+/* ── Read one ─── */
+export async function getDuaa(id: string): Promise<Duaa | null> {
+  const data = await kv.hgetall<Record<string, unknown>>(itemKey(id));
+  return normalize(data);
+}
+
+/* ── List ─── */
+export type DuaaSort = 'latest' | 'popular';
+export async function listDuaa(opts: {
+  sort?:        DuaaSort;
+  limit?:       number;
+  offset?:      number;
+  includeHidden?: boolean;
+} = {}): Promise<Duaa[]> {
+  const limit  = Math.min(opts.limit  ?? 30, 100);
+  const offset = Math.max(opts.offset ?? 0, 0);
+  const index  = opts.sort === 'popular' ? INDEX_POPULAR : INDEX_LATEST;
+  const ids    = await kv.zrange<string[]>(index, offset, offset + limit - 1, { rev: true });
+  if (!ids?.length) return [];
+  const pipe = kv.pipeline();
+  ids.forEach(id => pipe.hgetall(itemKey(id)));
+  const results = await pipe.exec<Record<string, unknown>[]>();
+  return results
+    .map(r => normalize(r))
+    .filter((d): d is Duaa => d !== null && (opts.includeHidden || !d.hidden));
+}
+
+/* ── React (idempotent per IP) ─── */
+export async function reactToDuaa(id: string, ip: string): Promise<
+  { ok: true; count: number } | { ok: false; reason: 'not_found' | 'already' }
+> {
+  const duaa = await getDuaa(id);
+  if (!duaa) return { ok: false, reason: 'not_found' };
+
+  const ipHash = await hashIp(ip);
+  const key    = reactKey(id, ipHash);
+
+  // SET key value NX EX  (only if not exists)
+  const set = await kv.set(key, 1, { nx: true, ex: REACT_TTL_SEC });
+  if (set === null) return { ok: false, reason: 'already' };
+
+  const newCount = (duaa.reactionCount ?? 0) + 1;
+  await kv.hset(itemKey(id), { reactionCount: newCount, updatedAt: Date.now() });
+  await kv.zadd(INDEX_POPULAR, { score: newCount, member: id });
+
+  return { ok: true, count: newCount };
+}
+
+/* ── Whether this IP has already reacted to a given duaa ─── */
+export async function hasReacted(id: string, ip: string): Promise<boolean> {
+  const ipHash = await hashIp(ip);
+  const v      = await kv.get(reactKey(id, ipHash));
+  return v !== null;
+}
+
+/* ── Bulk-load reaction state for many duaas (used on initial render) ─── */
+export async function getReactedSet(ids: string[], ip: string): Promise<Set<string>> {
+  if (!ids.length) return new Set();
+  const ipHash = await hashIp(ip);
+  const pipe = kv.pipeline();
+  ids.forEach(id => pipe.get(reactKey(id, ipHash)));
+  const results = await pipe.exec<unknown[]>();
+  const out = new Set<string>();
+  ids.forEach((id, i) => { if (results[i] !== null) out.add(id); });
+  return out;
+}
+
+/* ── Admin: hide / unhide ─── */
+export async function setDuaaHidden(id: string, hidden: boolean): Promise<Duaa | null> {
+  const d = await getDuaa(id);
+  if (!d) return null;
+  await kv.hset(itemKey(id), { hidden, updatedAt: Date.now() });
+  return { ...d, hidden };
+}
+
+/* ── Admin: delete ─── */
+export async function deleteDuaa(id: string): Promise<boolean> {
+  const d = await getDuaa(id);
+  if (!d) return false;
+  await kv.del(itemKey(id));
+  await kv.zrem(INDEX_LATEST,  id);
+  await kv.zrem(INDEX_POPULAR, id);
+  return true;
+}
+
+/* ── Stats ─── */
+export interface DuaaStats {
+  total:         number;
+  hidden:        number;
+  totalReacts:   number;
+  byCountry:     Record<string, number>;
+  withHajjBadge: number;
+}
+
+export async function getDuaaStats(): Promise<DuaaStats> {
+  const all = await listDuaa({ limit: 5000, includeHidden: true });
+  const stats: DuaaStats = { total: 0, hidden: 0, totalReacts: 0, byCountry: {}, withHajjBadge: 0 };
+  for (const d of all) {
+    stats.total++;
+    if (d.hidden) stats.hidden++;
+    stats.totalReacts += d.reactionCount ?? 0;
+    if (d.hajjYear) stats.withHajjBadge++;
+    if (d.country) stats.byCountry[d.country] = (stats.byCountry[d.country] ?? 0) + 1;
+  }
+  return stats;
+}

@@ -4,14 +4,13 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 
 const navLinks = [
-  { href: '#about',        ar: 'من نحن',         en: 'About'        },
-  { href: '#services',     ar: 'خدماتنا',        en: 'Services'     },
-  { href: '#journey',      ar: 'رحلة الحاج',     en: 'Journey'      },
-  { href: '#videos',       ar: 'الفيديو',        en: 'Gallery'      },
-  { href: '#testimonials', ar: 'آراء العملاء',   en: 'Reviews'      },
-  { href: '#faq',          ar: 'الأسئلة الشائعة', en: 'FAQ'         },
-  { href: '#agencies',     ar: 'للوكالات',       en: 'Agencies'     },
-  { href: '#contact',      ar: 'تواصل معنا',     en: 'Contact'      },
+  { href: '#about',        ar: 'من نحن',          en: 'About'        },
+  { href: '#services',     ar: 'خدماتنا',         en: 'Services'     },
+  { href: '#journey',      ar: 'رحلة الحاج',      en: 'Journey'      },
+  { href: '#faq',          ar: 'الأسئلة الشائعة',  en: 'FAQ'          },
+  { href: '/duaa',         ar: 'حائط الدعاء',     en: 'Prayer Wall', highlight: true },
+  { href: '#agencies',     ar: 'للوكالات',        en: 'Agencies'     },
+  { href: '#contact',      ar: 'تواصل معنا',      en: 'Contact'      },
 ];
 
 export default function Navbar() {
@@ -23,7 +22,7 @@ export default function Navbar() {
   /* ── scroll handler ─── */
   const onScroll = useCallback(() => {
     setScrolled(window.scrollY > 60);
-    const ids = navLinks.map(l => l.href.slice(1));
+    const ids = navLinks.filter(l => l.href.startsWith('#')).map(l => l.href.slice(1));
     for (const id of [...ids].reverse()) {
       const el = document.getElementById(id);
       if (el && window.scrollY >= el.offsetTop - 110) { setActiveId(id); break; }
@@ -124,14 +123,17 @@ export default function Navbar() {
                 <button
                   onClick={() => scrollTo(link.href)}
                   className={`text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-200
-                    relative after:absolute after:bottom-0 after:inset-x-3 after:h-0.5
-                    after:rounded-full after:bg-gold after:scale-x-0 after:transition-transform
-                    hover:text-gold-light hover:after:scale-x-100
-                    ${activeId === link.href.slice(1)
-                      ? 'text-gold-light after:scale-x-100'
-                      : 'text-white/80'
+                    ${link.highlight
+                      ? 'bg-gold/15 text-gold-light hover:bg-gold/25 border border-gold/30'
+                      : `relative after:absolute after:bottom-0 after:inset-x-3 after:h-0.5
+                         after:rounded-full after:bg-gold after:scale-x-0 after:transition-transform
+                         hover:text-gold-light hover:after:scale-x-100
+                         ${activeId === link.href.slice(1)
+                           ? 'text-gold-light after:scale-x-100'
+                           : 'text-white/80'}`
                     }`}
                 >
+                  {link.highlight && <span className="me-1">🤲</span>}
                   {t(link.ar, link.en)}
                 </button>
               </li>

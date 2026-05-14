@@ -7,6 +7,7 @@ const quickLinks = [
   { href: '#journey',      ar: 'رحلة الحاج',        en: 'Pilgrim Journey'  },
   { href: '#videos',       ar: 'معرض الفيديو',      en: 'Video Gallery'    },
   { href: '#testimonials', ar: 'آراء العملاء',      en: 'Testimonials'     },
+  { href: '/duaa',         ar: 'حائط الدعاء',       en: 'Prayer Wall'      },
   { href: '#awards',       ar: 'جوائزنا',           en: 'Our Awards'       },
   { href: '#faq',          ar: 'الأسئلة الشائعة',    en: 'FAQ'              },
   { href: '#agencies',     ar: 'للوكالات الخارجية',  en: 'External Agencies'},

@@ -182,6 +182,10 @@ export default function AdminDashboard() {
                   className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">
               <i className="fas fa-certificate me-1" />التذاكير
             </Link>
+            <Link href="/admin/duaa"
+                  className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">
+              <i className="fas fa-hands-praying me-1" />الدعاء
+            </Link>
           </nav>
           <button onClick={fetchData}
                   className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
@@ -195,13 +199,17 @@ export default function AdminDashboard() {
           </button>
         </div>
         {/* Mobile tab nav */}
-        <div className="md:hidden border-t border-white/10 px-4 sm:px-6 flex gap-1 text-xs font-bold">
+        <div className="md:hidden border-t border-white/10 px-4 sm:px-6 flex gap-1 text-[11px] font-bold">
           <span className="flex-1 text-center py-2 bg-gold">
             <i className="fas fa-inbox me-1" />الطلبات
           </span>
           <Link href="/admin/pilgrims"
                 className="flex-1 text-center py-2 hover:bg-white/10 transition">
             <i className="fas fa-certificate me-1" />التذاكير
+          </Link>
+          <Link href="/admin/duaa"
+                className="flex-1 text-center py-2 hover:bg-white/10 transition">
+            <i className="fas fa-hands-praying me-1" />الدعاء
           </Link>
         </div>
       </header>
