@@ -148,7 +148,7 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
               اذكروني بدعوة
             </h1>
             <p className="text-gold-dark text-xs sm:text-base mb-1 px-4">
-              حائط مفتوح للأمّة — شاركوا دعواتكم، وادعوا لإخوانكم
+              شاركوا دعواتكم، وادعوا لإخوانكم
             </p>
 
             {/* Verse card */}

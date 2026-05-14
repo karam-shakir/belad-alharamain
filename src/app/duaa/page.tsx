@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import DuaaWallClient from './DuaaWallClient';
 
 const TITLE = 'اذكروني بدعوة — مبادرة بلاد الحرمين';
-const DESC  = 'حائط مفتوح للأمّة: شاركوا دعواتكم، وادعوا لإخوانكم. كلّ قلب يحمل حاجة، وكلّ دعاء يحمل بركة.';
+const DESC  = 'شاركوا دعواتكم، وادعوا لإخوانكم. كلّ قلب يحمل حاجة، وكلّ دعاء يحمل بركة.';
 
 export const metadata: Metadata = {
   title: TITLE,
