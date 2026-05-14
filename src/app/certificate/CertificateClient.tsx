@@ -100,20 +100,87 @@ export default function CertificateClient() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cream via-cream-dark to-cream
-                    flex flex-col items-center py-10 px-4 print:p-0 print:bg-white print:min-h-0">
+                    flex flex-col items-center py-6 sm:py-10 px-2 sm:px-4
+                    print:p-0 print:bg-white print:min-h-0">
 
-      {/* ────── Hide everything except certificate during print ────── */}
+      {/* ────── Print rules: A4 landscape, exact dimensions, no overflow ────── */}
       <style jsx global>{`
         @media print {
-          body * { visibility: hidden; }
-          .cert-print-area, .cert-print-area * { visibility: visible; }
-          .cert-print-area {
-            position: absolute !important;
-            inset: 0 !important;
-            width: 100% !important;
-            height: auto !important;
+          @page {
+            size: A4 landscape;
+            margin: 0;
           }
-          @page { size: A4 landscape; margin: 0; }
+
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+            width: 297mm;
+            height: 210mm;
+          }
+
+          /* Hide everything by default */
+          body * { visibility: hidden !important; }
+
+          /* Show only the certificate area */
+          .cert-print-area, .cert-print-area * {
+            visibility: visible !important;
+          }
+
+          .cert-print-area {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 297mm !important;
+            height: 210mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+          }
+
+          /* Force exact A4 landscape on the certificate canvas */
+          .bhc-wrap {
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
+          }
+
+          .bhc {
+            width: 297mm !important;
+            height: 210mm !important;
+            max-width: none !important;
+            aspect-ratio: auto !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            page-break-inside: avoid !important;
+            page-break-after: avoid !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          .bhc-outer {
+            padding: 4mm !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          .bhc-inner {
+            padding: 8mm 12mm 8mm !important;
+            overflow: visible !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Ensure seal & QR colors render */
+          .bhc-seal, .bhc-qr, .bhc-logo {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
         }
       `}</style>
 
@@ -121,24 +188,24 @@ export default function CertificateClient() {
       {state.stage !== 'found' && (
         <div className="w-full max-w-xl print:hidden">
           {/* Brand */}
-          <div className="flex justify-center mb-6">
-            <a href="/" className="bg-white/90 rounded-2xl px-5 py-3 shadow-card hover:shadow-lg
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <a href="/" className="bg-white/90 rounded-2xl px-4 sm:px-5 py-2 sm:py-3 shadow-card hover:shadow-lg
                                    transition-shadow inline-block">
               <Image src="/images/logo.png" alt="بلاد الحرمين"
                      width={220} height={80} priority
-                     className="h-14 w-auto object-contain" />
+                     className="h-12 sm:h-14 w-auto object-contain" />
             </a>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-2xl border border-gold/20 p-7 sm:p-10">
-            <div className="text-center mb-6">
-              <div className="inline-flex w-16 h-16 rounded-full bg-gold/15 items-center justify-center mb-4">
-                <i className="fas fa-certificate text-gold text-2xl" />
+          <div className="bg-white rounded-3xl shadow-2xl border border-gold/20 p-5 sm:p-10">
+            <div className="text-center mb-5 sm:mb-6">
+              <div className="inline-flex w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gold/15 items-center justify-center mb-3 sm:mb-4">
+                <i className="fas fa-certificate text-gold text-xl sm:text-2xl" />
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-teal-dark mb-2">
+              <h1 className="text-xl sm:text-3xl font-black text-teal-dark mb-1.5 sm:mb-2">
                 تذكار الحج المبارك
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
                 أدخل رقم الهوية الوطنية أو الإقامة لاستخراج تذكاركم
               </p>
             </div>
@@ -236,62 +303,73 @@ export default function CertificateClient() {
       {state.stage === 'found' && (
         <div className="w-full max-w-[1200px] mx-auto">
           {/* Welcome banner — hidden during print */}
-          <div className="max-w-4xl mx-auto mb-6 text-center print:hidden">
+          <div className="max-w-4xl mx-auto mb-4 sm:mb-6 text-center print:hidden">
             <div className="inline-flex flex-col items-center bg-white rounded-2xl
-                            shadow-card border border-gold/20 px-6 py-5 max-w-lg">
-              <div className="inline-flex w-14 h-14 rounded-full bg-gradient-to-br
-                              from-gold to-gold-dark items-center justify-center mb-3 shadow-gold">
-                <i className="fas fa-circle-check text-white text-2xl" />
+                            shadow-card border border-gold/20 px-4 sm:px-6 py-4 sm:py-5 max-w-lg">
+              <div className="inline-flex w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br
+                              from-gold to-gold-dark items-center justify-center mb-2 sm:mb-3 shadow-gold">
+                <i className="fas fa-circle-check text-white text-xl sm:text-2xl" />
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-teal-dark mb-1">
+              <h2 className="text-lg sm:text-2xl font-black text-teal-dark mb-0.5 sm:mb-1">
                 تقبّل الله منكم 🤍
               </h2>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
                 تذكاركم جاهز — يمكنكم طباعته أو حفظه كملف PDF
               </p>
             </div>
           </div>
 
-          {/* Action buttons — hidden during print */}
-          <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center
-                          gap-2 mb-5 print:hidden">
+          {/* Action buttons — hidden during print, full-width grid on mobile */}
+          <div className="max-w-4xl mx-auto grid grid-cols-3 sm:flex sm:flex-wrap
+                          sm:items-center sm:justify-center gap-2 mb-4 sm:mb-5 print:hidden">
             <button onClick={print}
-                    className="inline-flex items-center gap-2 bg-gold hover:bg-gold-light
-                               text-white font-bold px-5 py-3 rounded-full transition-all
-                               duration-200 hover:-translate-y-0.5 shadow-gold">
+                    className="inline-flex items-center justify-center gap-1.5 sm:gap-2
+                               bg-gold hover:bg-gold-light text-white font-bold
+                               px-3 sm:px-5 py-2.5 sm:py-3 rounded-full transition-all
+                               duration-200 hover:-translate-y-0.5 shadow-gold
+                               text-xs sm:text-sm">
               <i className="fas fa-print" />
-              طباعة / حفظ PDF
+              <span className="hidden xs:inline sm:inline">طباعة /</span>
+              <span>PDF</span>
             </button>
             <button onClick={share}
-                    className="inline-flex items-center gap-2 bg-teal hover:bg-teal-light
-                               text-white font-bold px-5 py-3 rounded-full transition-all
-                               duration-200 hover:-translate-y-0.5 shadow-teal">
+                    className="inline-flex items-center justify-center gap-1.5 sm:gap-2
+                               bg-teal hover:bg-teal-light text-white font-bold
+                               px-3 sm:px-5 py-2.5 sm:py-3 rounded-full transition-all
+                               duration-200 hover:-translate-y-0.5 shadow-teal
+                               text-xs sm:text-sm">
               <i className="fas fa-share-nodes" />
               مشاركة
             </button>
             <button onClick={reset}
-                    className="inline-flex items-center gap-2 bg-white border-2 border-gold/30
-                               hover:border-gold text-teal-dark hover:text-gold
-                               font-bold px-5 py-3 rounded-full transition-all duration-200">
+                    className="inline-flex items-center justify-center gap-1.5 sm:gap-2
+                               bg-white border-2 border-gold/30 hover:border-gold
+                               text-teal-dark hover:text-gold font-bold
+                               px-3 sm:px-5 py-2.5 sm:py-3 rounded-full transition-all duration-200
+                               text-xs sm:text-sm">
               <i className="fas fa-arrow-rotate-left" />
-              بحث آخر
+              <span>بحث آخر</span>
             </button>
           </div>
 
-          {/* Certificate */}
-          <div ref={certRef} className="cert-print-area w-full">
-            <Certificate
-              name={state.pilgrim.name}
-              hajjYear={state.pilgrim.hajjYear}
-              verifyCode={state.pilgrim.verifyCode}
-              qrDataUrl={state.qr}
-            />
+          {/* Certificate — horizontal scroll on tiny screens so layout stays intact */}
+          <div className="overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0 sm:overflow-visible
+                          print:overflow-visible print:mx-0 print:px-0">
+            <div ref={certRef} className="cert-print-area w-full min-w-[480px] sm:min-w-0">
+              <Certificate
+                name={state.pilgrim.name}
+                hajjYear={state.pilgrim.hajjYear}
+                verifyCode={state.pilgrim.verifyCode}
+                qrDataUrl={state.qr}
+              />
+            </div>
           </div>
 
           {/* Footer tip */}
-          <p className="max-w-4xl mx-auto text-center text-xs text-gray-400 mt-5 print:hidden">
+          <p className="max-w-4xl mx-auto text-center text-[11px] sm:text-xs text-gray-400
+                        mt-4 sm:mt-5 px-2 print:hidden leading-relaxed">
             <i className="fas fa-lightbulb text-gold me-1" />
-            عند الطباعة، اختر <strong>"حفظ بصيغة PDF"</strong> من قائمة الطابعة لحفظها كملف.
+            عند الطباعة، اختر <strong>"حفظ بصيغة PDF"</strong> أو "A4 أفقي" من قائمة الطابعة.
           </p>
         </div>
       )}
