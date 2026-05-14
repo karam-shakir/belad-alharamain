@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import type { Duaa, DuaaStats } from '@/lib/duaa';
+import type { Duaa, DuaaReply, DuaaStats } from '@/lib/duaa';
 
 function fmtDate(ts: number) {
   return new Date(ts).toLocaleString('ar-SA', {
@@ -216,62 +216,9 @@ export default function AdminDuaaPage() {
         ) : (
           <div className="space-y-3">
             {filtered.map(d => (
-              <div key={d.id}
-                   className={`bg-white rounded-2xl border shadow-card p-4 sm:p-5
-                     ${d.hidden ? 'border-red-200 bg-red-50/30' : 'border-gold/10'}`}>
-                <div className="flex flex-wrap items-start gap-3 mb-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-2 text-xs">
-                      {d.hajjYear && (
-                        <span className="inline-flex items-center gap-1 bg-gold/15 text-gold-dark
-                                         px-2 py-0.5 rounded-full font-bold">
-                          <i className="fas fa-star text-[9px]" />حاج {d.hajjYear}
-                        </span>
-                      )}
-                      <span className="font-bold text-teal-dark">{d.name || 'زائر كريم'}</span>
-                      {d.country && <><span className="text-gray-300">·</span><span className="text-gray-500">{d.country}</span></>}
-                      <span className="text-gray-300">·</span>
-                      <span className="text-gray-500">{fmtDate(d.createdAt)}</span>
-                      {d.hidden && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
-                                         bg-red-100 text-red-700 font-bold">
-                          <i className="fas fa-eye-slash text-[9px]" />مخفي
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
-                      {d.message}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-gold/10 text-xs">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
-                                   bg-gold/10 text-gold-dark font-bold">
-                    🤲 {d.reactionCount ?? 0}
-                  </span>
-                  <a href={`/duaa/${d.id}`} target="_blank" rel="noopener noreferrer"
-                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold
-                                bg-teal-dark/10 hover:bg-teal-dark/20 text-teal-dark transition">
-                    <i className="fas fa-eye" />معاينة
-                  </a>
-                  <button onClick={() => toggleHide(d.id, !d.hidden)}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
-                                      text-xs font-bold transition
-                                      ${d.hidden
-                                        ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                                        : 'bg-amber-100 text-amber-800 hover:bg-amber-200'}`}>
-                    <i className={`fas ${d.hidden ? 'fa-eye' : 'fa-eye-slash'}`} />
-                    {d.hidden ? 'إظهار' : 'إخفاء'}
-                  </button>
-                  <button onClick={() => remove(d.id)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold
-                                     bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-700 transition
-                                     ms-auto">
-                    <i className="fas fa-trash" /><span className="hidden sm:inline">حذف</span>
-                  </button>
-                </div>
-              </div>
+              <DuaaCard key={d.id} d={d}
+                        onToggleHide={() => toggleHide(d.id, !d.hidden)}
+                        onRemove={() => remove(d.id)} />
             ))}
           </div>
         )}
@@ -280,6 +227,182 @@ export default function AdminDuaaPage() {
           {items.length > 0 && `${filtered.length} من ${items.length}`}
         </p>
       </main>
+    </div>
+  );
+}
+
+/* ── DuaaCard: a duaa with collapsible replies panel for moderation ── */
+function DuaaCard({ d, onToggleHide, onRemove }: {
+  d: Duaa;
+  onToggleHide: () => void;
+  onRemove: () => void;
+}) {
+  const [open,     setOpen]     = useState(false);
+  const [replies,  setReplies]  = useState<DuaaReply[]>([]);
+  const [loading,  setLoading]  = useState(false);
+  const [err,      setErr]      = useState('');
+
+  const loadReplies = useCallback(async () => {
+    setLoading(true); setErr('');
+    try {
+      const res = await fetch(`/api/admin/duaa/${d.id}/replies`, { cache: 'no-store' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'خطأ');
+      setReplies(data.items || []);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'خطأ');
+    } finally { setLoading(false); }
+  }, [d.id]);
+
+  const togglePanel = () => {
+    const next = !open;
+    setOpen(next);
+    if (next && replies.length === 0) loadReplies();
+  };
+
+  const toggleReplyHide = async (r: DuaaReply) => {
+    setReplies(prev => prev.map(p => p.id === r.id ? { ...p, hidden: !r.hidden } : p));
+    const res = await fetch(`/api/admin/duaa/reply/${r.id}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hidden: !r.hidden }),
+    });
+    if (!res.ok) { setErr('فشل التحديث'); loadReplies(); }
+  };
+
+  const removeReply = async (r: DuaaReply) => {
+    if (!confirm('حذف هذا الرد نهائياً؟')) return;
+    const res = await fetch(`/api/admin/duaa/reply/${r.id}`, { method: 'DELETE' });
+    if (!res.ok) { setErr('فشل الحذف'); return; }
+    setReplies(prev => prev.filter(p => p.id !== r.id));
+  };
+
+  return (
+    <div className={`bg-white rounded-2xl border shadow-card p-4 sm:p-5
+        ${d.hidden ? 'border-red-200 bg-red-50/30' : 'border-gold/10'}`}>
+      <div className="flex flex-wrap items-start gap-3 mb-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-2 text-xs">
+            {d.hajjYear && (
+              <span className="inline-flex items-center gap-1 bg-gold/15 text-gold-dark
+                               px-2 py-0.5 rounded-full font-bold">
+                <i className="fas fa-star text-[9px]" />حاج {d.hajjYear}
+              </span>
+            )}
+            <span className="font-bold text-teal-dark">{d.name || 'زائر كريم'}</span>
+            {d.country && <><span className="text-gray-300">·</span><span className="text-gray-500">{d.country}</span></>}
+            <span className="text-gray-300">·</span>
+            <span className="text-gray-500">{fmtDate(d.createdAt)}</span>
+            {d.hidden && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                               bg-red-100 text-red-700 font-bold">
+                <i className="fas fa-eye-slash text-[9px]" />مخفي
+              </span>
+            )}
+          </div>
+          <p className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
+            {d.message}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-gold/10 text-xs">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                         bg-gold/10 text-gold-dark font-bold">
+          🤲 {d.reactionCount ?? 0}
+        </span>
+        <button onClick={togglePanel}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition
+                  ${open ? 'bg-teal text-white' : 'bg-teal/10 text-teal-dark hover:bg-teal/20'}`}>
+          <i className={`fas ${open ? 'fa-chevron-up' : 'fa-comments'}`} />
+          الردود {typeof d.replyCount === 'number' && d.replyCount > 0 ? `(${d.replyCount})` : ''}
+        </button>
+        <a href={`/duaa/${d.id}`} target="_blank" rel="noopener noreferrer"
+           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold
+                      bg-teal-dark/10 hover:bg-teal-dark/20 text-teal-dark transition">
+          <i className="fas fa-eye" />معاينة
+        </a>
+        <button onClick={onToggleHide}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                            text-xs font-bold transition
+                            ${d.hidden
+                              ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                              : 'bg-amber-100 text-amber-800 hover:bg-amber-200'}`}>
+          <i className={`fas ${d.hidden ? 'fa-eye' : 'fa-eye-slash'}`} />
+          {d.hidden ? 'إظهار' : 'إخفاء'}
+        </button>
+        <button onClick={onRemove}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold
+                           bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-700 transition
+                           ms-auto">
+          <i className="fas fa-trash" /><span className="hidden sm:inline">حذف الدعاء</span>
+        </button>
+      </div>
+
+      {/* Replies panel */}
+      {open && (
+        <div className="mt-4 pt-4 border-t border-gold/10">
+          {err && (
+            <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg p-2 mb-3">
+              <i className="fas fa-circle-exclamation me-1" />{err}
+            </div>
+          )}
+          {loading ? (
+            <div className="text-center py-6 text-gray-400 text-sm">
+              <i className="fas fa-spinner fa-spin me-2" />جاري تحميل الردود...
+            </div>
+          ) : replies.length === 0 ? (
+            <p className="text-center text-xs text-gray-400 py-4">
+              <i className="fas fa-inbox me-1" />لا توجد ردود على هذا الدعاء
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {replies.map(r => (
+                <div key={r.id}
+                     className={`rounded-xl border p-3
+                       ${r.hidden ? 'border-red-200 bg-red-50/30' : 'border-gold/10 bg-cream/30'}`}>
+                  <div className="flex flex-wrap items-center gap-2 mb-1.5 text-[11px]">
+                    {r.hajjYear && (
+                      <span className="inline-flex items-center gap-1 bg-gold/15 text-gold-dark
+                                       px-1.5 py-0.5 rounded-full font-bold">
+                        <i className="fas fa-star text-[8px]" />حاج {r.hajjYear}
+                      </span>
+                    )}
+                    <span className="font-bold text-teal-dark">{r.name || 'زائر كريم'}</span>
+                    {r.country && <><span className="text-gray-300">·</span><span className="text-gray-500">{r.country}</span></>}
+                    <span className="text-gray-300">·</span>
+                    <span className="text-gray-500">{fmtDate(r.createdAt)}</span>
+                    {r.hidden && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full
+                                       bg-red-100 text-red-700 font-bold">
+                        <i className="fas fa-eye-slash text-[8px]" />مخفي
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap mb-2">
+                    {r.message}
+                  </p>
+                  <div className="flex gap-2">
+                    <button onClick={() => toggleReplyHide(r)}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg
+                                        text-[11px] font-bold transition
+                                        ${r.hidden
+                                          ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                                          : 'bg-amber-100 text-amber-800 hover:bg-amber-200'}`}>
+                      <i className={`fas ${r.hidden ? 'fa-eye' : 'fa-eye-slash'}`} />
+                      {r.hidden ? 'إظهار' : 'إخفاء'}
+                    </button>
+                    <button onClick={() => removeReply(r)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold
+                                       bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-700 transition">
+                      <i className="fas fa-trash" />حذف
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
