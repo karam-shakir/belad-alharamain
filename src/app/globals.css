@@ -371,10 +371,11 @@ html, body {
   box-sizing: border-box;
   overflow: hidden;
 }
-.bhc-top    { flex: 0 0 auto; }
-.bhc-title  { flex: 0 0 auto; margin-top: 0.6%; }
-.bhc-body   { flex: 1 1 auto; }
-.bhc-footer { flex: 0 0 auto; }
+/* Fixed-share sections — explicit basis so content never overlaps */
+.bhc-top    { flex: 0 0 18%; display: flex; align-items: center; justify-content: center; }
+.bhc-title  { flex: 0 0 14%; }
+.bhc-body   { flex: 1 1 0;  min-height: 0; }       /* remaining space, no content-grow */
+.bhc-footer { flex: 0 0 18%; }
 .bhc-corner {
   position: absolute;
   color: #A88B4A;

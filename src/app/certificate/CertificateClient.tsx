@@ -356,7 +356,7 @@ export default function CertificateClient() {
               900px min-width ensures all body content has room to render without overlap. */}
           <div className="overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0 sm:overflow-visible
                           print:overflow-visible print:mx-0 print:px-0">
-            <div ref={certRef} className="cert-print-area w-full min-w-[900px] sm:min-w-0">
+            <div ref={certRef} className="cert-print-area w-full min-w-[1100px] sm:min-w-0">
               <Certificate
                 name={state.pilgrim.name}
                 hajjYear={state.pilgrim.hajjYear}
