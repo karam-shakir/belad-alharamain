@@ -83,18 +83,30 @@ export default function CertificateClient() {
    * so iOS Safari (which often ignores @media print + @page size when
    * generating PDFs via Share Sheet) still captures the correct design. */
   const print = () => {
+    document.documentElement.classList.add('printing-cert');
     document.body.classList.add('printing-cert');
+    // Temporarily widen the viewport so iOS Safari sizes the PDF page at A4 landscape
+    const meta = document.querySelector('meta[name="viewport"]') as HTMLMetaElement | null;
+    const prevViewport = meta?.content;
+    if (meta) meta.content = 'width=1123, initial-scale=1';
     // Two RAFs to ensure layout has settled before triggering print dialog
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         try { window.print(); } catch {}
+        // Restore viewport after a short delay (gives iOS time to snapshot the page)
+        if (meta && prevViewport !== undefined) {
+          setTimeout(() => { meta.content = prevViewport; }, 1500);
+        }
       });
     });
   };
 
   /* Always clean up the print class after the user finishes (or cancels) */
   useEffect(() => {
-    const cleanup = () => document.body.classList.remove('printing-cert');
+    const cleanup = () => {
+      document.documentElement.classList.remove('printing-cert');
+      document.body.classList.remove('printing-cert');
+    };
     window.addEventListener('afterprint', cleanup);
     // Fallback in case afterprint isn't fired (some iOS flows)
     const onVisibility = () => {
@@ -137,11 +149,19 @@ export default function CertificateClient() {
        *   2. @media print        — works on desktop Ctrl+P / print dialogs
        *  Mobile rules in globals.css are overridden in both cases. */}
       <style jsx global>{`
-        /* (1) Force A4 layout the instant the PDF button is clicked */
+        /* (1) Force A4 layout the instant the PDF button is clicked.
+         *  Strategy: expand html+body to 297mm × 210mm so that iOS Safari's
+         *  Share→PDF builds the PDF page at A4-landscape dimensions, with
+         *  the certificate filling the full page (not a tiny strip). */
+        html.printing-cert,
         body.printing-cert {
-          background: #fff !important;
+          width: 297mm !important;
+          min-width: 297mm !important;
+          height: 210mm !important;
+          min-height: 210mm !important;
           margin: 0 !important;
           padding: 0 !important;
+          background: #fff !important;
           overflow: hidden !important;
         }
         /* Hide everything via visibility (keeps DOM tree intact, but invisible) */
@@ -153,33 +173,29 @@ export default function CertificateClient() {
           position: fixed !important;
           top: 0 !important;
           left: 0 !important;
-          right: 0 !important;
-          width: 100vw !important;
-          height: auto !important;
+          width: 297mm !important;
+          height: 210mm !important;
           margin: 0 !important;
           padding: 0 !important;
           background: #fff !important;
           z-index: 99999 !important;
-          overflow: visible !important;
+          overflow: hidden !important;
         }
         body.printing-cert .bhc-wrap {
           padding: 0 !important;
-          width: 100vw !important;
-          height: auto !important;
+          width: 297mm !important;
+          height: 210mm !important;
           display: block !important;
         }
-        /* Cert fills the viewport width with strict A4-landscape aspect ratio.
-         * On mobile portrait viewports this renders as a landscape strip at the
-         * top of the PDF page — readable, no overflow, no clipping. */
         body.printing-cert .bhc {
-          width: 100vw !important;
-          height: auto !important;
+          width: 297mm !important;
+          height: 210mm !important;
           max-width: none !important;
-          aspect-ratio: 1.4142 / 1 !important;
+          aspect-ratio: auto !important;
           box-shadow: none !important;
           border-radius: 0 !important;
           margin: 0 !important;
-          padding: 4px !important;
+          padding: 0 !important;
           direction: rtl !important;
         }
         body.printing-cert .bhc-outer { padding: 4mm !important; }
