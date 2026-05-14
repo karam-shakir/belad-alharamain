@@ -29,13 +29,6 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center pt-24 pb-20 sm:py-28">
 
-        {/* Bismillah */}
-        <div className="bismillah-line mb-8 reveal" style={{ transitionDelay: '0ms' }}>
-          <span className="text-gold-light/80 tracking-widest text-xs font-medium">
-            ﷽
-          </span>
-        </div>
-
         {/* Company Logo */}
         <div className="flex justify-center mb-10 reveal" style={{ transitionDelay: '100ms' }}>
           <div className="relative inline-flex items-center justify-center
