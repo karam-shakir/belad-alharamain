@@ -372,10 +372,20 @@ html, body {
     text-align: center !important;
     width: 100%;
   }
-  /* Seal smaller and centered on mobile */
+  /* Seal becomes inline on mobile — between body & footer, no overlap with QR */
   .bhc-seal {
-    width: 65px !important;
-    bottom: 4% !important;
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    inset-inline-start: auto !important;
+    inset-inline-end: auto !important;
+    display: block !important;
+    margin: 8px auto 0 !important;
+    width: 80px !important;
+    opacity: 0.65 !important;
+    transform: rotate(-6deg) !important;
   }
 }
 .bhc-outer {
