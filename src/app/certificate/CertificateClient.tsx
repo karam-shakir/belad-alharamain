@@ -197,6 +197,30 @@ export default function CertificateClient() {
           margin: 0 !important;
           padding: 0 !important;
           direction: rtl !important;
+          /* iOS Safari drops radial-gradients in PDF — use a solid cream instead */
+          background: #FFFCF5 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        body.printing-cert .bhc-outer,
+        body.printing-cert .bhc-inner {
+          background-image: none !important;
+          background-color: #FFFCF5 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        /* Force all colored elements to render colors in PDF */
+        body.printing-cert .bhc,
+        body.printing-cert .bhc *,
+        body.printing-cert .bhc-name-frame,
+        body.printing-cert .bhc-qr,
+        body.printing-cert .bhc-logo {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        /* Name frame: use solid faint tint, not gradient */
+        body.printing-cert .bhc-name-frame {
+          background: rgba(168,139,74,0.08) !important;
         }
         body.printing-cert .bhc-outer { padding: 4mm !important; }
         body.printing-cert .bhc-inner {
