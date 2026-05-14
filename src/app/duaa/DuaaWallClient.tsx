@@ -1,8 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, FormEvent } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { useCallback, useEffect, useRef, useState, FormEvent } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingElements from '@/components/FloatingElements';
@@ -12,15 +10,25 @@ const MAX_MSG = 300;
 const SITE = typeof window !== 'undefined' ? window.location.origin : 'https://belad-alharamain.com';
 
 interface Duaa {
-  id:            string;
-  name:          string;
-  country:       string;
-  message:       string;
-  hajjYear?:     string;
-  reactionCount: number;
-  createdAt:     number;
-  reactedByMe?:  boolean;
+  id:                    string;
+  name:                  string;
+  country:               string;
+  message:               string;
+  hajjYear?:             string;
+  reactionCount:         number;
+  reactionCountPilgrims: number;
+  createdAt:             number;
+  reactedByMe?:          boolean;
 }
+
+interface Identity {
+  nationalId: string;
+  hajjYear:   string;
+  nameMasked?: string;
+  verifiedAt: number;
+}
+
+const IDENTITY_KEY = 'bh-duaa-identity';
 
 const VERSES = [
   { ar: 'وَإِذَا سَأَلَكَ عِبَادِي عَنِّي فَإِنِّي قَرِيبٌ ۖ أُجِيبُ دَعْوَةَ الدَّاعِ إِذَا دَعَانِ', ref: 'البقرة ١٨٦' },
@@ -46,19 +54,39 @@ function fmtRelativeAr(ts: number): string {
   return new Date(ts).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
-/* Pick a verse based on current minute so it changes naturally across visits */
 function pickVerse() {
   const i = Math.floor((Date.now() / 60_000)) % VERSES.length;
   return VERSES[i];
+}
+
+function loadIdentity(): Identity | null {
+  try {
+    const raw = localStorage.getItem(IDENTITY_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed.nationalId === 'string' && typeof parsed.hajjYear === 'string') return parsed;
+  } catch {}
+  return null;
+}
+
+function saveIdentity(id: Identity) {
+  try { localStorage.setItem(IDENTITY_KEY, JSON.stringify(id)); } catch {}
+}
+
+function clearIdentity() {
+  try { localStorage.removeItem(IDENTITY_KEY); } catch {}
 }
 
 export default function DuaaWallClient({ highlightId }: { highlightId: string | null }) {
   const [items,    setItems]    = useState<Duaa[]>([]);
   const [loading,  setLoading]  = useState(true);
   const [sort,     setSort]     = useState<'latest' | 'popular'>('latest');
-  const [stats,    setStats]    = useState({ total: 0, totalReacts: 0 });
+  const [stats,    setStats]    = useState({ total: 0, totalReacts: 0, pilgrimReacts: 0 });
   const [verse]                  = useState(pickVerse);
-  const verseFlavorRef           = useRef(pickVerse);
+  const [identity, setIdentity] = useState<Identity | null>(null);
+
+  /* Load saved identity on mount */
+  useEffect(() => { setIdentity(loadIdentity()); }, []);
 
   /* Fetch the list of duaas */
   const fetchList = useCallback(async () => {
@@ -69,9 +97,11 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
       if (data?.ok) {
         const list: Duaa[] = data.items;
         setItems(list);
-        const total       = list.length;
-        const totalReacts = list.reduce((s, d) => s + (d.reactionCount ?? 0), 0);
-        setStats({ total, totalReacts });
+        setStats({
+          total:         list.length,
+          totalReacts:   list.reduce((s, d) => s + (d.reactionCount         ?? 0), 0),
+          pilgrimReacts: list.reduce((s, d) => s + (d.reactionCountPilgrims ?? 0), 0),
+        });
       }
     } finally { setLoading(false); }
   }, [sort]);
@@ -96,7 +126,7 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
       <main className="bg-pattern-white min-h-screen pt-24 pb-20">
 
         {/* ── Hero ─── */}
-        <section className="relative max-w-4xl mx-auto px-4 sm:px-6 mb-10">
+        <section className="relative max-w-4xl mx-auto px-4 sm:px-6 mb-8">
           <div className="text-center reveal">
             <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20
                             rounded-full bg-gradient-to-br from-gold to-gold-dark
@@ -126,28 +156,43 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
 
             {/* Stats */}
             {stats.total > 0 && (
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-5
-                              text-sm sm:text-base">
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3
+                              text-xs sm:text-sm">
                 <span className="inline-flex items-center gap-1.5 text-teal-dark font-bold
-                                 bg-white px-4 py-1.5 rounded-full border border-gold/20 shadow-card">
+                                 bg-white px-3 sm:px-4 py-1.5 rounded-full border border-gold/20 shadow-card">
                   <i className="fas fa-bookmark text-gold" />
                   <span>{stats.total}</span>
                   <span className="text-gray-500 font-medium">دعاء</span>
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-teal-dark font-bold
-                                 bg-white px-4 py-1.5 rounded-full border border-gold/20 shadow-card">
+                                 bg-white px-3 sm:px-4 py-1.5 rounded-full border border-gold/20 shadow-card">
                   <i className="fas fa-hands-praying text-gold" />
                   <span>{stats.totalReacts}</span>
-                  <span className="text-gray-500 font-medium">تفاعل بالدعاء</span>
+                  <span className="text-gray-500 font-medium">تفاعل</span>
                 </span>
+                {stats.pilgrimReacts > 0 && (
+                  <span className="inline-flex items-center gap-1.5 text-amber-700 font-bold
+                                   bg-amber-50 px-3 sm:px-4 py-1.5 rounded-full border border-amber-200 shadow-card">
+                    <i className="fas fa-star text-amber-500" />
+                    <span>{stats.pilgrimReacts}</span>
+                    <span className="text-amber-600 font-medium">من حجاجنا</span>
+                  </span>
+                )}
               </div>
             )}
           </div>
         </section>
 
+        {/* ── Identity Panel ─── */}
+        <section className="max-w-3xl mx-auto px-4 sm:px-6 mb-6">
+          <IdentityPanel identity={identity}
+                         onIdentified={(id) => { saveIdentity(id); setIdentity(id); }}
+                         onCleared={() => { clearIdentity(); setIdentity(null); }} />
+        </section>
+
         {/* ── Submit form ─── */}
         <section className="max-w-3xl mx-auto px-4 sm:px-6 mb-8">
-          <SubmitForm onSubmitted={fetchList} />
+          <SubmitForm identity={identity} onSubmitted={fetchList} />
         </section>
 
         {/* ── Sort tabs ─── */}
@@ -184,17 +229,24 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
             </div>
           ) : (
             items.map(d => (
-              <DuaaCard key={d.id} duaa={d}
-                        onReacted={(count) => {
+              <DuaaCard key={d.id} duaa={d} identity={identity}
+                        onReacted={(r) => {
                           setItems(prev => prev.map(p => p.id === d.id
-                            ? { ...p, reactionCount: count, reactedByMe: true } : p));
-                          setStats(s => ({ ...s, totalReacts: s.totalReacts + 1 }));
+                            ? { ...p,
+                                reactionCount:         r.count,
+                                reactionCountPilgrims: r.pilgrimCount,
+                                reactedByMe:           true }
+                            : p));
+                          setStats(s => ({
+                            ...s,
+                            totalReacts:   s.totalReacts + 1,
+                            pilgrimReacts: s.pilgrimReacts + (r.reactorBadge === 'pilgrim' ? 1 : 0),
+                          }));
                         }} />
             ))
           )}
         </section>
 
-        {/* Footer note */}
         {items.length > 0 && (
           <p className="text-center text-xs text-gray-400 mt-10 px-4">
             <i className="fas fa-circle-info me-1 text-gold" />
@@ -208,16 +260,133 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
   );
 }
 
+/* ─────────────────────── Identity Panel ─────────────────────── */
+function IdentityPanel({
+  identity, onIdentified, onCleared,
+}: {
+  identity: Identity | null;
+  onIdentified: (id: Identity) => void;
+  onCleared: () => void;
+}) {
+  const [open,  setOpen]  = useState(false);
+  const [nid,   setNid]   = useState('');
+  const [busy,  setBusy]  = useState(false);
+  const [error, setError] = useState('');
+
+  const verify = async () => {
+    setError('');
+    if (!/^\d{10}$/.test(nid)) { setError('رقم الهوية يجب أن يكون ١٠ أرقام.'); return; }
+    setBusy(true);
+    try {
+      const res  = await fetch('/api/duaa/identify', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nationalId: nid }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        setError(data?.error || 'تعذّر التحقّق.');
+        return;
+      }
+      onIdentified({
+        nationalId: nid,
+        hajjYear:   String(data.hajjYear ?? ''),
+        nameMasked: data.nameMasked,
+        verifiedAt: Date.now(),
+      });
+      setOpen(false);
+      setNid('');
+    } catch {
+      setError('تعذّر الاتصال.');
+    } finally { setBusy(false); }
+  };
+
+  /* Verified pilgrim identity */
+  if (identity) {
+    return (
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50
+                      border-2 border-amber-300 rounded-2xl px-4 py-3
+                      flex items-center gap-3 shadow-card">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-700
+                        flex items-center justify-center text-white shadow-amber-500/40 shadow-md">
+          <i className="fas fa-star text-base" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs text-amber-700 font-bold">أنت من حجاج بلاد الحرمين</p>
+          <p className="text-sm font-black text-amber-900">
+            ⭐ حاج {identity.hajjYear}{identity.nameMasked ? ` · ${identity.nameMasked}` : ''}
+          </p>
+          <p className="text-[11px] text-amber-700/80 mt-0.5">
+            دعواتك وتفاعلاتك ستظهر بشارة الحاج
+          </p>
+        </div>
+        <button onClick={onCleared}
+                title="إزالة التوثيق من هذا المتصفّح"
+                className="w-8 h-8 rounded-lg hover:bg-amber-200 text-amber-700 transition flex items-center justify-center">
+          <i className="fas fa-xmark text-sm" />
+        </button>
+      </div>
+    );
+  }
+
+  /* Visitor — option to identify */
+  return (
+    <div className="bg-white border border-gold/20 rounded-2xl shadow-card overflow-hidden">
+      <button onClick={() => setOpen(o => !o)}
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gold/5 transition">
+        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-2xl">
+          🤍
+        </div>
+        <div className="flex-1 min-w-0 text-start">
+          <p className="text-xs text-gray-500 font-medium">حالتك الحالية</p>
+          <p className="text-sm font-bold text-teal-dark">زائر كريم</p>
+        </div>
+        <span className="inline-flex items-center gap-1 text-xs font-bold text-gold-dark">
+          {open ? 'إغلاق' : 'حدّد نفسك كحاج'}
+          <i className={`fas fa-chevron-${open ? 'up' : 'down'} text-[10px]`} />
+        </span>
+      </button>
+
+      {open && (
+        <div className="border-t border-gold/15 p-4 bg-gold/5">
+          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+            <i className="fas fa-star text-gold me-1" />
+            إن كنت من حجاج بلاد الحرمين، أدخل رقم هويتك للحصول على شارة "حاج" تظهر مع كل دعاء أو تفاعل تقوم به.
+          </p>
+          <div className="flex gap-2">
+            <input type="text" inputMode="numeric" maxLength={10} dir="ltr"
+                   className="form-input text-center font-mono tracking-widest flex-1"
+                   placeholder="١٠ أرقام"
+                   value={nid}
+                   onChange={e => setNid(e.target.value.replace(/\D/g, '').slice(0, 10))} />
+            <button onClick={verify} disabled={busy || nid.length !== 10}
+                    className="px-4 py-2 rounded-xl bg-gold hover:bg-gold-light disabled:bg-gold/40
+                               text-white text-sm font-bold transition shadow-gold whitespace-nowrap">
+              {busy ? <i className="fas fa-spinner fa-spin" /> : 'تحقّق'}
+            </button>
+          </div>
+          {error && (
+            <p className="text-red-600 text-xs mt-2 flex items-center gap-1">
+              <i className="fas fa-circle-exclamation" />{error}
+            </p>
+          )}
+          <p className="text-[11px] text-gray-400 mt-2">
+            🔒 لن يظهر رقم هويتك لأحد — فقط شارة "حاج" مع سنة الحج.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─────────────────────── Submit Form ─────────────────────── */
-function SubmitForm({ onSubmitted }: { onSubmitted: () => void }) {
-  const [open,       setOpen]       = useState(false);
-  const [name,       setName]       = useState('');
-  const [country,    setCountry]    = useState('');
-  const [message,    setMessage]    = useState('');
-  const [nationalId, setNationalId] = useState('');
-  const [busy,       setBusy]       = useState(false);
-  const [error,      setError]      = useState('');
-  const [done,       setDone]       = useState(false);
+function SubmitForm({ identity, onSubmitted }: { identity: Identity | null; onSubmitted: () => void }) {
+  const [open,    setOpen]    = useState(false);
+  const [name,    setName]    = useState('');
+  const [country, setCountry] = useState('');
+  const [message, setMessage] = useState('');
+  const [busy,    setBusy]    = useState(false);
+  const [error,   setError]   = useState('');
+  const [done,    setDone]    = useState(false);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -228,7 +397,11 @@ function SubmitForm({ onSubmitted }: { onSubmitted: () => void }) {
       const hp = (document.getElementById('duaa-hp') as HTMLInputElement | null)?.value ?? '';
       const res = await fetch('/api/duaa', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, country, message, nationalId: nationalId || undefined, hp }),
+        body: JSON.stringify({
+          name, country, message,
+          nationalId: identity?.nationalId,
+          hp,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -237,7 +410,7 @@ function SubmitForm({ onSubmitted }: { onSubmitted: () => void }) {
         return;
       }
       setDone(true);
-      setName(''); setCountry(''); setMessage(''); setNationalId('');
+      setName(''); setCountry(''); setMessage('');
       onSubmitted();
       setTimeout(() => { setDone(false); setOpen(false); }, 2500);
     } catch {
@@ -254,6 +427,11 @@ function SubmitForm({ onSubmitted }: { onSubmitted: () => void }) {
                          flex items-center justify-center gap-2 text-base">
         <i className="fas fa-plus" />
         أضف دعاءك
+        {identity && (
+          <span className="ms-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">
+            ⭐ سيظهر دعاؤك بشارة حاج
+          </span>
+        )}
       </button>
     );
   }
@@ -285,7 +463,14 @@ function SubmitForm({ onSubmitted }: { onSubmitted: () => void }) {
         </button>
       </div>
 
-      {/* Honeypot */}
+      {identity && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-xs text-amber-800
+                        flex items-center gap-2">
+          <i className="fas fa-star text-amber-600" />
+          سيظهر دعاؤك بشارة <strong>"⭐ حاج {identity.hajjYear}"</strong>
+        </div>
+      )}
+
       <input type="text" name="hp" id="duaa-hp" tabIndex={-1} autoComplete="off"
              aria-hidden="true"
              style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, opacity: 0 }} />
@@ -322,23 +507,6 @@ function SubmitForm({ onSubmitted }: { onSubmitted: () => void }) {
         </p>
       </div>
 
-      <details className="bg-gold/5 rounded-lg border border-gold/15">
-        <summary className="px-3 py-2 text-xs font-bold text-teal-dark cursor-pointer flex items-center gap-1">
-          <i className="fas fa-star text-gold" />
-          هل أنت حاج معنا؟ احصل على شارة "حاج" بإدخال رقم هويتك
-        </summary>
-        <div className="p-3">
-          <input type="text" className="form-input text-center font-mono tracking-widest"
-                 dir="ltr" maxLength={10}
-                 placeholder="1XXXXXXXXX"
-                 value={nationalId}
-                 onChange={e => setNationalId(e.target.value.replace(/\D/g, '').slice(0, 10))} />
-          <p className="text-[11px] text-gray-500 mt-1.5">
-            رقمك لن يظهر للزوار — يُستخدم فقط للتحقق من قائمة الحجاج.
-          </p>
-        </div>
-      </details>
-
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 flex items-start gap-2">
           <i className="fas fa-circle-exclamation mt-0.5" /><span>{error}</span>
@@ -358,33 +526,48 @@ function SubmitForm({ onSubmitted }: { onSubmitted: () => void }) {
 }
 
 /* ─────────────────────── Single Duaa Card ─────────────────────── */
-function DuaaCard({ duaa, onReacted }: { duaa: Duaa; onReacted: (count: number) => void }) {
-  const [reactedNow, setReactedNow] = useState(duaa.reactedByMe ?? false);
-  const [count,      setCount]      = useState(duaa.reactionCount ?? 0);
-  const [busy,       setBusy]       = useState(false);
-  const [showThanks, setShowThanks] = useState(false);
-  const [shareOpen,  setShareOpen]  = useState(false);
+function DuaaCard({
+  duaa, identity, onReacted,
+}: {
+  duaa: Duaa;
+  identity: Identity | null;
+  onReacted: (r: { count: number; pilgrimCount: number; reactorBadge: 'pilgrim' | 'visitor' }) => void;
+}) {
+  const [reactedNow,   setReactedNow]   = useState(duaa.reactedByMe ?? false);
+  const [count,        setCount]        = useState(duaa.reactionCount         ?? 0);
+  const [pilgrimCount, setPilgrimCount] = useState(duaa.reactionCountPilgrims ?? 0);
+  const [busy,         setBusy]         = useState(false);
+  const [showThanks,   setShowThanks]   = useState(false);
+  const [shareOpen,    setShareOpen]    = useState(false);
 
   const handleReact = async () => {
     if (busy || reactedNow) return;
     setBusy(true);
-    // optimistic
     setReactedNow(true);
     setCount(c => c + 1);
+    if (identity) setPilgrimCount(c => c + 1);
     setShowThanks(true);
     try {
-      const res = await fetch(`/api/duaa/${duaa.id}/react`, { method: 'POST' });
+      const res = await fetch(`/api/duaa/${duaa.id}/react`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nationalId: identity?.nationalId }),
+      });
       const data = await res.json().catch(() => ({}));
       if (data?.alreadyReacted) {
-        /* already counted before — keep optimistic state but don't bump server count */
+        /* keep optimistic state */
       } else if (data?.ok && typeof data.count === 'number') {
         setCount(data.count);
-        onReacted(data.count);
+        setPilgrimCount(data.pilgrimCount ?? pilgrimCount);
+        onReacted({
+          count:         data.count,
+          pilgrimCount:  data.pilgrimCount ?? 0,
+          reactorBadge:  data.reactorBadge ?? 'visitor',
+        });
       }
     } catch {
-      // revert on hard failure
       setReactedNow(false);
       setCount(c => Math.max(0, c - 1));
+      if (identity) setPilgrimCount(c => Math.max(0, c - 1));
     } finally {
       setBusy(false);
       setTimeout(() => setShowThanks(false), 2200);
@@ -412,10 +595,7 @@ function DuaaCard({ duaa, onReacted }: { duaa: Duaa; onReacted: (count: number) 
              className="bg-white rounded-2xl border border-gold/15 shadow-card
                         p-5 sm:p-6 relative overflow-hidden transition-shadow hover:shadow-card-lg">
 
-      {/* Top gold accent */}
       <div className="absolute top-0 inset-x-0 h-1 bg-gold-gradient" />
-
-      {/* Quote marks */}
       <div className="absolute top-3 right-4 text-gold/20 text-3xl leading-none select-none" aria-hidden>❝</div>
       <div className="absolute bottom-3 left-4  text-gold/20 text-3xl leading-none select-none" aria-hidden>❞</div>
 
@@ -429,8 +609,8 @@ function DuaaCard({ duaa, onReacted }: { duaa: Duaa; onReacted: (count: number) 
       <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1
                       text-xs text-gray-500 mb-4 pb-4 border-b border-gold/10">
         {duaa.hajjYear && (
-          <span className="inline-flex items-center gap-1 bg-gold/15 text-gold-dark
-                           px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+          <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800
+                           px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-amber-300">
             <i className="fas fa-star text-[9px]" />
             حاج {duaa.hajjYear}
           </span>
@@ -446,22 +626,40 @@ function DuaaCard({ duaa, onReacted }: { duaa: Duaa; onReacted: (count: number) 
         <span>{fmtRelativeAr(duaa.createdAt)}</span>
       </div>
 
+      {/* Reaction stats line */}
+      {count > 0 && (
+        <div className="flex items-center justify-center gap-2 mb-3 text-[11px] font-bold">
+          <span className="inline-flex items-center gap-1 bg-gold/10 text-gold-dark px-2.5 py-1 rounded-full">
+            🤲 {count}
+            <span className="text-gray-500 font-medium">دعا له</span>
+          </span>
+          {pilgrimCount > 0 && (
+            <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800
+                             px-2.5 py-1 rounded-full border border-amber-300">
+              <i className="fas fa-star text-amber-600" />
+              {pilgrimCount}
+              <span className="text-amber-700 font-medium">من حجاجنا</span>
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Actions */}
       <div className="flex items-center justify-between gap-3 relative">
         <button onClick={handleReact} disabled={busy || reactedNow}
                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
                            font-bold text-sm transition-all duration-200
                            ${reactedNow
-                             ? 'bg-gold text-white shadow-gold cursor-default'
+                             ? identity
+                               ? 'bg-gradient-to-br from-amber-500 to-amber-700 text-white shadow-amber-500/40 shadow-md cursor-default'
+                               : 'bg-gold text-white shadow-gold cursor-default'
                              : 'bg-white border-2 border-gold/40 text-gold-dark hover:bg-gold/5 hover:border-gold hover:-translate-y-0.5'}`}>
           <span className="text-lg">🤲</span>
-          <span>{reactedNow ? 'دعوتُ له' : 'ادعُ له'}</span>
-          {count > 0 && (
-            <span className={`px-2 py-0.5 rounded-full text-xs font-black
-              ${reactedNow ? 'bg-white/25' : 'bg-gold/15 text-gold-dark'}`}>
-              {count}
-            </span>
-          )}
+          <span>
+            {reactedNow
+              ? (identity ? `دعوتُ له (حاج ${identity.hajjYear})` : 'دعوتُ له')
+              : 'ادعُ له'}
+          </span>
         </button>
 
         <button onClick={handleShare} aria-label="مشاركة"
@@ -471,7 +669,6 @@ function DuaaCard({ duaa, onReacted }: { duaa: Duaa; onReacted: (count: number) 
           <i className="fas fa-share-nodes" />
         </button>
 
-        {/* Desktop share dropdown */}
         {shareOpen && (
           <div className="absolute bottom-full end-0 mb-2 bg-white rounded-xl
                           border border-gold/20 shadow-card-lg p-1.5 z-10 flex flex-col gap-0.5 min-w-[180px]">
@@ -487,7 +684,6 @@ function DuaaCard({ duaa, onReacted }: { duaa: Duaa; onReacted: (count: number) 
         )}
       </div>
 
-      {/* Thanks overlay (small toast within card) */}
       {showThanks && (
         <div className="absolute inset-0 flex items-center justify-center
                         bg-gradient-to-br from-gold/95 to-gold-dark/95 rounded-2xl
@@ -495,7 +691,9 @@ function DuaaCard({ duaa, onReacted }: { duaa: Duaa; onReacted: (count: number) 
           <div>
             <div className="text-3xl mb-2">🤍</div>
             <p className="font-black text-lg mb-0.5">تقبّل الله منا ومنكم</p>
-            <p className="text-sm text-white/90">جزاكم الله خيراً</p>
+            <p className="text-sm text-white/90">
+              {identity ? 'بُورك في دعاء الحاج لأخيه' : 'جزاكم الله خيراً'}
+            </p>
           </div>
         </div>
       )}

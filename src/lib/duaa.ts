@@ -19,17 +19,18 @@ import { getPilgrim } from '@/lib/pilgrims';
  * ───────────────────────────────────────────────────────────── */
 
 export interface Duaa {
-  id:             string;
-  name:           string;          // empty = "زائر كريم"
-  country:        string;          // empty = "—"
-  message:        string;
+  id:                    string;
+  name:                  string;          // empty = "زائر كريم"
+  country:               string;          // empty = "—"
+  message:               string;
   /* If submitter entered a valid Hajj nationalId, store the year for the badge */
-  hajjYear?:      string;          // e.g. '1447'
-  reactionCount:  number;
-  hidden?:        boolean;         // admin-hidden (still kept for moderation log)
-  ip:             string;
-  createdAt:      number;
-  updatedAt:      number;
+  hajjYear?:             string;          // e.g. '1447'
+  reactionCount:         number;          // total reactions
+  reactionCountPilgrims: number;          // reactions from verified pilgrims only
+  hidden?:               boolean;
+  ip:                    string;
+  createdAt:             number;
+  updatedAt:             number;
 }
 
 const INDEX_LATEST  = 'duaa:all';
@@ -59,16 +60,17 @@ function normalize(raw: Record<string, unknown> | null | undefined): Duaa | null
   };
   const str = (v: unknown): string => (v == null ? '' : String(v));
   return {
-    id:            str(raw.id),
-    name:          str(raw.name),
-    country:       str(raw.country),
-    message:       str(raw.message),
-    hajjYear:      raw.hajjYear ? str(raw.hajjYear) : undefined,
-    reactionCount: num(raw.reactionCount),
-    hidden:        Boolean(raw.hidden),
-    ip:            str(raw.ip),
-    createdAt:     num(raw.createdAt),
-    updatedAt:     num(raw.updatedAt),
+    id:                    str(raw.id),
+    name:                  str(raw.name),
+    country:               str(raw.country),
+    message:               str(raw.message),
+    hajjYear:              raw.hajjYear ? str(raw.hajjYear) : undefined,
+    reactionCount:         num(raw.reactionCount),
+    reactionCountPilgrims: num(raw.reactionCountPilgrims),
+    hidden:                Boolean(raw.hidden),
+    ip:                    str(raw.ip),
+    createdAt:             num(raw.createdAt),
+    updatedAt:             num(raw.updatedAt),
   };
 }
 
@@ -126,15 +128,16 @@ export async function createDuaa(input: {
 
   const now = Date.now();
   const duaa: Duaa = {
-    id:            shortId(),
-    name:          (input.name    ?? '').trim().slice(0, MAX_NAME_LEN),
-    country:       (input.country ?? '').trim().slice(0, MAX_COUNTRY_LEN),
-    message:       input.message.trim(),
+    id:                    shortId(),
+    name:                  (input.name    ?? '').trim().slice(0, MAX_NAME_LEN),
+    country:               (input.country ?? '').trim().slice(0, MAX_COUNTRY_LEN),
+    message:               input.message.trim(),
     hajjYear,
-    reactionCount: 0,
-    ip:            input.ip,
-    createdAt:     now,
-    updatedAt:     now,
+    reactionCount:         0,
+    reactionCountPilgrims: 0,
+    ip:                    input.ip,
+    createdAt:             now,
+    updatedAt:             now,
   };
 
   await kv.hset(itemKey(duaa.id), clean(duaa as unknown as Record<string, unknown>));
@@ -171,24 +174,61 @@ export async function listDuaa(opts: {
 }
 
 /* ── React (idempotent per IP) ─── */
-export async function reactToDuaa(id: string, ip: string): Promise<
-  { ok: true; count: number } | { ok: false; reason: 'not_found' | 'already' }
-> {
+export interface ReactResult {
+  count:         number;          // new total reaction count
+  pilgrimCount:  number;          // new pilgrim reaction count
+  reactorBadge:  'pilgrim' | 'visitor';
+  hajjYear?:     string;
+}
+
+export async function reactToDuaa(
+  id: string,
+  ip: string,
+  nationalId?: string,
+): Promise<{ ok: true; result: ReactResult } | { ok: false; reason: 'not_found' | 'already' }> {
   const duaa = await getDuaa(id);
   if (!duaa) return { ok: false, reason: 'not_found' };
 
   const ipHash = await hashIp(ip);
   const key    = reactKey(id, ipHash);
 
-  // SET key value NX EX  (only if not exists)
-  const set = await kv.set(key, 1, { nx: true, ex: REACT_TTL_SEC });
+  // Verify pilgrim badge if nationalId provided
+  let reactorBadge: 'pilgrim' | 'visitor' = 'visitor';
+  let pilgrimYear: string | undefined;
+  if (nationalId) {
+    try {
+      const p = await getPilgrim(nationalId.trim());
+      if (p && !p.revokedAt) {
+        reactorBadge = 'pilgrim';
+        pilgrimYear  = p.hajjYear;
+      }
+    } catch { /* fall back to visitor */ }
+  }
+
+  // Idempotency: store reactor type for future analytics
+  const reactorPayload = JSON.stringify({ b: reactorBadge, y: pilgrimYear ?? '' });
+  const set = await kv.set(key, reactorPayload, { nx: true, ex: REACT_TTL_SEC });
   if (set === null) return { ok: false, reason: 'already' };
 
-  const newCount = (duaa.reactionCount ?? 0) + 1;
-  await kv.hset(itemKey(id), { reactionCount: newCount, updatedAt: Date.now() });
+  const newCount         = (duaa.reactionCount         ?? 0) + 1;
+  const newPilgrimCount  = (duaa.reactionCountPilgrims ?? 0) + (reactorBadge === 'pilgrim' ? 1 : 0);
+
+  await kv.hset(itemKey(id), {
+    reactionCount:         newCount,
+    reactionCountPilgrims: newPilgrimCount,
+    updatedAt:             Date.now(),
+  });
   await kv.zadd(INDEX_POPULAR, { score: newCount, member: id });
 
-  return { ok: true, count: newCount };
+  return {
+    ok: true,
+    result: {
+      count:        newCount,
+      pilgrimCount: newPilgrimCount,
+      reactorBadge,
+      hajjYear:     pilgrimYear,
+    },
+  };
 }
 
 /* ── Whether this IP has already reacted to a given duaa ─── */
