@@ -352,25 +352,15 @@ export default function CertificateClient() {
             </button>
           </div>
 
-          {/* Certificate — horizontal scroll on small screens so A4 proportions stay correct.
-              900px min-width ensures all body content has room to render without overlap. */}
-          <div className="overflow-x-auto -mx-2 px-2 sm:mx-0 sm:px-0 sm:overflow-visible
-                          print:overflow-visible print:mx-0 print:px-0">
-            <div ref={certRef} className="cert-print-area w-full min-w-[1100px] sm:min-w-0">
-              <Certificate
-                name={state.pilgrim.name}
-                hajjYear={state.pilgrim.hajjYear}
-                verifyCode={state.pilgrim.verifyCode}
-                qrDataUrl={state.qr}
-              />
-            </div>
+          {/* Certificate — mobile-first vertical fit, desktop A4 landscape */}
+          <div ref={certRef} className="cert-print-area w-full">
+            <Certificate
+              name={state.pilgrim.name}
+              hajjYear={state.pilgrim.hajjYear}
+              verifyCode={state.pilgrim.verifyCode}
+              qrDataUrl={state.qr}
+            />
           </div>
-
-          {/* Mobile scroll hint */}
-          <p className="sm:hidden text-center text-[11px] text-gray-400 mt-2 print:hidden">
-            <i className="fas fa-arrows-left-right me-1 text-gold" />
-            مرّر التذكار يميناً ويساراً لرؤيته كاملاً
-          </p>
 
           {/* Footer tip */}
           <p className="max-w-4xl mx-auto text-center text-[11px] sm:text-xs text-gray-400
