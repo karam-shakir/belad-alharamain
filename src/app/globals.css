@@ -346,8 +346,8 @@ html, body {
   direction: rtl;
 }
 
-/* ── Mobile: drop A4 aspect-ratio so cert grows vertically to fit content ── */
-@media (max-width: 768px) {
+/* ── Mobile (SCREEN only — never applies in print): drop A4 aspect-ratio so cert grows vertically ── */
+@media screen and (max-width: 768px) {
   .bhc {
     aspect-ratio: auto;
     padding: 10px;

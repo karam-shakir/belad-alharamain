@@ -159,6 +159,7 @@ export default function CertificateClient() {
             padding: 0 !important;
             page-break-inside: avoid !important;
             page-break-after: avoid !important;
+            direction: rtl !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -171,13 +172,53 @@ export default function CertificateClient() {
 
           .bhc-inner {
             padding: 8mm 12mm 8mm !important;
-            overflow: visible !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          /* Restore A4-landscape internal proportions even if mobile rules tried to flatten them */
+          .bhc-top    { flex: 0 0 18% !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important; }
+          .bhc-title  { flex: 0 0 14% !important; padding: 0 !important; }
+          .bhc-body   { flex: 1 1 0 !important; min-height: 0 !important; padding: 0 2% !important; gap: clamp(4px, 0.7vw, 8px) !important; }
+          .bhc-footer { flex: 0 0 18% !important; padding-top: 1% !important; flex-wrap: nowrap !important; gap: 16px !important; }
+
+          /* Footer cells: date right (RTL flex-start), QR left (RTL flex-end) — desktop style */
+          .bhc-cell-date {
+            align-items: flex-start !important;
+            text-align: start !important;
+            width: auto !important;
+          }
+          .bhc-cell-qr {
+            align-items: flex-end !important;
+            text-align: end !important;
+            width: auto !important;
+          }
+
+          /* Seal back to absolute hand-stamp position for print */
+          .bhc-seal {
+            position: absolute !important;
+            bottom: 1.5% !important;
+            left: 50% !important;
+            top: auto !important;
+            right: auto !important;
+            inset-inline-start: auto !important;
+            inset-inline-end: auto !important;
+            margin: 0 !important;
+            display: block !important;
+            width: clamp(55px, 6.5vw, 85px) !important;
+            height: auto !important;
+            transform: translateX(-50%) rotate(-7deg) !important;
+            opacity: 0.55 !important;
+            mix-blend-mode: multiply !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
 
           /* Ensure seal & QR colors render */
-          .bhc-seal, .bhc-qr, .bhc-logo {
+          .bhc-qr, .bhc-logo {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
