@@ -144,7 +144,11 @@ export default function CertificateClient() {
           padding: 0 !important;
           overflow: hidden !important;
         }
-        body.printing-cert > *:not(.cert-print-area) { display: none !important; }
+        /* Hide everything via visibility (keeps DOM tree intact, but invisible) */
+        body.printing-cert * { visibility: hidden !important; }
+        /* Then re-show only the certificate subtree */
+        body.printing-cert .cert-print-area,
+        body.printing-cert .cert-print-area * { visibility: visible !important; }
         body.printing-cert .cert-print-area {
           position: fixed !important;
           inset: 0 !important;
