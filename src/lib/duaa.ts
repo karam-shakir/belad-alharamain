@@ -1,5 +1,6 @@
 import { kv } from '@vercel/kv';
 import { getPilgrim } from '@/lib/pilgrims';
+import { moderateContent } from '@/lib/contentFilter';
 
 /* ─────────────────────────────────────────────────────────────
  * "تذكروني في دعائكم" — public prayer wall
@@ -125,6 +126,8 @@ export function validateDuaaContent(message: string): { ok: true } | { ok: false
   if (m.length > MAX_MESSAGE_LEN) return { ok: false, reason: `حد أقصى ${MAX_MESSAGE_LEN} حرف.` };
   if (URL_RE.test(m))   return { ok: false, reason: 'لا تُسمح الروابط في الدعاء.' };
   if (PHONE_RE.test(m)) return { ok: false, reason: 'لا تُسمح الأرقام الطويلة (كأرقام الجوال).' };
+  const mod = moderateContent(m);
+  if (!mod.ok) return { ok: false, reason: mod.reason };
   return { ok: true };
 }
 
@@ -334,6 +337,8 @@ export function validateReplyContent(message: string): { ok: true } | { ok: fals
   if (m.length > MAX_REPLY_LEN) return { ok: false, reason: `حد أقصى ${MAX_REPLY_LEN} حرف.` };
   if (URL_RE.test(m))   return { ok: false, reason: 'لا تُسمح الروابط في الدعاء.' };
   if (PHONE_RE.test(m)) return { ok: false, reason: 'لا تُسمح الأرقام الطويلة.' };
+  const mod = moderateContent(m);
+  if (!mod.ok) return { ok: false, reason: mod.reason };
   return { ok: true };
 }
 
