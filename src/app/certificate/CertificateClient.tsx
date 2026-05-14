@@ -79,7 +79,35 @@ export default function CertificateClient() {
     setState({ stage: 'form' });
   };
 
-  const print = () => window.print();
+  /* Force the certificate into A4-landscape layout BEFORE printing,
+   * so iOS Safari (which often ignores @media print + @page size when
+   * generating PDFs via Share Sheet) still captures the correct design. */
+  const print = () => {
+    document.body.classList.add('printing-cert');
+    // Two RAFs to ensure layout has settled before triggering print dialog
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        try { window.print(); } catch {}
+      });
+    });
+  };
+
+  /* Always clean up the print class after the user finishes (or cancels) */
+  useEffect(() => {
+    const cleanup = () => document.body.classList.remove('printing-cert');
+    window.addEventListener('afterprint', cleanup);
+    // Fallback in case afterprint isn't fired (some iOS flows)
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        setTimeout(cleanup, 800);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('afterprint', cleanup);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []);
 
   const share = async () => {
     if (state.stage !== 'found') return;
@@ -103,8 +131,63 @@ export default function CertificateClient() {
                     flex flex-col items-center py-6 sm:py-10 px-2 sm:px-4
                     print:p-0 print:bg-white print:min-h-0">
 
-      {/* ────── Print rules: A4 landscape, exact dimensions, no overflow ────── */}
+      {/* ────── Print rules: A4 landscape, exact dimensions, no overflow ──────
+       *  Applied in TWO ways:
+       *   1. body.printing-cert  — JS-toggled class, works on iOS Safari Share→PDF
+       *   2. @media print        — works on desktop Ctrl+P / print dialogs
+       *  Mobile rules in globals.css are overridden in both cases. */}
       <style jsx global>{`
+        /* (1) Force A4 layout the instant the PDF button is clicked */
+        body.printing-cert {
+          background: #fff !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow: hidden !important;
+        }
+        body.printing-cert > *:not(.cert-print-area) { display: none !important; }
+        body.printing-cert .cert-print-area {
+          position: fixed !important;
+          inset: 0 !important;
+          width: 297mm !important;
+          height: 210mm !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow: hidden !important;
+          background: #fff !important;
+          z-index: 99999 !important;
+        }
+        body.printing-cert .bhc-wrap {
+          padding: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          display: block !important;
+        }
+        body.printing-cert .bhc {
+          width: 297mm !important;
+          height: 210mm !important;
+          max-width: none !important;
+          aspect-ratio: auto !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          direction: rtl !important;
+        }
+        body.printing-cert .bhc-outer { padding: 4mm !important; }
+        body.printing-cert .bhc-inner {
+          padding: 8mm 12mm !important;
+          display: flex !important;
+          flex-direction: column !important;
+          overflow: hidden !important;
+        }
+        body.printing-cert .bhc-top    { flex: 0 0 15% !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important; }
+        body.printing-cert .bhc-title  { flex: 0 0 11% !important; padding: 0 !important; }
+        body.printing-cert .bhc-body   { flex: 1 1 0 !important; min-height: 0 !important; padding: 0 2% !important; gap: clamp(2px, 0.5vw, 6px) !important; overflow: hidden !important; }
+        body.printing-cert .bhc-footer { flex: 0 0 16% !important; padding-top: 1% !important; flex-wrap: nowrap !important; gap: 16px !important; }
+        body.printing-cert .bhc-cell-date { align-items: flex-start !important; text-align: start !important; width: auto !important; }
+        body.printing-cert .bhc-cell-qr   { align-items: flex-end !important;   text-align: end !important;   width: auto !important; }
+
+        /* (2) Same rules under @media print for desktop printing */
         @media print {
           @page {
             size: A4 landscape;
