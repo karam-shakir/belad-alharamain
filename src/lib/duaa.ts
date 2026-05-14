@@ -3,7 +3,7 @@ import { getPilgrim } from '@/lib/pilgrims';
 import { moderateContent } from '@/lib/contentFilter';
 
 /* ─────────────────────────────────────────────────────────────
- * "تذكروني في دعائكم" — public prayer wall
+ * "اذكروني بدعوة" — public prayer wall
  *
  * KV schema:
  *   duaa:<id>                  → hash with all fields

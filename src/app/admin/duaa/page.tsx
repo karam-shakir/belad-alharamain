@@ -107,7 +107,7 @@ export default function AdminDuaaPage() {
                    className="h-8 w-auto object-contain" />
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-sm sm:text-base font-black leading-tight truncate">لوحة التحكم — حائط الدعاء</h1>
+            <h1 className="text-sm sm:text-base font-black leading-tight truncate">لوحة التحكم — اذكروني بدعوة</h1>
             <p className="text-[11px] text-gold-light/80">إدارة الدعوات المنشورة</p>
           </div>
           <nav className="hidden md:flex gap-1 text-xs font-bold">

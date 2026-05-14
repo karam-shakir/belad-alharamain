@@ -145,7 +145,7 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
               <i className="fas fa-hands-praying text-white text-xl sm:text-3xl" />
             </div>
             <h1 className="text-2xl sm:text-5xl font-black text-teal-dark mb-2 sm:mb-3 leading-tight">
-              تذكروني في دعائكم
+              اذكروني بدعوة
             </h1>
             <p className="text-gold-dark text-xs sm:text-base mb-1 px-4">
               حائط مفتوح للأمّة — شاركوا دعواتكم، وادعوا لإخوانكم
@@ -613,11 +613,11 @@ function DuaaCard({
     `🤲 أرجو دعوتكم...\n\n` +
     `"${duaa.message}"\n` +
     (duaa.name ? `— ${duaa.name}${duaa.country ? ` · ${duaa.country}` : ''}\n` : '') +
-    `\nشاركوني الدعاء:\n${url}\n\nحائط الدعاء — بلاد الحرمين 🕋`;
+    `\nشاركوني الدعاء:\n${url}\n\nاذكروني بدعوة — بلاد الحرمين 🕋`;
 
   const handleShare = async () => {
     if (typeof navigator !== 'undefined' && navigator.share) {
-      try { await navigator.share({ title: 'تذكروني في دعائكم', text: shareText, url }); return; }
+      try { await navigator.share({ title: 'اذكروني بدعوة', text: shareText, url }); return; }
       catch { /* user cancelled */ }
     }
     setShareOpen(o => !o);

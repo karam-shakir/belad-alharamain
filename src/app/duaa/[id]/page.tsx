@@ -11,7 +11,7 @@ export async function generateMetadata(
 
   if (!duaa || duaa.hidden) {
     return {
-      title: 'تذكروني في دعائكم — بلاد الحرمين',
+      title: 'اذكروني بدعوة — بلاد الحرمين',
       description: 'حائط مفتوح للأمّة: شاركوا دعواتكم، وادعوا لإخوانكم.',
       alternates: { canonical: `${SITE}/duaa/${params.id}` },
     };
