@@ -362,14 +362,19 @@ html, body {
   border: 1px solid #C4A55E;
   border-radius: 2px;
   padding: 1.6% 3.5% 2.2%;
-  display: grid;
-  /* minmax(0, 1fr) lets body shrink so footer is always pinned inside the frame */
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
-  row-gap: 0.4%;
+  /* Switched from grid to flex-column for predictable cross-browser rendering.
+   * Flex naturally stacks children without the overlap risk grid had when
+   * minmax(0,1fr) collapsed under tight viewports. */
+  display: flex;
+  flex-direction: column;
   position: relative;
   box-sizing: border-box;
-  overflow: visible;
+  overflow: hidden;
 }
+.bhc-top    { flex: 0 0 auto; }
+.bhc-title  { flex: 0 0 auto; margin-top: 0.6%; }
+.bhc-body   { flex: 1 1 auto; }
+.bhc-footer { flex: 0 0 auto; }
 .bhc-corner {
   position: absolute;
   color: #A88B4A;
@@ -438,9 +443,9 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: clamp(4px, 0.7vw, 8px);
-  padding: 0 2%;
+  padding: 0.6% 2%;
   min-height: 0;
-  overflow: visible;
+  overflow: hidden;
 }
 .bhc-intro-ar {
   font-size: clamp(12px, 1.4vw, 16px);
