@@ -151,30 +151,35 @@ export default function CertificateClient() {
         body.printing-cert .cert-print-area * { visibility: visible !important; }
         body.printing-cert .cert-print-area {
           position: fixed !important;
-          inset: 0 !important;
-          width: 297mm !important;
-          height: 210mm !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          width: 100vw !important;
+          height: auto !important;
           margin: 0 !important;
           padding: 0 !important;
-          overflow: hidden !important;
           background: #fff !important;
           z-index: 99999 !important;
+          overflow: visible !important;
         }
         body.printing-cert .bhc-wrap {
           padding: 0 !important;
-          width: 100% !important;
-          height: 100% !important;
+          width: 100vw !important;
+          height: auto !important;
           display: block !important;
         }
+        /* Cert fills the viewport width with strict A4-landscape aspect ratio.
+         * On mobile portrait viewports this renders as a landscape strip at the
+         * top of the PDF page — readable, no overflow, no clipping. */
         body.printing-cert .bhc {
-          width: 297mm !important;
-          height: 210mm !important;
+          width: 100vw !important;
+          height: auto !important;
           max-width: none !important;
-          aspect-ratio: auto !important;
+          aspect-ratio: 1.4142 / 1 !important;
           box-shadow: none !important;
           border-radius: 0 !important;
           margin: 0 !important;
-          padding: 0 !important;
+          padding: 4px !important;
           direction: rtl !important;
         }
         body.printing-cert .bhc-outer { padding: 4mm !important; }
