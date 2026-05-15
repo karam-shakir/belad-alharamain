@@ -1,12 +1,17 @@
 import { NextResponse } from 'next/server';
 import { rateLimit, getIp } from '@/lib/ratelimit';
 import { createReply, listReplies, MAX_REPLY_LEN, MAX_NAME_LEN, MAX_COUNTRY_LEN } from '@/lib/duaa';
+import { DUAA_ENABLED } from '@/lib/features';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const disabled = () =>
+  NextResponse.json({ ok: false, error: 'unavailable' }, { status: 404 });
+
 /* GET /api/duaa/[id]/reply — list replies for a duaa */
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
+  if (!DUAA_ENABLED) return disabled();
   try {
     const replies = await listReplies(params.id, { limit: 100 });
     // Strip private IP before sending to client
@@ -20,6 +25,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 
 /* POST /api/duaa/[id]/reply — add a free-text prayer in response to a duaa */
 export async function POST(req: Request, { params }: { params: { id: string } }) {
+  if (!DUAA_ENABLED) return disabled();
   const ip = getIp(req);
   const rl = rateLimit(`duaa-reply:${ip}`, { max: 10, windowMs: 60 * 60 * 1000 });  // 10/hour
   if (!rl.allowed) {

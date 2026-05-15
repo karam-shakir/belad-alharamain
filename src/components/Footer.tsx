@@ -7,7 +7,7 @@ const quickLinks = [
   { href: '#journey',      ar: 'رحلة الحاج',        en: 'Pilgrim Journey'  },
   { href: '#videos',       ar: 'معرض الفيديو',      en: 'Video Gallery'    },
   { href: '#testimonials', ar: 'آراء العملاء',      en: 'Testimonials'     },
-  { href: '/duaa',         ar: 'اذكروني بدعوة',     en: 'Remember Me in Prayer' },
+  // { href: '/duaa',         ar: 'اذكروني بدعوة',     en: 'Remember Me in Prayer' },  // temporarily hidden
   { href: '/certificate',  ar: 'تذكار الحج المبارك', en: 'Hajj Memento'        },
   { href: '#awards',       ar: 'جوائزنا',           en: 'Our Awards'       },
   { href: '#faq',          ar: 'الأسئلة الشائعة',    en: 'FAQ'              },

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { rateLimit, getIp } from '@/lib/ratelimit';
+import { DUAA_ENABLED } from '@/lib/features';
 import {
   createDuaa,
   listDuaa,
@@ -13,8 +14,12 @@ import {
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const disabled = () =>
+  NextResponse.json({ ok: false, error: 'المبادرة غير متاحة حالياً.' }, { status: 404 });
+
 /* ── GET: list duaas ─── */
 export async function GET(req: Request) {
+  if (!DUAA_ENABLED) return disabled();
   const { searchParams } = new URL(req.url);
   const sort   = (searchParams.get('sort') === 'popular' ? 'popular' : 'latest') as DuaaSort;
   const limit  = Math.min(Math.max(Number(searchParams.get('limit')  ?? '30'), 1), 100);
@@ -39,6 +44,7 @@ export async function GET(req: Request) {
 
 /* ── POST: submit a new duaa ─── */
 export async function POST(req: Request) {
+  if (!DUAA_ENABLED) return disabled();
   const ip = getIp(req);
   const rl = rateLimit(`duaa:${ip}`, { max: 3, windowMs: 60 * 60 * 1000 });   // 3/hour
   if (!rl.allowed) {

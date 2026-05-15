@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { getDuaa } from '@/lib/duaa';
 import DuaaWallClient from '../DuaaWallClient';
+import { DUAA_ENABLED } from '@/lib/features';
 
 const SITE = 'https://belad-alharamain.com';
 
@@ -44,5 +46,6 @@ export async function generateMetadata(
 }
 
 export default function Page({ params }: { params: { id: string } }) {
+  if (!DUAA_ENABLED) notFound();
   return <DuaaWallClient highlightId={params.id} />;
 }

@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getDuaa, hasReacted } from '@/lib/duaa';
 import { getIp } from '@/lib/ratelimit';
+import { DUAA_ENABLED } from '@/lib/features';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 /* GET /api/duaa/[id] — fetch a single duaa (used by the permalink page) */
 export async function GET(req: Request, { params }: { params: { id: string } }) {
+  if (!DUAA_ENABLED) return NextResponse.json({ ok: false, error: 'unavailable' }, { status: 404 });
   const duaa = await getDuaa(params.id);
   if (!duaa || duaa.hidden) {
     return NextResponse.json({ ok: false, error: 'الدعاء غير موجود.' }, { status: 404 });

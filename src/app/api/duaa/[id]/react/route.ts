@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { rateLimit, getIp } from '@/lib/ratelimit';
 import { reactToDuaa } from '@/lib/duaa';
+import { DUAA_ENABLED } from '@/lib/features';
 
 export const runtime = 'nodejs';
 
@@ -8,6 +9,7 @@ export const runtime = 'nodejs';
  * Body: { nationalId?: string }  — optional, for pilgrim badge tagging.
  * Idempotent per IP (one count per IP per duaa, valid 30 days). */
 export async function POST(req: Request, { params }: { params: { id: string } }) {
+  if (!DUAA_ENABLED) return NextResponse.json({ ok: false, error: 'unavailable' }, { status: 404 });
   const ip = getIp(req);
   const rl = rateLimit(`duaa-react:${ip}`, { max: 60, windowMs: 60 * 1000 });
   if (!rl.allowed) {

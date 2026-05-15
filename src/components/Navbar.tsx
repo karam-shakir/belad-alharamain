@@ -8,7 +8,7 @@ const navLinks = [
   { href: '#services',     ar: 'خدماتنا',         en: 'Services'     },
   { href: '#journey',      ar: 'رحلة الحاج',      en: 'Journey'      },
   { href: '#faq',          ar: 'الأسئلة الشائعة',  en: 'FAQ'          },
-  { href: '/duaa',         ar: 'اذكروني بدعوة',   en: 'Remember Me in Prayer', highlight: true },
+  // { href: '/duaa',         ar: 'اذكروني بدعوة',   en: 'Remember Me in Prayer', highlight: true },  // temporarily hidden
   { href: '/certificate',  ar: 'تذكار الحج',      en: 'Hajj Memento',          highlight: true },
   { href: '#agencies',     ar: 'للوكالات',        en: 'Agencies'     },
   { href: '#contact',      ar: 'تواصل معنا',      en: 'Contact'      },

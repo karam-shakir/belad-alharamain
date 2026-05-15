@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import DuaaWallClient from './DuaaWallClient';
+import { DUAA_ENABLED } from '@/lib/features';
 
 const TITLE = 'اذكروني بدعوة — مبادرة بلاد الحرمين';
 const DESC  = 'شاركوا دعواتكم، وادعوا لإخوانكم. كلّ قلب يحمل حاجة، وكلّ دعاء يحمل بركة.';
@@ -25,5 +27,6 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
+  if (!DUAA_ENABLED) notFound();
   return <DuaaWallClient highlightId={null} />;
 }
