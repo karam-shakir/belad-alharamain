@@ -93,7 +93,6 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
   const [loading,  setLoading]  = useState(true);
   const [sort,     setSort]     = useState<'latest' | 'popular'>('latest');
   const [stats,    setStats]    = useState({ total: 0, totalReacts: 0, pilgrimReacts: 0 });
-  const [verse]                  = useState(pickVerse);
   const [identity, setIdentity] = useState<Identity | null>(null);
 
   /* Load saved identity on mount */
@@ -150,20 +149,6 @@ export default function DuaaWallClient({ highlightId }: { highlightId: string | 
             <p className="text-gold-dark text-xs sm:text-base mb-1 px-4">
               شاركوا دعواتكم، وادعوا لإخوانكم
             </p>
-
-            {/* Verse card */}
-            <div className="mt-5 sm:mt-6 mx-auto max-w-2xl">
-              <div className="bg-gradient-to-br from-cream via-white to-cream-dark
-                              border-2 border-gold/30 rounded-2xl sm:rounded-3xl p-4 sm:p-7
-                              shadow-card relative overflow-hidden">
-                <div className="absolute top-1 left-2 text-gold/30 text-3xl sm:text-4xl">❝</div>
-                <div className="absolute bottom-1 right-2 text-gold/30 text-3xl sm:text-4xl">❞</div>
-                <p className="text-teal-dark text-sm sm:text-xl font-bold leading-loose px-4 sm:px-6">
-                  {verse.ar}
-                </p>
-                <p className="text-gold-dark text-[11px] sm:text-sm mt-2 sm:mt-3 font-semibold">— {verse.ref}</p>
-              </div>
-            </div>
 
             {/* Stats */}
             {stats.total > 0 && (
