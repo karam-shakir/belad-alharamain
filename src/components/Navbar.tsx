@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import { STORY_ENABLED } from '@/lib/features';
 
-const navLinks = [
+const baseNavLinks = [
   { href: '#about',        ar: 'من نحن',          en: 'About'        },
   { href: '#services',     ar: 'خدماتنا',         en: 'Services'     },
   { href: '#journey',      ar: 'رحلة الحاج',      en: 'Journey'      },
@@ -13,6 +14,14 @@ const navLinks = [
   { href: '#agencies',     ar: 'للوكالات',        en: 'Agencies'     },
   { href: '#contact',      ar: 'تواصل معنا',      en: 'Contact'      },
 ];
+
+const navLinks = STORY_ENABLED
+  ? [
+      ...baseNavLinks.slice(0, 5),
+      { href: '/story', ar: 'قصّتي', en: 'My Story', highlight: true },
+      ...baseNavLinks.slice(5),
+    ]
+  : baseNavLinks;
 
 export default function Navbar() {
   const [scrolled,  setScrolled]  = useState(false);

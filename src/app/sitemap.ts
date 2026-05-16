@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { DUAA_ENABLED } from '@/lib/features';
+import { DUAA_ENABLED, STORY_ENABLED } from '@/lib/features';
 
 /* ─────────────────────────────────────────────────────────────
  * sitemap.xml — قائمة الصفحات الرسمية لمحركات البحث
@@ -27,6 +27,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
   if (DUAA_ENABLED) {
     entries.push({ url: `${BASE}/duaa`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 });
+  }
+  if (STORY_ENABLED) {
+    entries.push({ url: `${BASE}/story`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 });
   }
   return entries;
 }
