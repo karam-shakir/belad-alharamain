@@ -10,7 +10,7 @@ import type { ChapterKey } from './storyTemplate';
  *                                          pdfGeneratedAt, createdAt,
  *                                          updatedAt }
  *   story:{nid}:photos             → hash { ihram, tarwiyah, arafah,
- *                                          muzdalifah, jamarat, eid }
+ *                                          jamarat, eid }
  *                                          (each value = blob URL)
  *   story:slug:{slug}              → nid (reverse lookup for share)
  *   story:index                    → sorted set, score=createdAt
@@ -37,7 +37,7 @@ const photosKey = (nid: string) => `story:${nid}:photos`;
 const slugKey   = (slug: string) => `story:slug:${slug}`;
 const INDEX     = 'story:index';
 
-const CHAPTERS: ChapterKey[] = ['ihram', 'tarwiyah', 'arafah', 'muzdalifah', 'jamarat', 'eid'];
+const CHAPTERS: ChapterKey[] = ['ihram', 'tarwiyah', 'arafah', 'jamarat', 'eid'];
 
 /* ── Slug ─── */
 function makeSlug(): string {

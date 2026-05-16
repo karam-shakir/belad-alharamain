@@ -9,7 +9,7 @@ import type { ChapterKey } from '@/lib/storyTemplate';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const VALID_CHAPTERS: ChapterKey[] = ['ihram', 'tarwiyah', 'arafah', 'muzdalifah', 'jamarat', 'eid'];
+const VALID_CHAPTERS: ChapterKey[] = ['ihram', 'tarwiyah', 'arafah', 'jamarat', 'eid'];
 /* Accept the common image mimes + iOS HEIC/HEIF (we store as-is and the user
  * gets a working blob URL — react-pdf will rasterize whatever the browser
  * already decoded for the preview). */

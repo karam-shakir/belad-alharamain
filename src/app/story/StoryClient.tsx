@@ -17,12 +17,11 @@ type Stage =
   | { kind: 'error'; msg: string };
 
 const ICONS: Record<ChapterKey, string> = {
-  ihram:      'fa-person-walking-luggage',
-  tarwiyah:   'fa-campground',
-  arafah:     'fa-mountain-sun',
-  muzdalifah: 'fa-moon',
-  jamarat:    'fa-hand-fist',
-  eid:        'fa-kaaba',
+  ihram:    'fa-person-walking-luggage',
+  tarwiyah: 'fa-campground',
+  arafah:   'fa-mountain-sun',
+  jamarat:  'fa-hand-fist',
+  eid:      'fa-kaaba',
 };
 
 const STORAGE_KEY = 'storyLastNid';

@@ -22,7 +22,6 @@ export type ChapterKey =
   | 'ihram'
   | 'tarwiyah'
   | 'arafah'
-  | 'muzdalifah'
   | 'jamarat'
   | 'eid';
 
@@ -188,45 +187,9 @@ export const STORY_CHAPTERS: Chapter[] = [
 
   /* ─── 4 ─────────────────────────────────────────────────── */
   {
-    key:      'muzdalifah',
+    key:      'jamarat',
     numberAr: 'الرابع',
     numberEn: 'Four',
-    titleAr:  'ليلةُ مُزدلفة — تحت سماء المشعر الحرام',
-    titleEn:  'The Night of Muzdalifah — Beneath the Sacred Sky',
-    proseAr:
-      'تحت قُبّةٍ من نجوم،\n' +
-      'كنتَ ومَن معكَ على الأرض،\n' +
-      'وكان الذِّكرُ يَعلو فوقَكم إلى السّماء.\n\n' +
-      'جمعتَ حصياتٍ صغيراتٍ من أرضٍ كبيرةٍ في قلب الله،\n' +
-      'كأنّك تجمع عهداً مع نفسك:\n' +
-      'أن ترميَ ضعفَك، وأن تَخرُجَ من ضيق ذاتك\n' +
-      'إلى سَعَةِ ربّك.\n\n' +
-      'سمَّى اللهُ هذا الموضعَ «المشعرَ الحرام»،\n' +
-      'فما أعظمَ من بات ليلةً عند مشعرٍ سمّاه الله.',
-    proseEn:
-      'Beneath a canopy of stars,\n' +
-      'you lay upon the ground with your companions,\n' +
-      'while remembrance rose above you to the heavens.\n\n' +
-      'You gathered small stones from a great earth\n' +
-      'held within the heart of God —\n' +
-      'as though gathering a covenant with yourself:\n' +
-      'to cast away your weakness,\n' +
-      'to step out of the narrowness of self\n' +
-      'into the vastness of your Lord.\n\n' +
-      'God named this place al-Mash‘ar al-Haram —\n' +
-      'how great is the one who slept a night where God Himself has named.',
-    citation: {
-      textAr: '﴿ فَإِذَا أَفَضْتُم مِّنْ عَرَفَاتٍ فَاذْكُرُوا اللَّهَ عِندَ الْمَشْعَرِ الْحَرَامِ ﴾',
-      refAr:  'سورة البقرة — الآية ١٩٨',
-      textEn: 'And when you depart from Arafat, remember Allah at al-Mash‘ar al-Haram. — Al-Baqarah 2:198',
-    },
-  },
-
-  /* ─── 5 ─────────────────────────────────────────────────── */
-  {
-    key:      'jamarat',
-    numberAr: 'الخامس',
-    numberEn: 'Five',
     titleAr:  'رميُ العَقَبة والتَّحلُّل — عهدٌ جديد',
     titleEn:  'The Stoning and Release — A New Covenant',
     proseAr:
@@ -258,41 +221,43 @@ export const STORY_CHAPTERS: Chapter[] = [
     },
   },
 
-  /* ─── 6 ─────────────────────────────────────────────────── */
+  /* ─── 5 ─────────────────────────────────────────────────── */
   {
     key:      'eid',
-    numberAr: 'السادس',
-    numberEn: 'Six',
-    titleAr:  'يومُ العيد وطوافُ الإفاضة — فرحُ العائدين',
-    titleEn:  'The Day of Eid and the Tawaf of Return — A Joy Restored',
+    numberAr: 'الخامس',
+    numberEn: 'Five',
+    titleAr:  'يومُ العيد — فرحُ الحاجّ المُكَرَّم',
+    titleEn:  'The Day of Eid — Joy of the Honored Pilgrim',
     proseAr:
-      'عُدتَ إلى بيت الله طائفاً،\n' +
-      'وفي قلبك فرحةُ المغفور لهم.\n' +
-      'كانت الكعبةُ تَلوحُ كأنّها قلبُ الكون،\n' +
-      'وكنتَ ترقُص حولها رقصةَ شكرٍ صامتة،\n' +
-      'تَهمسُ في كلِّ خطوة:\n' +
-      'الحمدُ لله…\n' +
-      'الحمدُ لله…\n\n' +
-      'اليومُ عيدُ المسلمين،\n' +
-      'وأنت في أوّل صفِّ الفرحين،\n' +
-      'يَفرح اللهُ بك كما تفرح أنت بربّك.\n\n' +
+      'عُدتَ من المشاعر وقلبُك مُنوَّر،\n' +
+      'وعلى وجهك بَسمةُ المُكَرَّمين.\n\n' +
+      'اليومُ عيدُ الأضحى…\n' +
+      'يومٌ كَبَّر فيه الكونُ مع المُلبِّين،\n' +
+      'وفرح المسلمون بنعمة الله عليهم،\n' +
+      'وأنت في أوّل صفِّ الفرحين.\n\n' +
+      'يتجدّد فيك العهدُ مع ربّك،\n' +
+      'ويُهنّئك مَن يُحبّك:\n' +
+      'حجٌّ مبرور…\n' +
+      'وذنبٌ مغفور…\n' +
+      'وسعيٌ مشكور.\n\n' +
       'تقبّل اللهُ منك،\n' +
-      'وجعلَ ما أتممتَه ذُخراً يومَ تلقاه،\n' +
-      'وميزاناً يَرجُح به قلبُك بين يدَيه.',
+      'وجعلَ ما أكرمك به نوراً لا ينطفئ في صدرك،\n' +
+      'حتى تَلقى ربَّك راضياً مَرضيًّا.',
     proseEn:
-      'You returned to the House of God in tawaf,\n' +
-      'your heart filled with the joy of the forgiven.\n' +
-      'The Ka‘bah shone like the heart of the universe,\n' +
-      'and you circled it in a silent dance of gratitude,\n' +
-      'whispering with every step:\n' +
-      'Praise be to God…\n' +
-      'Praise be to God…\n\n' +
-      'This is the day of Eid,\n' +
-      'and you stand in the first row of the joyful,\n' +
-      'for God rejoices in His servant as the servant rejoices in his Lord.\n\n' +
+      'You returned from the rites with a heart aglow,\n' +
+      'and upon your face the smile of the honored.\n\n' +
+      'This is the day of Eid al-Adha —\n' +
+      'when the heavens echoed your takbeer,\n' +
+      'and the believers rejoiced in God’s bounty,\n' +
+      'and you stood in the first row of the joyful.\n\n' +
+      'Your covenant with your Lord is renewed,\n' +
+      'and those who love you greet you with the words:\n' +
+      'an accepted Hajj,\n' +
+      'sins forgiven,\n' +
+      'striving rewarded.\n\n' +
       'May God accept from you,\n' +
-      'and may what you have completed shine for you\n' +
-      'on the Day you meet your Lord.',
+      'and make this honor a light that never fades within your heart,\n' +
+      'until you meet your Lord, pleased and well-pleased.',
   },
 ];
 
