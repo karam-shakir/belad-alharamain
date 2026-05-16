@@ -81,12 +81,25 @@ export async function POST(req: Request) {
   const check = await validatePilgrim(nid);
   if ('error' in check) return NextResponse.json({ ok: false, error: check.error }, { status: check.status });
 
-  // Ensure story envelope exists
-  await getOrCreateStory(nid, check.pilgrim.hajjYear);
+  try {
+    // Ensure story envelope exists
+    await getOrCreateStory(nid, check.pilgrim.hajjYear);
 
-  const bytes = await file.arrayBuffer();
-  const url = await setChapterPhoto(nid, chapter, bytes, file.type);
-  return NextResponse.json({ ok: true, chapter, url });
+    const bytes = await file.arrayBuffer();
+    const url = await setChapterPhoto(nid, chapter, bytes, file.type);
+    return NextResponse.json({ ok: true, chapter, url });
+  } catch (e) {
+    console.error('[story/photos] upload failed:', e);
+    const msg = e instanceof Error ? e.message : 'فشل غير معروف';
+    // Map common infra errors to friendly Arabic
+    let userMsg = 'تعذّر رفع الصورة. حاول مرة أخرى.';
+    if (/BLOB_READ_WRITE_TOKEN|missing.*token/i.test(msg)) {
+      userMsg = 'إعداد التخزين غير مكتمل. تواصلوا مع الدعم.';
+    } else if (/too large|payload/i.test(msg)) {
+      userMsg = 'الصورة كبيرة جداً. اختر صورة أصغر.';
+    }
+    return NextResponse.json({ ok: false, error: userMsg, debug: msg }, { status: 500 });
+  }
 }
 
 /* DELETE /api/story/photos?nid=...&chapter=... */

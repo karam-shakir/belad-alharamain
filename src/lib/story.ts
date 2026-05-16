@@ -108,19 +108,32 @@ export async function setChapterPhoto(
 ): Promise<string> {
   if (!CHAPTERS.includes(chapter)) throw new Error('Invalid chapter');
 
-  // Delete previous photo for this chapter (if any) so blob stays clean
+  // Normalize contentType (some HEIC files report empty string)
+  const ct = contentType && contentType.includes('/')
+    ? contentType
+    : 'image/jpeg';
+
+  const ext =
+    ct.includes('png')  ? 'png'  :
+    ct.includes('webp') ? 'webp' :
+    ct.includes('heic') ? 'heic' :
+    ct.includes('heif') ? 'heif' :
+    'jpg';
+
+  // Always delete previous file first (silent if not found), then put.
+  // This is more compatible across @vercel/blob versions than allowOverwrite.
   const existing = (await getPhotos(nid))[chapter];
   if (existing) {
     try { await del(existing); } catch { /* best effort */ }
   }
 
-  const ext = contentType.includes('png') ? 'png' : 'jpg';
+  // Use addRandomSuffix: true so we never collide with stale CDN entries,
+  // which removes the need for overwrite semantics entirely.
   const path = `story/${nid}/${chapter}.${ext}`;
-  const blob = await put(path, Buffer.from(bytes), {
-    access:            'public',
-    contentType,
-    addRandomSuffix:   false,
-    allowOverwrite:    true,
+  const blob = await put(path, new Uint8Array(bytes), {
+    access:          'public',
+    contentType:     ct,
+    addRandomSuffix: true,
   });
 
   await kv.hset(photosKey(nid), { [chapter]: blob.url });
