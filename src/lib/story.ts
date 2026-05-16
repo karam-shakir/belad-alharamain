@@ -130,7 +130,7 @@ export async function setChapterPhoto(
   // Use addRandomSuffix: true so we never collide with stale CDN entries,
   // which removes the need for overwrite semantics entirely.
   const path = `story/${nid}/${chapter}.${ext}`;
-  const blob = await put(path, new Uint8Array(bytes), {
+  const blob = await put(path, Buffer.from(bytes), {
     access:          'public',
     contentType:     ct,
     addRandomSuffix: true,
