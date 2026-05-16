@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getPilgrim, isValidNationalId } from '@/lib/pilgrims';
 import { rateLimit, getIp } from '@/lib/ratelimit';
-import { STORY_ENABLED, STORY_HAJJ_YEAR, isStoryUploadOpen } from '@/lib/features';
+import { STORY_ENABLED, STORY_HAJJ_YEAR } from '@/lib/features';
+import { getSettings, isUploadWindowOpen } from '@/lib/storySettings';
 import { getOrCreateStory, getPhotos, setChapterPhoto, removeChapterPhoto } from '@/lib/story';
 import type { ChapterKey } from '@/lib/storyTemplate';
 
@@ -9,7 +10,6 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const VALID_CHAPTERS: ChapterKey[] = ['ihram', 'tarwiyah', 'arafah', 'muzdalifah', 'jamarat', 'eid'];
-const MAX_BYTES = 5 * 1024 * 1024;     // 5MB per photo
 const VALID_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 async function validatePilgrim(nid: string) {
@@ -38,7 +38,11 @@ export async function GET(req: Request) {
  *     photo     — File */
 export async function POST(req: Request) {
   if (!STORY_ENABLED) return NextResponse.json({ ok: false, error: 'unavailable' }, { status: 404 });
-  if (!isStoryUploadOpen()) return NextResponse.json({ ok: false, error: 'فترة المبادرة منتهية.' }, { status: 403 });
+  const settings = await getSettings();
+  if (!isUploadWindowOpen(settings)) {
+    return NextResponse.json({ ok: false, error: 'فترة المبادرة منتهية أو غير مفتوحة بعد.' }, { status: 403 });
+  }
+  const MAX_BYTES = settings.maxFileSizeMB * 1024 * 1024;
 
   const ip = getIp(req);
   const rl = rateLimit(`story-up:${ip}`, { max: 30, windowMs: 60 * 60 * 1000 });
@@ -61,7 +65,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'نوع الملف غير مدعوم (JPG/PNG/WEBP فقط).' }, { status: 400 });
   }
   if (file.size > MAX_BYTES) {
-    return NextResponse.json({ ok: false, error: 'الملف أكبر من ٥ ميغابايت.' }, { status: 400 });
+    return NextResponse.json({ ok: false, error: `الملف أكبر من ${settings.maxFileSizeMB} ميغابايت.` }, { status: 400 });
   }
 
   const check = await validatePilgrim(nid);
@@ -78,7 +82,10 @@ export async function POST(req: Request) {
 /* DELETE /api/story/photos?nid=...&chapter=... */
 export async function DELETE(req: Request) {
   if (!STORY_ENABLED) return NextResponse.json({ ok: false, error: 'unavailable' }, { status: 404 });
-  if (!isStoryUploadOpen()) return NextResponse.json({ ok: false, error: 'فترة المبادرة منتهية.' }, { status: 403 });
+  const settings = await getSettings();
+  if (!isUploadWindowOpen(settings)) {
+    return NextResponse.json({ ok: false, error: 'فترة المبادرة منتهية أو غير مفتوحة بعد.' }, { status: 403 });
+  }
 
   const { searchParams } = new URL(req.url);
   const nid = String(searchParams.get('nid') ?? '').replace(/\D/g, '').slice(0, 10);

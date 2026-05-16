@@ -7,11 +7,13 @@ import { contact } from '@/content/site';
 
 interface Pilgrim { nationalId: string; name: string; hajjYear: string; country?: string; }
 interface StoryMeta { slug: string; pdfUrl?: string; pdfGeneratedAt?: number; updatedAt?: number; }
+interface PrintPartner { enabled: boolean; nameAr: string; whatsapp: string; phone: string; addressAr: string; noteAr: string; priceFromSAR: number; }
+interface IdentifySettings { maxPhotos: number; maxFileMB: number; startAt: number; endAt: number; printPartner: PrintPartner | null; }
 
 type Stage =
   | { kind: 'form' }
   | { kind: 'loading' }
-  | { kind: 'build'; pilgrim: Pilgrim; story: StoryMeta; uploadOpen: boolean }
+  | { kind: 'build'; pilgrim: Pilgrim; story: StoryMeta; uploadOpen: boolean; settings: IdentifySettings }
   | { kind: 'error'; msg: string };
 
 const ICONS: Record<ChapterKey, string> = {
@@ -73,7 +75,7 @@ export default function StoryClient() {
         return;
       }
       try { localStorage.setItem(STORAGE_KEY, id); } catch {}
-      setState({ kind: 'build', pilgrim: data.pilgrim, story: data.story, uploadOpen: data.uploadOpen });
+      setState({ kind: 'build', pilgrim: data.pilgrim, story: data.story, uploadOpen: data.uploadOpen, settings: data.settings });
     } catch {
       setState({ kind: 'error', msg: 'تعذّر الاتصال. تحقّق من الإنترنت.' });
     }
@@ -152,15 +154,18 @@ export default function StoryClient() {
       )}
 
       {state.kind === 'build' && (
-        <StoryBuilder pilgrim={state.pilgrim} story={state.story} uploadOpen={state.uploadOpen} onReset={reset} />
+        <StoryBuilder pilgrim={state.pilgrim} story={state.story} uploadOpen={state.uploadOpen}
+                      printPartner={state.settings?.printPartner ?? null} onReset={reset} />
       )}
     </div>
   );
 }
 
 /* ── Story builder: per-chapter upload + generate button ── */
-function StoryBuilder({ pilgrim, story, uploadOpen, onReset }: {
-  pilgrim: Pilgrim; story: StoryMeta; uploadOpen: boolean; onReset: () => void;
+function StoryBuilder({ pilgrim, story, uploadOpen, printPartner, onReset }: {
+  pilgrim: Pilgrim; story: StoryMeta; uploadOpen: boolean;
+  printPartner: PrintPartner | null;
+  onReset: () => void;
 }) {
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<ChapterKey | null>(null);
@@ -337,8 +342,49 @@ function StoryBuilder({ pilgrim, story, uploadOpen, onReset }: {
         )}
       </div>
 
+      {/* Print partner card — shown only after PDF is generated and partner is configured */}
+      {pdfUrl && printPartner && printPartner.enabled && (
+        <div className="mt-5 bg-gradient-to-br from-cream to-cream-dark border-2 border-gold/30 rounded-2xl p-5 shadow-card">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center text-white">
+              <i className="fas fa-print" />
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-gold-dark font-bold tracking-wider">طبعة فاخرة</p>
+              <p className="font-black text-teal-dark">{printPartner.nameAr}</p>
+            </div>
+            {printPartner.priceFromSAR > 0 && (
+              <span className="text-xs bg-gold/15 text-gold-dark font-bold px-2 py-1 rounded-full">
+                من {printPartner.priceFromSAR} ر.س
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-gray-600 leading-relaxed mb-3">{printPartner.noteAr}</p>
+          {printPartner.addressAr && (
+            <p className="text-xs text-gray-500 mb-3"><i className="fas fa-location-dot text-gold me-1" />{printPartner.addressAr}</p>
+          )}
+          <div className="flex flex-wrap gap-2">
+            {printPartner.whatsapp && (
+              <a target="_blank" rel="noopener noreferrer"
+                 href={`https://wa.me/${printPartner.whatsapp}?text=${encodeURIComponent(
+                   `السلام عليكم،\nأرغب في طباعة قصّة حجّي (موسم ${pilgrim.hajjYear}هـ) من شركة بلاد الحرمين.\nرابط القصّة: ${shareUrl}`
+                 )}`}
+                 className="flex-1 inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition">
+                <i className="fab fa-whatsapp" />تواصل واتساب
+              </a>
+            )}
+            {printPartner.phone && (
+              <a href={`tel:${printPartner.phone}`}
+                 className="inline-flex items-center justify-center gap-2 bg-white border-2 border-gold/30 hover:border-gold text-teal-dark text-sm font-bold px-4 py-2.5 rounded-xl transition">
+                <i className="fas fa-phone" />{printPartner.phone}
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+
       <p className="text-center text-[11px] text-gray-400 mt-4 leading-relaxed">
-        المبادرة لموسم {pilgrim.hajjYear}هـ — تنتهي يوم 29 ذي الحجة. القصص المُنشأة تبقى متاحة دائماً.
+        المبادرة لموسم {pilgrim.hajjYear}هـ. القصص المُنشأة تبقى متاحة دائماً.
       </p>
     </div>
   );

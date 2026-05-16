@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getPilgrim, isValidNationalId } from '@/lib/pilgrims';
 import { rateLimit, getIp } from '@/lib/ratelimit';
-import { STORY_ENABLED, STORY_HAJJ_YEAR, isStoryUploadOpen } from '@/lib/features';
+import { STORY_ENABLED, STORY_HAJJ_YEAR } from '@/lib/features';
+import { getSettings, isUploadWindowOpen } from '@/lib/storySettings';
 import { getOrCreateStory } from '@/lib/story';
 
 export const runtime = 'nodejs';
@@ -11,6 +12,8 @@ export const runtime = 'nodejs';
  *   Returns pilgrim summary + story slug (creates the record if first time). */
 export async function POST(req: Request) {
   if (!STORY_ENABLED) return NextResponse.json({ ok: false, error: 'unavailable' }, { status: 404 });
+  const settings = await getSettings();
+  if (!settings.enabled) return NextResponse.json({ ok: false, error: 'المبادرة غير مُفعَّلة حالياً.' }, { status: 404 });
 
   const ip = getIp(req);
   const rl = rateLimit(`story-id:${ip}`, { max: 10, windowMs: 60_000 });
@@ -41,6 +44,13 @@ export async function POST(req: Request) {
     ok: true,
     pilgrim: { nationalId: p.nationalId, name: p.name, hajjYear: p.hajjYear, country: p.country },
     story:   { slug: story.slug, pdfUrl: story.pdfUrl, pdfGeneratedAt: story.pdfGeneratedAt, updatedAt: story.updatedAt },
-    uploadOpen: isStoryUploadOpen(),
+    uploadOpen: isUploadWindowOpen(settings),
+    settings: {
+      maxPhotos:    settings.maxPhotosPerStory,
+      maxFileMB:    settings.maxFileSizeMB,
+      startAt:      settings.startAt,
+      endAt:        settings.endAt,
+      printPartner: settings.printPartner.enabled ? settings.printPartner : null,
+    },
   });
 }

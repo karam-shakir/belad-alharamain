@@ -71,6 +71,7 @@ export default function AdminStoryPage() {
             <Link href="/admin" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition"><i className="fas fa-inbox me-1" />الطلبات</Link>
             <Link href="/admin/pilgrims" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition"><i className="fas fa-certificate me-1" />التذاكير</Link>
             <span className="px-3 py-1.5 rounded-lg bg-gold text-white"><i className="fas fa-book-open me-1" />قصّتي</span>
+            <Link href="/admin/story/settings" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition"><i className="fas fa-sliders me-1" />الإعدادات</Link>
           </nav>
           <button onClick={fetchData} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white/10 hover:bg-white/20 transition">
             <i className="fas fa-arrows-rotate" /><span className="hidden sm:inline">تحديث</span>
