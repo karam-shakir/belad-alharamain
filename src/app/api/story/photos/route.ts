@@ -81,24 +81,31 @@ export async function POST(req: Request) {
   const check = await validatePilgrim(nid);
   if ('error' in check) return NextResponse.json({ ok: false, error: check.error }, { status: check.status });
 
+  let stage = 'init';
   try {
-    // Ensure story envelope exists
+    stage = 'envelope';
     await getOrCreateStory(nid, check.pilgrim.hajjYear);
 
+    stage = 'read-bytes';
     const bytes = await file.arrayBuffer();
+
+    stage = 'blob-put';
     const url = await setChapterPhoto(nid, chapter, bytes, file.type);
+
     return NextResponse.json({ ok: true, chapter, url });
   } catch (e) {
-    console.error('[story/photos] upload failed:', e);
-    const msg = e instanceof Error ? e.message : 'فشل غير معروف';
-    // Map common infra errors to friendly Arabic
-    let userMsg = 'تعذّر رفع الصورة. حاول مرة أخرى.';
+    const msg = e instanceof Error ? e.message : 'unknown';
+    const stack = e instanceof Error ? (e.stack || '').split('\n').slice(0, 3).join(' | ') : '';
+    console.error('[story/photos] upload failed at stage', stage, '-', msg, stack);
+    let userMsg = `تعذّر رفع الصورة (${stage}).`;
     if (/BLOB_READ_WRITE_TOKEN|missing.*token/i.test(msg)) {
-      userMsg = 'إعداد التخزين غير مكتمل. تواصلوا مع الدعم.';
+      userMsg = 'إعداد التخزين غير مكتمل (BLOB_READ_WRITE_TOKEN). فعّل Vercel Blob في المشروع.';
+    } else if (/KV_|UPSTASH|REDIS/i.test(msg)) {
+      userMsg = 'إعداد قاعدة البيانات غير مكتمل (Vercel KV).';
     } else if (/too large|payload/i.test(msg)) {
-      userMsg = 'الصورة كبيرة جداً. اختر صورة أصغر.';
+      userMsg = 'الصورة كبيرة جداً.';
     }
-    return NextResponse.json({ ok: false, error: userMsg, debug: msg }, { status: 500 });
+    return NextResponse.json({ ok: false, error: userMsg, debug: `${stage}: ${msg}` }, { status: 500 });
   }
 }
 

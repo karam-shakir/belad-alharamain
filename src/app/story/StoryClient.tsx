@@ -96,6 +96,7 @@ function friendlyError(raw: string): string {
   if (s.includes('413') || s.includes('large') || s.includes('size'))  return 'الصورة كبيرة جداً. اختر صورة أصغر.';
   if (s.includes('network') || s.includes('failed to fetch')) return 'انقطع الاتصال. تأكّد من الإنترنت وحاول مرة أخرى.';
   if (s.includes('not-image') || s.includes('mime')) return 'الملف ليس صورة. اختر صورة بصيغة JPG / PNG / WEBP.';
+  // During testing: surface the raw message so we can diagnose
   return raw || 'تعذّر رفع الصورة. حاول مرة أخرى.';
 }
 
@@ -287,7 +288,11 @@ function StoryBuilder({ pilgrim, story, uploadOpen, startAt, endAt, printPartner
 
       const res = await fetch('/api/story/photos', { method: 'POST', body: fd });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) throw new Error(data?.error || `خطأ ${res.status}`);
+      if (!res.ok || !data.ok) {
+        // Surface server-side debug message during testing
+        const detail = data?.debug ? ` (${data.debug})` : '';
+        throw new Error((data?.error || `خطأ ${res.status}`) + detail);
+      }
       setPhotos(prev => ({ ...prev, [chapter]: data.url }));
     } catch (e) {
       setError(friendlyError(e instanceof Error ? e.message : String(e)));
