@@ -155,6 +155,7 @@ export default function StoryClient() {
 
       {state.kind === 'build' && (
         <StoryBuilder pilgrim={state.pilgrim} story={state.story} uploadOpen={state.uploadOpen}
+                      startAt={state.settings?.startAt ?? 0} endAt={state.settings?.endAt ?? 0}
                       printPartner={state.settings?.printPartner ?? null} onReset={reset} />
       )}
     </div>
@@ -162,8 +163,9 @@ export default function StoryClient() {
 }
 
 /* ── Story builder: per-chapter upload + generate button ── */
-function StoryBuilder({ pilgrim, story, uploadOpen, printPartner, onReset }: {
+function StoryBuilder({ pilgrim, story, uploadOpen, startAt, endAt, printPartner, onReset }: {
   pilgrim: Pilgrim; story: StoryMeta; uploadOpen: boolean;
+  startAt: number; endAt: number;
   printPartner: PrintPartner | null;
   onReset: () => void;
 }) {
@@ -173,6 +175,13 @@ function StoryBuilder({ pilgrim, story, uploadOpen, printPartner, onReset }: {
   const [generating, setGenerating] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | undefined>(story.pdfUrl);
   const [shareUrl, setShareUrl] = useState<string>(typeof window !== 'undefined' ? `${window.location.origin}/story/s/${story.slug}` : '');
+
+  /* Window status: 'before' | 'during' | 'after' — used for clearer messaging */
+  const now = Date.now();
+  const status: 'before' | 'during' | 'after' = uploadOpen
+    ? 'during'
+    : (startAt && now < startAt) ? 'before' : 'after';
+  const fmt = (ms: number) => new Date(ms).toLocaleDateString('ar-SA', { day: '2-digit', month: 'long', year: 'numeric' });
 
   useEffect(() => {
     (async () => {
@@ -259,10 +268,16 @@ function StoryBuilder({ pilgrim, story, uploadOpen, printPartner, onReset }: {
         </button>
       </div>
 
-      {!uploadOpen && (
+      {status === 'before' && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-xl p-4 mb-5 text-sm">
+          <i className="fas fa-clock me-1.5" />
+          المبادرة تبدأ يوم <strong>{fmt(startAt)}</strong>. ارجعوا في هذا اليوم لرفع صوركم وإنشاء قصّتكم.
+        </div>
+      )}
+      {status === 'after' && (
         <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-xl p-4 mb-5 text-sm">
           <i className="fas fa-clock me-1.5" />
-          فترة رفع الصور والتعديل منتهية. يمكنك تنزيل قصّتك أو مشاركة الرابط أدناه.
+          انتهت فترة رفع الصور والتعديل (انتهت يوم {fmt(endAt)}). يمكنكم تنزيل قصّتكم أو مشاركة الرابط أدناه إن سبق وأنشأتموها.
         </div>
       )}
 
