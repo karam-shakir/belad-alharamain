@@ -10,7 +10,13 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const VALID_CHAPTERS: ChapterKey[] = ['ihram', 'tarwiyah', 'arafah', 'muzdalifah', 'jamarat', 'eid'];
-const VALID_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+/* Accept the common image mimes + iOS HEIC/HEIF (we store as-is and the user
+ * gets a working blob URL — react-pdf will rasterize whatever the browser
+ * already decoded for the preview). */
+const VALID_TYPES = [
+  'image/jpeg', 'image/jpg', 'image/png', 'image/webp',
+  'image/heic', 'image/heif',
+];
 
 async function validatePilgrim(nid: string) {
   if (!isValidNationalId(nid)) return { error: 'رقم الهوية غير صحيح.', status: 400 };
@@ -61,8 +67,12 @@ export async function POST(req: Request) {
   if (!file || !(file instanceof Blob)) {
     return NextResponse.json({ ok: false, error: 'لم يُرفع ملف.' }, { status: 400 });
   }
-  if (!VALID_TYPES.includes(file.type)) {
-    return NextResponse.json({ ok: false, error: 'نوع الملف غير مدعوم (JPG/PNG/WEBP فقط).' }, { status: 400 });
+  // Some browsers report empty type for HEIC — allow if name extension hints at image
+  const fileType = file.type || '';
+  const isAcceptedByType = VALID_TYPES.includes(fileType);
+  const isAcceptedByName = !fileType && /\.(jpe?g|png|webp|heic|heif)$/i.test((file as File).name ?? '');
+  if (!isAcceptedByType && !isAcceptedByName) {
+    return NextResponse.json({ ok: false, error: 'نوع الملف غير مدعوم. اختر صورة JPG/PNG/WEBP/HEIC.' }, { status: 400 });
   }
   if (file.size > MAX_BYTES) {
     return NextResponse.json({ ok: false, error: `الملف أكبر من ${settings.maxFileSizeMB} ميغابايت.` }, { status: 400 });

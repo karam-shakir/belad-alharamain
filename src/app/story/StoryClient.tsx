@@ -27,21 +27,77 @@ const ICONS: Record<ChapterKey, string> = {
 
 const STORAGE_KEY = 'storyLastNid';
 
-/* Client-side resize to ≤ 1600px + JPEG 85% (saves bandwidth, fixes EXIF) */
-async function compressImage(file: File): Promise<Blob> {
-  if (!/^image\//.test(file.type)) throw new Error('not-image');
-  const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' as ImageBitmapOptions['imageOrientation'] });
-  const MAX = 1600;
-  const scale = Math.min(1, MAX / Math.max(bitmap.width, bitmap.height));
-  const w = Math.round(bitmap.width * scale);
-  const h = Math.round(bitmap.height * scale);
+/* Client-side resize → JPEG with quality auto-adjust to fit under a target size.
+ *
+ * Two attempts:
+ *  1) createImageBitmap (fast, modern path with EXIF rotation handling)
+ *  2) HTMLImageElement + URL.createObjectURL (fallback for iOS HEIC, older browsers)
+ *
+ * If BOTH fail (e.g. HEIC on a browser that can't decode it), the caller
+ * receives the original file untouched and lets the server decide. */
+async function compressImage(file: File, targetBytes = 1.5 * 1024 * 1024): Promise<Blob> {
+  const MAX_DIM = 1600;
+
+  // Try modern path
+  let width = 0, height = 0;
+  let drawSource: CanvasImageSource | null = null;
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' as ImageBitmapOptions['imageOrientation'] });
+    width = bitmap.width;
+    height = bitmap.height;
+    drawSource = bitmap;
+  } catch {
+    // Fallback: HTMLImageElement
+    try {
+      drawSource = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = document.createElement('img');
+        img.onload  = () => { URL.revokeObjectURL(url); resolve(img); };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image-decode-failed')); };
+        img.src = url;
+      });
+      width = (drawSource as HTMLImageElement).naturalWidth;
+      height = (drawSource as HTMLImageElement).naturalHeight;
+    } catch {
+      // Cannot decode this format in browser (e.g. HEIC on some Androids).
+      // Return the original file — server will accept and store it.
+      return file;
+    }
+  }
+
+  if (!width || !height) return file;
+
+  const scale = Math.min(1, MAX_DIM / Math.max(width, height));
+  const w = Math.round(width * scale);
+  const h = Math.round(height * scale);
+
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
-  const ctx = canvas.getContext('2d')!;
-  ctx.drawImage(bitmap, 0, 0, w, h);
-  return await new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), 'image/jpeg', 0.85);
-  });
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return file;
+  try {
+    ctx.drawImage(drawSource, 0, 0, w, h);
+  } catch {
+    return file;
+  }
+
+  // Step quality down until under targetBytes (max 4 attempts)
+  for (const q of [0.85, 0.75, 0.65, 0.55]) {
+    const blob = await new Promise<Blob | null>(res => canvas.toBlob(res, 'image/jpeg', q));
+    if (blob && blob.size <= targetBytes) return blob;
+    if (blob && q === 0.55) return blob;       // last attempt: send anyway
+  }
+  return file;
+}
+
+/* Map common error patterns to user-friendly Arabic */
+function friendlyError(raw: string): string {
+  const s = raw.toLowerCase();
+  if (s.includes('pattern') || s.includes('decode')) return 'تعذّر فتح الصورة. جرّب صورة بصيغة JPG أو PNG.';
+  if (s.includes('413') || s.includes('large') || s.includes('size'))  return 'الصورة كبيرة جداً. اختر صورة أصغر.';
+  if (s.includes('network') || s.includes('failed to fetch')) return 'انقطع الاتصال. تأكّد من الإنترنت وحاول مرة أخرى.';
+  if (s.includes('not-image') || s.includes('mime')) return 'الملف ليس صورة. اختر صورة بصيغة JPG / PNG / WEBP.';
+  return raw || 'تعذّر رفع الصورة. حاول مرة أخرى.';
 }
 
 export default function StoryClient() {
@@ -199,17 +255,43 @@ function StoryBuilder({ pilgrim, story, uploadOpen, startAt, endAt, printPartner
     setError('');
     setBusy(chapter);
     try {
-      const compressed = await compressImage(file);
+      // Quick MIME pre-check (covers most cases)
+      if (file.size === 0) throw new Error('الملف فارغ.');
+      // 8MB pre-check (large enough to allow HEIC originals — server will reject if needed)
+      if (file.size > 8 * 1024 * 1024) {
+        throw new Error('الصورة أكبر من 8 ميغابايت. اختر صورة أصغر أو قلّل دقّتها من إعدادات الكاميرا.');
+      }
+
+      let toUpload: Blob = file;
+      try {
+        toUpload = await compressImage(file);
+      } catch {
+        toUpload = file;     // safest fallback: send original
+      }
+
+      // Pick an extension/MIME the server accepts
+      const isJpeg = toUpload.type === 'image/jpeg';
+      const isPng  = toUpload.type === 'image/png';
+      const isWebp = toUpload.type === 'image/webp';
+      const ext  = isPng ? 'png' : isWebp ? 'webp' : 'jpg';
+      // Force re-wrap as File with a clean name + jpeg type fallback (server handles)
+      const safeFile = new File(
+        [toUpload],
+        `${chapter}.${ext}`,
+        { type: isJpeg || isPng || isWebp ? toUpload.type : 'image/jpeg' },
+      );
+
       const fd = new FormData();
       fd.append('nid', pilgrim.nationalId);
       fd.append('chapter', chapter);
-      fd.append('photo', compressed, `${chapter}.jpg`);
+      fd.append('photo', safeFile);
+
       const res = await fetch('/api/story/photos', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data?.error || 'فشل الرفع');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data?.error || `خطأ ${res.status}`);
       setPhotos(prev => ({ ...prev, [chapter]: data.url }));
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'فشل الرفع');
+      setError(friendlyError(e instanceof Error ? e.message : String(e)));
     } finally { setBusy(null); }
   };
 
@@ -453,7 +535,7 @@ function ChapterCard({ chapter, icon, titleAr, titleEn, number, photoUrl, busy, 
         </button>
       )}
 
-      <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic"
+      <input ref={inputRef} type="file" accept="image/*"
              className="hidden"
              onChange={e => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ''; }} />
     </div>
